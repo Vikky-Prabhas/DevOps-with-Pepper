@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevOps Introduction — Real-Life Workflow</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            /* Apple Light Theme */
+            --bg-primary: #FFFFFF;
+            --bg-secondary: #F2F2F7;
+            --text-primary: #000000;
+            --text-secondary: #8E8E93;
+            --border-color: #E5E5EA;
+            --border-hover: #D1D1D6;
+            --card-shadow: rgba(0, 0, 0, 0.08);
+            --card-shadow-hover: rgba(0, 0, 0, 0.15);
+        }
+        
+        [data-theme="dark"] {
+            /* Apple Dark Theme */
+            --bg-primary: #000000;
+            --bg-secondary: #1C1C1E;
+            --text-primary: #FFFFFF;
+            --text-secondary: #8E8E93;
+            --border-color: #38383A;
+            --border-hover: #48484A;
+            --card-shadow: rgba(255, 255, 255, 0.05);
+            --card-shadow-hover: rgba(255, 255, 255, 0.1);
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            background: var(--bg-secondary);
+            color: #007AFF;
+            padding: 12px 20px;
+            border-radius: 12px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            border: 1px solid var(--border-color);
+        }
+        
+        .back-button:hover {
+            background: var(--border-color);
+            transform: translateX(-3px);
+        }
+        
+        .theme-toggle {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 25px;
+            padding: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .theme-toggle:hover {
+            transform: scale(1.05);
+            background: var(--border-color);
+        }
+        
+        .toggle-switch {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+        }
+        
+        .toggle-icon {
+            font-size: 1.2rem;
+        }
+        
+        .toggle-text {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 3rem 2rem;
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+        
+        .workflow-section {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px var(--card-shadow);
+        }
+        
+        .step {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+        
+        .step:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px var(--card-shadow-hover);
+            border-color: var(--border-hover);
+        }
+        
+        .step-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+        
+        .step ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .step li {
+            margin-bottom: 0.8rem;
+            padding-left: 0;
+            color: var(--text-secondary);
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+        
+        .highlight-box {
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+            margin-top: 2rem;
+            transition: all 0.3s ease;
+        }
+        
+        .highlight-box:hover {
+            border-color: var(--border-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px var(--card-shadow-hover);
+        }
+        
+        .highlight-box p {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .workflow-section {
+                padding: 1rem;
+            }
+            
+            .step {
+                padding: 1rem;
+            }
+            
+            .top-bar {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="top-bar">
+            <a href="index.html" class="back-button">← Back to Dashboard</a>
+            
+            <div class="theme-toggle" onclick="toggleTheme()">
+                <div class="toggle-switch">
+                    <span class="toggle-icon" id="themeIcon">🌙</span>
+                    <span class="toggle-text" id="themeText">Dark</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="header">
+            <h1>🏢 How DevOps Works in Real Companies 🌐</h1>
+            <p>Imagine you work at a tech company. Here's what happens daily: 📊</p>
+        </div>
+        
+        <div class="workflow-section">
+            <div class="step">
+                <h3 class="step-title">1️⃣ 📋 Client Request</h3>
+                <ul>
+                    <li>💼 Business team gets requirements: "We need a new user login feature"</li>
+                    <li>📈 Product Manager creates project scope & timeline</li>
+                </ul>
+            </div>
+            
+            <div class="step">
+                <h3 class="step-title">2️⃣ ⚙️ DevOps Team Setup</h3>
+                <ul>
+                    <li>🔧 DevOps engineer creates Git repositories (code storage)</li>
+                    <li>🏗️ Sets up development environments (dev, testing, production)</li>
+                    <li>⚡ Configures CI/CD pipelines (automatic testing & deployment)</li>
+                </ul>
+            </div>
+            
+            <div class="step">
+                <h3 class="step-title">3️⃣ 📊 Agile Planning</h3>
+                <ul>
+                    <li>🏃‍♂️ Team uses Scrum framework — work in 2-week "sprints"</li>
+                    <li>📝 Tasks broken into small pieces in Jira/Azure DevOps</li>
+                    <li>☕ Daily stand-up meetings to track progress</li>
+                </ul>
+            </div>
+            
+            <div class="step">
+                <h3 class="step-title">4️⃣ 👨‍💻 Development Cycle</h3>
+                <ul>
+                    <li>💻 Developer codes the login feature on local machine</li>
+                    <li>📝 Commits code to Git with proper messages</li>
+                    <li>🚀 Pushes to shared repository (GitHub/GitLab)</li>
+                </ul>
+            </div>
+            
+            <div class="step">
+                <h3 class="step-title">5️⃣ 🤖 Automated Pipeline Kicks In</h3>
+                <ul>
+                    <li>🧪 Code automatically tested (unit tests, integration tests)</li>
+                    <li>✅ If tests pass → deployed to testing environment</li>
+                    <li>🔍 QA team verifies functionality works correctly</li>
+                </ul>
+            </div>
+            
+            <div class="step">
+                <h3 class="step-title">6️⃣ 🌐 Production Deployment</h3>
+                <ul>
+                    <li>👍 After approval → code deployed to live website</li>
+                    <li>📊 DevOps monitors performance, logs, and user experience</li>
+                    <li>🚨 If issues arise → quick rollback or hotfix</li>
+                </ul>
+            </div>
+            
+            <div class="highlight-box">
+                <p>💡 DevOps Role: Make this entire process smooth, fast, and reliable! ⚡</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dark mode functionality
+        function toggleTheme() {
+            const body = document.body;
+            const themeIcon = document.getElementById('themeIcon');
+            const themeText = document.getElementById('themeText');
+            
+            if (body.getAttribute('data-theme') === 'dark') {
+                body.removeAttribute('data-theme');
+                themeIcon.textContent = '🌙';
+                themeText.textContent = 'Dark';
+                localStorage.setItem('theme', 'light');
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                themeIcon.textContent = '☀️';
+                themeText.textContent = 'Light';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+        
+        // Load saved theme on page load
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const themeIcon = document.getElementById('themeIcon');
+            const themeText = document.getElementById('themeText');
+            
+            if (savedTheme === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+                themeIcon.textContent = '☀️';
+                themeText.textContent = 'Light';
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', loadTheme);
+    </script>
+</body>
+</html>
+

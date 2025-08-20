@@ -1,0 +1,3155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional DevOps Lifecycle - Interactive Simulation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            /* Modern Professional Color Palette */
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --warning-gradient: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            
+            /* Base Colors */
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-dark: #1a202c;
+            --text-primary: #2d3748;
+            --text-secondary: #718096;
+            --border-light: #e2e8f0;
+            --shadow-light: rgba(0, 0, 0, 0.1);
+            --shadow-medium: rgba(0, 0, 0, 0.15);
+            --shadow-heavy: rgba(0, 0, 0, 0.25);
+            
+            /* Team Role Colors */
+            --manager-color: #8b5cf6;
+            --devops-color: #06b6d4;
+            --developer-color: #3b82f6;
+            --qa-color: #f59e0b;
+            --client-color: #ec4899;
+            
+            /* Status Colors */
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --info: #3b82f6;
+            
+            /* Animation Variables */
+            --animation-fast: 0.2s;
+            --animation-normal: 0.3s;
+            --animation-slow: 0.5s;
+        }
+        
+        [data-theme="dark"] {
+            --bg-primary: #1a202c;
+            --bg-secondary: #2d3748;
+            --bg-dark: #ffffff;
+            --text-primary: #f7fafc;
+            --text-secondary: #cbd5e1;
+            --border-light: #4a5568;
+            --shadow-light: rgba(0, 0, 0, 0.3);
+            --shadow-medium: rgba(0, 0, 0, 0.4);
+            --shadow-heavy: rgba(0, 0, 0, 0.6);
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            transition: all var(--animation-normal) ease;
+            overflow-x: hidden;
+        }
+        
+        /* GLASSMORPHISM COMPONENTS */
+        .glass {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+        }
+        
+        .glass-dark {
+            background: rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        /* ANIMATED BACKGROUND */
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.05;
+        }
+        
+        .floating-shapes {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            animation: float 20s infinite linear;
+        }
+        
+        .shape:nth-child(1) { 
+            width: 80px; height: 80px; 
+            background: var(--primary-gradient);
+            top: 20%; left: 10%; 
+            animation-delay: 0s; 
+        }
+        .shape:nth-child(2) { 
+            width: 120px; height: 120px; 
+            background: var(--secondary-gradient);
+            top: 60%; left: 70%; 
+            animation-delay: -5s; 
+        }
+        .shape:nth-child(3) { 
+            width: 60px; height: 60px; 
+            background: var(--success-gradient);
+            top: 30%; left: 80%; 
+            animation-delay: -10s; 
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-20px) rotate(90deg); }
+            50% { transform: translateY(-40px) rotate(180deg); }
+            75% { transform: translateY(-20px) rotate(270deg); }
+            100% { transform: translateY(0) rotate(360deg); }
+        }
+        
+        /* PREMIUM NAVIGATION */
+        .premium-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            z-index: 1000;
+            transition: all var(--animation-normal) ease;
+        }
+        
+        [data-theme="dark"] .premium-nav {
+            background: rgba(26, 32, 44, 0.95);
+        }
+        
+        .nav-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .nav-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .meeting-indicator {
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--client-color);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            animation: pulse-meeting 2s infinite;
+            box-shadow: 0 4px 15px rgba(236, 72, 153, 0.3);
+            transition: all var(--animation-normal) ease;
+        }
+        
+        .meeting-indicator:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(236, 72, 153, 0.4);
+        }
+        
+        @keyframes pulse-meeting {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .theme-switcher {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-light);
+            border-radius: 50px;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all var(--animation-normal) ease;
+            font-weight: 500;
+        }
+        
+        .theme-switcher:hover {
+            background: var(--primary-gradient);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        /* MAIN CONTENT */
+        .main-content {
+            margin-top: 80px;
+            padding: 2rem;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+        }
+        
+        /* CINEMATIC SIDE ACTIVITY NOTIFICATIONS */
+        .side-activity-container {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 400px;
+            z-index: 1400;
+            transform: translateX(-450px);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .side-activity-container.show {
+            transform: translateX(0);
+        }
+        
+        .side-activity-notification {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-light);
+            border-radius: 20px;
+            padding: 1.5rem 2rem;
+            box-shadow: 0 8px 30px var(--shadow-medium);
+            backdrop-filter: blur(20px);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            animation: slideInActivity 0.5s ease;
+        }
+        
+        @keyframes slideInActivity {
+            from { 
+                opacity: 0; 
+                transform: translateY(20px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0); 
+            }
+        }
+        
+        .side-activity-icon {
+            font-size: 2rem;
+            animation: pulse 2s infinite;
+        }
+        
+        .side-activity-message {
+            flex: 1;
+            font-weight: 500;
+            color: var(--text-primary);
+            line-height: 1.4;
+        }
+        
+        .side-activity-progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            background: var(--primary-gradient);
+            border-radius: 0 0 20px 20px;
+            animation: progressBar 2s linear;
+        }
+        
+        @keyframes progressBar {
+            from { width: 0%; }
+            to { width: 100%; }
+        }
+        
+        /* HERO SECTION WITH MODERN DESIGN */
+        .hero-section {
+            background: var(--primary-gradient);
+            border-radius: 30px;
+            padding: 4rem 2rem;
+            text-align: center;
+            color: white;
+            margin-bottom: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><polygon fill="rgba(255,255,255,0.1)" points="0,1000 1000,0 1000,1000"/></svg>');
+            pointer-events: none;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .hero-title {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 800;
+            margin-bottom: 1rem;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .hero-subtitle {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .start-journey-btn {
+            background: white;
+            color: var(--manager-color);
+            border: none;
+            padding: 1.2rem 3rem;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all var(--animation-normal) ease;
+            box-shadow: 0 8px 30px rgba(255, 255, 255, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .start-journey-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(255, 255, 255, 0.4);
+            scale: 1.05;
+        }
+        
+        .start-journey-btn:active {
+            transform: translateY(-1px);
+        }
+        
+        /* PROFESSIONAL TEAM SECTION */
+        .team-section {
+            background: var(--bg-secondary);
+            border-radius: 25px;
+            padding: 3rem 2rem;
+            margin-bottom: 3rem;
+            border: 1px solid var(--border-light);
+            text-align: center;
+        }
+        
+        .team-title {
+            font-size: 2rem;
+            font-weight: 700;
+            background: var(--secondary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+        
+        .team-subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 3rem;
+            font-size: 1.1rem;
+        }
+        
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .team-member {
+            background: var(--bg-primary);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            border: 2px solid var(--border-light);
+            transition: all var(--animation-normal) ease;
+            position: relative;
+        }
+        
+        .team-member:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px var(--shadow-medium);
+        }
+        
+        .team-member.active {
+            border-color: var(--success);
+            background: rgba(16, 185, 129, 0.05);
+            transform: scale(1.02);
+        }
+        
+        .member-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: white;
+            position: relative;
+        }
+        
+        .member-name {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .member-role {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+        
+        .member-status {
+            background: var(--border-light);
+            color: var(--text-secondary);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .member-status.working {
+            background: var(--success);
+            color: white;
+            animation: pulse 2s infinite;
+        }
+        
+        /* PROFESSIONAL DASHBOARD */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .dashboard-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-light);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px var(--shadow-light);
+            transition: all var(--animation-normal) ease;
+        }
+        
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px var(--shadow-medium);
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            background: var(--primary-gradient);
+            color: white;
+        }
+        
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .project-progress {
+            margin-bottom: 1rem;
+        }
+        
+        .progress-bar-modern {
+            height: 8px;
+            background: var(--border-light);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: var(--success-gradient);
+            border-radius: 10px;
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+        
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            animation: shimmer 2s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 1rem;
+            background: var(--bg-primary);
+            border-radius: 15px;
+            border: 1px solid var(--border-light);
+        }
+        
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--manager-color);
+            margin-bottom: 0.3rem;
+        }
+        
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        /* ADVANCED TIMELINE */
+        .timeline-container {
+            background: var(--bg-secondary);
+            border-radius: 25px;
+            padding: 3rem 2rem;
+            margin-bottom: 3rem;
+            border: 1px solid var(--border-light);
+        }
+        
+        .timeline-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .timeline-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+        
+        .timeline-description {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .workflow-timeline {
+            position: relative;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .timeline-line {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(to bottom, var(--manager-color), var(--devops-color), var(--developer-color), var(--qa-color));
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
+        
+        .timeline-step {
+            display: flex;
+            align-items: center;
+            margin-bottom: 3rem;
+            opacity: 0.6;
+            transition: all var(--animation-slow) ease;
+            cursor: pointer;
+        }
+        
+        .timeline-step.active {
+            opacity: 1;
+            transform: scale(1.02);
+        }
+        
+        .timeline-step.completed {
+            opacity: 0.8;
+        }
+        
+        .timeline-step:nth-child(even) {
+            flex-direction: row-reverse;
+        }
+        
+        .step-content {
+            flex: 1;
+            max-width: 400px;
+            background: var(--bg-primary);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px var(--shadow-light);
+            border: 1px solid var(--border-light);
+            transition: all var(--animation-normal) ease;
+        }
+        
+        .step-content:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px var(--shadow-medium);
+        }
+        
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .step-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            position: relative;
+        }
+        
+        .step-avatar::after {
+            content: '';
+            position: absolute;
+            top: -3px;
+            right: -3px;
+            width: 16px;
+            height: 16px;
+            background: var(--success);
+            border-radius: 50%;
+            border: 3px solid var(--bg-primary);
+            opacity: 0;
+            transition: all var(--animation-normal) ease;
+        }
+        
+        .timeline-step.active .step-avatar::after,
+        .timeline-step.completed .step-avatar::after {
+            opacity: 1;
+        }
+        
+        .step-info h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+        
+        .step-role {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        
+        .step-description {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+        
+        .step-tools {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .tool-badge {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .step-node {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--border-light);
+            border: 4px solid var(--bg-primary);
+            position: relative;
+            z-index: 10;
+            transition: all var(--animation-normal) ease;
+        }
+        
+        .timeline-step.active .step-node {
+            background: var(--manager-color);
+            animation: pulse-node 2s infinite;
+        }
+        
+        .timeline-step.completed .step-node {
+            background: var(--success);
+        }
+        
+        @keyframes pulse-node {
+            0%, 100% { 
+                box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.4);
+            }
+            50% { 
+                box-shadow: 0 0 0 10px rgba(139, 92, 246, 0);
+            }
+        }
+        
+        /* ADVANCED KANBAN BOARD */
+        .kanban-section {
+            background: var(--bg-primary);
+            border-radius: 25px;
+            padding: 3rem 2rem;
+            margin-bottom: 3rem;
+            border: 1px solid var(--border-light);
+            box-shadow: 0 4px 20px var(--shadow-light);
+        }
+        
+        .kanban-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .kanban-title {
+            font-size: 2rem;
+            font-weight: 700;
+            background: var(--secondary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+        
+        .kanban-board {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 1.5rem;
+            min-height: 500px;
+        }
+        
+        .kanban-column {
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            padding: 1.5rem;
+            border: 1px solid var(--border-light);
+            transition: all var(--animation-normal) ease;
+        }
+        
+        .kanban-column.drag-over {
+            border-color: var(--manager-color);
+            background: rgba(139, 92, 246, 0.05);
+            transform: scale(1.02);
+        }
+        
+        .column-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--border-light);
+        }
+        
+        .column-title {
+            font-weight: 600;
+            font-size: 1rem;
+            color: var(--text-primary);
+        }
+        
+        .task-count {
+            background: var(--primary-gradient);
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .tasks-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            min-height: 300px;
+        }
+        
+        .task-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-light);
+            border-radius: 15px;
+            padding: 1.2rem;
+            transition: all var(--animation-normal) ease;
+            cursor: grab;
+            position: relative;
+            box-shadow: 0 2px 10px var(--shadow-light);
+            animation: taskSlideIn 0.5s ease;
+        }
+
+        @keyframes taskSlideIn {
+            from { 
+                opacity: 0; 
+                transform: translateY(20px) scale(0.95); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0) scale(1); 
+            }
+        }
+        
+        .task-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px var(--shadow-medium);
+        }
+        
+        .task-card:active {
+            cursor: grabbing;
+        }
+        
+        .task-card.dragging {
+            opacity: 0.8;
+            transform: rotate(5deg) scale(1.05);
+            z-index: 1000;
+        }
+        
+        .task-title {
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            color: var(--text-primary);
+            line-height: 1.4;
+        }
+        
+        .task-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .task-assignee {
+            background: var(--devops-color);
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+        
+        .task-id {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            color: var(--text-secondary);
+            font-style: italic;
+            text-align: center;
+            min-height: 200px;
+        }
+        
+        .empty-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            opacity: 0.5;
+        }
+        
+        /* SINGLE NOTIFICATION SYSTEM - NO OVERLAPPING */
+        .notification-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(15px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            transition: all var(--animation-slow) cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .notification-overlay.show {
+            opacity: 1;
+        }
+        
+        .notification-card {
+            background: var(--bg-primary);
+            border-radius: 25px;
+            padding: 3rem;
+            max-width: 700px;
+            width: 90%;
+            box-shadow: 0 25px 50px var(--shadow-heavy);
+            border: 1px solid var(--border-light);
+            position: relative;
+            transform: scale(0.8) translateY(50px);
+            transition: all var(--animation-slow) cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .notification-overlay.show .notification-card {
+            transform: scale(1) translateY(0);
+        }
+        
+        .notification-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--bg-secondary);
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            transition: all var(--animation-normal) ease;
+        }
+        
+        .notification-close:hover {
+            background: var(--error);
+            color: white;
+            transform: scale(1.1);
+        }
+        
+        .notification-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .notification-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: white;
+            position: relative;
+            flex-shrink: 0;
+        }
+        
+        .notification-avatar::before {
+            content: '';
+            position: absolute;
+            top: -3px;
+            right: -3px;
+            width: 20px;
+            height: 20px;
+            background: var(--success);
+            border-radius: 50%;
+            border: 4px solid var(--bg-primary);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .notification-info {
+            flex: 1;
+        }
+        
+        .notification-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .notification-role {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            margin-bottom: 0.8rem;
+        }
+        
+        .notification-badge {
+            background: var(--success-gradient);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+        
+        .notification-content {
+            color: var(--text-primary);
+            line-height: 1.8;
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: var(--bg-secondary);
+            border-radius: 15px;
+            border-left: 4px solid var(--manager-color);
+        }
+        
+        .notification-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+        
+        .notification-btn {
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--animation-normal) ease;
+            font-size: 1rem;
+        }
+        
+        .notification-btn.primary {
+            background: var(--primary-gradient);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .notification-btn.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .notification-btn.secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-light);
+        }
+        
+        .notification-btn.secondary:hover {
+            background: var(--border-light);
+        }
+        
+        /* MEETING INTERFACE */
+        .meeting-room {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--bg-primary);
+            z-index: 1500;
+            display: none;
+            flex-direction: column;
+            animation: slideUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+        
+        .meeting-header {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+        }
+        
+        .meeting-header::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-top: 10px solid;
+            border-image: var(--primary-gradient) 1;
+        }
+        
+        .meeting-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .meeting-subtitle {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+        
+        .participants-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            padding: 3rem 2rem;
+            max-width: 1000px;
+            margin: 0 auto;
+            flex: 1;
+        }
+        
+        .participant-card {
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            border: 2px solid var(--border-light);
+            transition: all var(--animation-normal) ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .participant-card.speaking {
+            border-color: var(--success);
+            background: rgba(16, 185, 129, 0.05);
+            transform: scale(1.02);
+            animation: speaking-pulse 2s infinite;
+        }
+        
+        @keyframes speaking-pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+            50% { box-shadow: 0 0 0 15px rgba(16, 185, 129, 0); }
+        }
+        
+        .participant-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: white;
+            position: relative;
+        }
+        
+        .participant-name {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .participant-role {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+        
+        .participant-message {
+            background: var(--bg-primary);
+            padding: 1rem;
+            border-radius: 15px;
+            border-left: 4px solid var(--manager-color);
+            font-style: italic;
+            line-height: 1.6;
+            position: relative;
+        }
+        
+        .end-meeting-btn {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--secondary-gradient);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(241, 147, 251, 0.3);
+            transition: all var(--animation-normal) ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .end-meeting-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(241, 147, 251, 0.4);
+        }
+        
+        /* SUCCESS CELEBRATION - FIXED SCROLLING */
+        .celebration-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--primary-gradient);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2500;
+            color: white;
+            text-align: center;
+            overflow-y: auto;
+        }
+        
+        .celebration-content {
+            max-width: 600px;
+            padding: 3rem;
+            animation: celebration-bounce 1s ease;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        @keyframes celebration-bounce {
+            0% { transform: scale(0.5) rotate(-5deg); opacity: 0; }
+            50% { transform: scale(1.1) rotate(2deg); }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+        
+        .celebration-title {
+            font-size: clamp(2rem, 8vw, 4rem);
+            font-weight: 800;
+            margin-bottom: 1rem;
+            animation: glow 2s infinite alternate;
+        }
+        
+        @keyframes glow {
+            from { text-shadow: 0 0 20px rgba(255,255,255,0.5); }
+            to { text-shadow: 0 0 40px rgba(255,255,255,0.8), 0 0 60px rgba(255,255,255,0.6); }
+        }
+        
+        .celebration-message {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            opacity: 0.95;
+            line-height: 1.6;
+        }
+        
+        .celebration-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .celebration-stat {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1.5rem;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .celebration-stat-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+        
+        .celebration-stat-label {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+        
+        .celebration-continue-btn {
+            background: white;
+            color: var(--manager-color);
+            border: none;
+            padding: 1.2rem 3rem;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all var(--animation-normal) ease;
+            box-shadow: 0 8px 30px rgba(255, 255, 255, 0.3);
+            position: relative;
+            z-index: 10;
+        }
+        
+        .celebration-continue-btn:hover {
+            transform: scale(1.05) translateY(-3px);
+            box-shadow: 0 12px 40px rgba(255, 255, 255, 0.4);
+        }
+        
+        /* STATUS TOAST - NO BACKGROUND NOTIFICATIONS WHEN MODAL IS OPEN */
+        .status-toast {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-light);
+            border-radius: 15px;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 8px 30px var(--shadow-medium);
+            z-index: 1500;
+            transform: translateX(120%);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            max-width: 300px;
+            backdrop-filter: blur(20px);
+        }
+        
+        .status-toast.show {
+            transform: translateX(0);
+        }
+        
+        .toast-content {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .toast-icon {
+            font-size: 1.2rem;
+        }
+        
+        .toast-message {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        
+        /* RESPONSIVE DESIGN */
+        @media (max-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .kanban-board {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            }
+            
+            .timeline-line {
+                left: 30px;
+            }
+            
+            .timeline-step {
+                flex-direction: row !important;
+                padding-left: 60px;
+            }
+            
+            .timeline-step:nth-child(even) {
+                flex-direction: row !important;
+            }
+            
+            .participants-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .team-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
+            
+            .side-activity-container {
+                width: 300px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .premium-nav {
+                padding: 0 1rem;
+            }
+            
+            .main-content {
+                padding: 1rem;
+            }
+            
+            .hero-section {
+                padding: 3rem 1.5rem;
+            }
+            
+            .participants-grid {
+                grid-template-columns: 1fr;
+                padding: 2rem 1rem;
+            }
+            
+            .celebration-stats {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .nav-controls {
+                gap: 0.5rem;
+            }
+            
+            .meeting-indicator {
+                font-size: 0.8rem;
+                padding: 0.4rem 0.8rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .team-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .side-activity-container {
+                width: 280px;
+                bottom: 10px;
+                left: 10px;
+            }
+            
+            .celebration-content {
+                padding: 2rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ANIMATED BACKGROUND -->
+    <div class="animated-bg">
+        <div class="floating-shapes">
+            <div class="shape"></div>
+            <div class="shape"></div>
+            <div class="shape"></div>
+        </div>
+    </div>
+    
+    <!-- PREMIUM NAVIGATION -->
+    <nav class="premium-nav">
+        <div class="nav-brand">
+            🚀 DevOps Professional Suite
+        </div>
+        <div class="nav-controls">
+            <div class="meeting-indicator" id="meetingIndicator">
+                <span>📞</span>
+                <span>Sprint Planning Call</span>
+            </div>
+            <button class="theme-switcher" onclick="toggleTheme()">
+                <span id="themeIcon">🌙</span>
+                <span id="themeText">Dark Mode</span>
+            </button>
+        </div>
+    </nav>
+    
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        <!-- HERO SECTION -->
+        <section class="hero-section">
+            <div class="hero-content">
+                <h1 class="hero-title">Master DevOps Excellence</h1>
+                <p class="hero-subtitle">
+                    Experience the complete professional software development lifecycle. 
+                    From planning to deployment, master industry-standard DevOps practices.
+                </p>
+                <button class="start-journey-btn" onclick="startProfessionalJourney()">
+                    <span>🎯</span>
+                    Start Professional Journey
+                </button>
+            </div>
+        </section>
+        
+        <!-- PROFESSIONAL TEAM SECTION -->
+        <section class="team-section">
+            <h2 class="team-title">Meet Your Professional Team</h2>
+            <p class="team-subtitle">Work with industry experts following real-world DevOps practices</p>
+            <div class="team-grid">
+                <div class="team-member" id="team-manager">
+                    <div class="member-avatar" style="background: var(--manager-color);">👨‍💼</div>
+                    <div class="member-name">Sarah Johnson</div>
+                    <div class="member-role">Product Manager</div>
+                    <div class="member-status" id="manager-status">Ready</div>
+                </div>
+                
+                <div class="team-member" id="team-devops">
+                    <div class="member-avatar" style="background: var(--devops-color);">👨‍💻</div>
+                    <div class="member-name">You (DevOps Engineer)</div>
+                    <div class="member-role">Senior DevOps Engineer</div>
+                    <div class="member-status" id="devops-status">Ready</div>
+                </div>
+                
+                <div class="team-member" id="team-developer">
+                    <div class="member-avatar" style="background: var(--developer-color);">👩‍💻</div>
+                    <div class="member-name">Alex Chen</div>
+                    <div class="member-role">Full-Stack Developer</div>
+                    <div class="member-status" id="developer-status">Ready</div>
+                </div>
+                
+                <div class="team-member" id="team-qa">
+                    <div class="member-avatar" style="background: var(--qa-color);">🧪</div>
+                    <div class="member-name">Jordan Smith</div>
+                    <div class="member-role">QA Engineer</div>
+                    <div class="member-status" id="qa-status">Ready</div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- DASHBOARD -->
+        <section class="dashboard-grid">
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <div class="card-icon">📊</div>
+                    <div>
+                        <h3 class="card-title">Project Overview</h3>
+                    </div>
+                </div>
+                <div class="project-info">
+                    <h4 id="currentProjectTitle">🔐 User Authentication System</h4>
+                    <p id="currentProjectDesc">Building secure login and authentication features</p>
+                </div>
+                <div class="project-progress">
+                    <div class="progress-bar-modern">
+                        <div class="progress-fill" id="projectProgressFill" style="width: 0%"></div>
+                    </div>
+                    <p id="projectProgressText">Ready to begin</p>
+                </div>
+            </div>
+            
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <div class="card-icon">📈</div>
+                    <div>
+                        <h3 class="card-title">Performance Metrics</h3>
+                    </div>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value" id="currentSprint">1</div>
+                        <div class="stat-label">Sprint</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="tasksCompleted">0</div>
+                        <div class="stat-label">Tasks Done</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="totalTasks">0</div>
+                        <div class="stat-label">Total Tasks</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="daysWorked">0</div>
+                        <div class="stat-label">Days Active</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- WORKFLOW TIMELINE -->
+        <section class="timeline-container">
+            <div class="timeline-header">
+                <h2 class="timeline-title">Professional Development Workflow</h2>
+                <p class="timeline-description">
+                    Follow the industry-standard software development process used by top tech companies worldwide
+                </p>
+            </div>
+            <div class="workflow-timeline">
+                <div class="timeline-line"></div>
+                
+                <div class="timeline-step" id="step-1" onclick="activateWorkflowStep(1)">
+                    <div class="step-content">
+                        <div class="step-header">
+                            <div class="step-avatar" style="background: var(--manager-color);">👨‍💼</div>
+                            <div class="step-info">
+                                <h3>Project Planning</h3>
+                                <p class="step-role">Product Manager</p>
+                            </div>
+                        </div>
+                        <p class="step-description">
+                            Strategic planning session with stakeholders to define project requirements and create detailed user stories
+                        </p>
+                        <div class="step-tools">
+                            <span class="tool-badge">Jira</span>
+                            <span class="tool-badge">Confluence</span>
+                            <span class="tool-badge">Slack</span>
+                        </div>
+                    </div>
+                    <div class="step-node"></div>
+                </div>
+                
+                <div class="timeline-step" id="step-2" onclick="activateWorkflowStep(2)">
+                    <div class="step-content">
+                        <div class="step-header">
+                            <div class="step-avatar" style="background: var(--developer-color);">👩‍💻</div>
+                            <div class="step-info">
+                                <h3>Feature Development</h3>
+                                <p class="step-role">Full-Stack Developer</p>
+                            </div>
+                        </div>
+                        <p class="step-description">
+                            Implementation of features using modern frameworks, comprehensive testing, and clean code practices
+                        </p>
+                        <div class="step-tools">
+                            <span class="tool-badge">React</span>
+                            <span class="tool-badge">Node.js</span>
+                            <span class="tool-badge">Jest</span>
+                            <span class="tool-badge">Git</span>
+                        </div>
+                    </div>
+                    <div class="step-node"></div>
+                </div>
+                
+                <div class="timeline-step" id="step-3" onclick="activateWorkflowStep(3)">
+                    <div class="step-content">
+                        <div class="step-header">
+                            <div class="step-avatar" style="background: var(--devops-color);">🔍</div>
+                            <div class="step-info">
+                                <h3>Code Review & CI/CD</h3>
+                                <p class="step-role">DevOps Engineer</p>
+                            </div>
+                        </div>
+                        <p class="step-description">
+                            Comprehensive code review, automated testing pipeline, security scanning, and staging deployment
+                        </p>
+                        <div class="step-tools">
+                            <span class="tool-badge">GitHub Actions</span>
+                            <span class="tool-badge">SonarQube</span>
+                            <span class="tool-badge">Docker</span>
+                        </div>
+                    </div>
+                    <div class="step-node"></div>
+                </div>
+                
+                <div class="timeline-step" id="step-4" onclick="activateWorkflowStep(4)">
+                    <div class="step-content">
+                        <div class="step-header">
+                            <div class="step-avatar" style="background: var(--qa-color);">🧪</div>
+                            <div class="step-info">
+                                <h3>Quality Assurance</h3>
+                                <p class="step-role">QA Engineer</p>
+                            </div>
+                        </div>
+                        <p class="step-description">
+                            Comprehensive testing including functional, integration, performance, and security testing across platforms
+                        </p>
+                        <div class="step-tools">
+                            <span class="tool-badge">Selenium</span>
+                            <span class="tool-badge">Postman</span>
+                            <span class="tool-badge">LoadRunner</span>
+                        </div>
+                    </div>
+                    <div class="step-node"></div>
+                </div>
+                
+                <div class="timeline-step" id="step-5" onclick="activateWorkflowStep(5)">
+                    <div class="step-content">
+                        <div class="step-header">
+                            <div class="step-avatar" style="background: var(--devops-color);">🚀</div>
+                            <div class="step-info">
+                                <h3>Production Deployment</h3>
+                                <p class="step-role">DevOps Engineer</p>
+                            </div>
+                        </div>
+                        <p class="step-description">
+                            Zero-downtime production deployment with monitoring, logging, and automated rollback capabilities
+                        </p>
+                        <div class="step-tools">
+                            <span class="tool-badge">AWS</span>
+                            <span class="tool-badge">Kubernetes</span>
+                            <span class="tool-badge">Prometheus</span>
+                            <span class="tool-badge">Grafana</span>
+                        </div>
+                    </div>
+                    <div class="step-node"></div>
+                </div>
+                
+                <div class="timeline-step" id="step-6" onclick="activateWorkflowStep(6)">
+                    <div class="step-content">
+                        <div class="step-header">
+                            <div class="step-avatar" style="background: var(--manager-color);">🔄</div>
+                            <div class="step-info">
+                                <h3>Sprint Retrospective</h3>
+                                <p class="step-role">Scrum Master</p>
+                            </div>
+                        </div>
+                        <p class="step-description">
+                            Sprint review, retrospective analysis, and planning for next iteration with continuous improvement focus
+                        </p>
+                        <div class="step-tools">
+                            <span class="tool-badge">Sprint Planning</span>
+                            <span class="tool-badge">Retrospective</span>
+                            <span class="tool-badge">Analytics</span>
+                        </div>
+                    </div>
+                    <div class="step-node"></div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- KANBAN BOARD -->
+        <section class="kanban-section">
+            <div class="kanban-header">
+                <h2 class="kanban-title">Live Task Management Board</h2>
+                <p>Real-time task tracking with automatic updates</p>
+            </div>
+            <div class="kanban-board">
+                <div class="kanban-column" ondrop="drop(event)" ondragover="allowDrop(event)" data-column="backlog">
+                    <div class="column-header">
+                        <span class="column-title">📋 Backlog</span>
+                        <span class="task-count" id="backlog-count">0</span>
+                    </div>
+                    <div class="tasks-container" id="backlog-tasks">
+                        <div class="empty-state">
+                            <div class="empty-icon">📝</div>
+                            <p>Tasks will appear here after sprint planning</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="kanban-column" ondrop="drop(event)" ondragover="allowDrop(event)" data-column="todo">
+                    <div class="column-header">
+                        <span class="column-title">📋 To Do</span>
+                        <span class="task-count" id="todo-count">0</span>
+                    </div>
+                    <div class="tasks-container" id="todo-tasks">
+                        <div class="empty-state">
+                            <div class="empty-icon">⏳</div>
+                            <p>Ready for development</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="kanban-column" ondrop="drop(event)" ondragover="allowDrop(event)" data-column="progress">
+                    <div class="column-header">
+                        <span class="column-title">⚡ In Progress</span>
+                        <span class="task-count" id="progress-count">0</span>
+                    </div>
+                    <div class="tasks-container" id="progress-tasks">
+                        <div class="empty-state">
+                            <div class="empty-icon">⚡</div>
+                            <p>Active development</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="kanban-column" ondrop="drop(event)" ondragover="allowDrop(event)" data-column="review">
+                    <div class="column-header">
+                        <span class="column-title">👀 Review/QA</span>
+                        <span class="task-count" id="review-count">0</span>
+                    </div>
+                    <div class="tasks-container" id="review-tasks">
+                        <div class="empty-state">
+                            <div class="empty-icon">🔍</div>
+                            <p>Code review and testing</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="kanban-column" ondrop="drop(event)" ondragover="allowDrop(event)" data-column="done">
+                    <div class="column-header">
+                        <span class="column-title">✅ Complete</span>
+                        <span class="task-count" id="done-count">0</span>
+                    </div>
+                    <div class="tasks-container" id="done-tasks">
+                        <div class="empty-state">
+                            <div class="empty-icon">🎉</div>
+                            <p>Deployed to production</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- CINEMATIC SIDE ACTIVITY NOTIFICATIONS CONTAINER -->
+        <div class="side-activity-container" id="sideActivityContainer">
+            <!-- Side activities will appear here -->
+        </div>
+    </main>
+    
+    <!-- SINGLE NOTIFICATION SYSTEM - NO OVERLAPPING -->
+    <div class="notification-overlay" id="notificationOverlay">
+        <div class="notification-card">
+            <button class="notification-close" onclick="closeNotification()">&times;</button>
+            <div class="notification-header">
+                <div class="notification-avatar" id="notificationAvatar">👨‍💼</div>
+                <div class="notification-info">
+                    <div class="notification-name" id="notificationName">Sarah Johnson</div>
+                    <div class="notification-role" id="notificationRole">Product Manager</div>
+                    <span class="notification-badge">Online</span>
+                </div>
+            </div>
+            <div class="notification-content" id="notificationContent">
+                Welcome to your DevOps journey! Ready to start your first professional project?
+            </div>
+            <div class="notification-actions">
+                <button class="notification-btn secondary" onclick="closeNotification()">Later</button>
+                <button class="notification-btn primary" id="notificationActionBtn" onclick="handleNotificationAction()">Let's Go!</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- MEETING ROOM -->
+    <div class="meeting-room" id="meetingRoom">
+        <div class="meeting-header">
+            <h2 class="meeting-title">Sprint Planning Meeting</h2>
+            <p class="meeting-subtitle">Live collaboration session</p>
+        </div>
+        <div class="participants-grid">
+            <div class="participant-card" id="participant-manager">
+                <div class="participant-avatar" style="background: var(--manager-color);">👨‍💼</div>
+                <div class="participant-name">Sarah Johnson</div>
+                <div class="participant-role">Product Manager • Host</div>
+                <div class="participant-message" id="manager-message">
+                    "Let's plan our sprint and define the key deliverables for this iteration."
+                </div>
+            </div>
+            
+            <div class="participant-card" id="participant-devops">
+                <div class="participant-avatar" style="background: var(--devops-color);">👨‍💻</div>
+                <div class="participant-name">You (DevOps Engineer)</div>
+                <div class="participant-role">Senior DevOps Engineer</div>
+                <div class="participant-message" id="devops-message">
+                    "Ready to set up CI/CD pipeline and deployment infrastructure!"
+                </div>
+            </div>
+            
+            <div class="participant-card" id="participant-developer">
+                <div class="participant-avatar" style="background: var(--developer-color);">👩‍💻</div>
+                <div class="participant-name">Alex Chen</div>
+                <div class="participant-role">Full-Stack Developer</div>
+                <div class="participant-message" id="developer-message">
+                    "Excited to work on the new features with modern technologies!"
+                </div>
+            </div>
+            
+            <div class="participant-card" id="participant-qa">
+                <div class="participant-avatar" style="background: var(--qa-color);">🧪</div>
+                <div class="participant-name">Jordan Smith</div>
+                <div class="participant-role">QA Engineer</div>
+                <div class="participant-message" id="qa-message">
+                    "Will prepare comprehensive test cases and automation scripts."
+                </div>
+            </div>
+        </div>
+        <button class="end-meeting-btn" onclick="endMeeting()">
+            <span>📞</span>
+            End Meeting
+        </button>
+    </div>
+    
+    <!-- CELEBRATION MODAL -->
+    <div class="celebration-modal" id="celebrationModal">
+        <div class="celebration-content">
+            <h1 class="celebration-title" id="celebrationTitle">🎉 SPRINT COMPLETED! 🎉</h1>
+            <p class="celebration-message" id="celebrationMessage">
+                Outstanding work! You've successfully completed Sprint 1 following professional DevOps practices.
+            </p>
+            <div class="celebration-stats">
+                <div class="celebration-stat">
+                    <div class="celebration-stat-value" id="celebrationTasks">0</div>
+                    <div class="celebration-stat-label">Tasks Completed</div>
+                </div>
+                <div class="celebration-stat">
+                    <div class="celebration-stat-value" id="celebrationSprints">1</div>
+                    <div class="celebration-stat-label">Sprint Complete</div>
+                </div>
+                <div class="celebration-stat">
+                    <div class="celebration-stat-value">100%</div>
+                    <div class="celebration-stat-label">Success Rate</div>
+                </div>
+            </div>
+            <button class="celebration-continue-btn" id="celebrationContinueBtn" onclick="continueToNextSprint()">
+                Continue to Next Sprint
+            </button>
+        </div>
+    </div>
+    
+    <!-- STATUS TOAST -->
+    <div class="status-toast" id="statusToast">
+        <div class="toast-content">
+            <span class="toast-icon">ℹ️</span>
+            <span class="toast-message" id="toastMessage">Ready to start your DevOps journey!</span>
+        </div>
+    </div>
+
+    <script>
+        // ULTRA-REALISTIC DEVOPS SIMULATION WITH REAL COMPANY WORKFLOW
+        class DevOpsSimulation {
+            constructor() {
+                this.currentStep = 0;
+                this.currentProject = 'auth';
+                this.currentSprint = 1;
+                this.tasksCompleted = 0;
+                this.totalTasks = 0;
+                this.daysWorked = 0;
+                this.projectsCompleted = 0;
+                this.journeyStarted = false;
+                this.taskIdCounter = 1;
+                this.addedTasks = new Set();
+                this.currentAction = null;
+                this.isNotificationShowing = false;
+                this.isSideActivityShowing = false;
+                this.sideActivityQueue = [];
+                this.meetingInterval = null;
+                
+                this.projects = {
+                    auth: {
+                        name: '🔐 User Authentication System',
+                        description: 'Building secure login and authentication features',
+                        color: '#8b5cf6',
+                        sprints: [
+                            { 
+                                name: 'Core Authentication', 
+                                tasks: ['User Registration System', 'Login & JWT Implementation', 'Password Reset Feature'] 
+                            },
+                            { 
+                                name: 'Advanced Security', 
+                                tasks: ['Two-Factor Authentication', 'Social Login Integration', 'Account Security Dashboard'] 
+                            }
+                        ]
+                    },
+                    shopping: {
+                        name: '🛒 E-Commerce Platform',
+                        description: 'Building complete shopping experience',
+                        color: '#f59e0b',
+                        sprints: [
+                            { 
+                                name: 'Product Catalog', 
+                                tasks: ['Product Database', 'Shopping Cart System', 'Inventory Management'] 
+                            },
+                            { 
+                                name: 'Payment & Orders', 
+                                tasks: ['Payment Gateway', 'Order Processing', 'Customer Dashboard'] 
+                            }
+                        ]
+                    },
+                    social: {
+                        name: '📱 Social Media Platform',
+                        description: 'Building social networking features',
+                        color: '#10b981',
+                        sprints: [
+                            { 
+                                name: 'Social Features', 
+                                tasks: ['User Profiles', 'News Feed', 'Like & Comment System'] 
+                            },
+                            { 
+                                name: 'Communication', 
+                                tasks: ['Direct Messaging', 'Group Chat', 'Real-time Notifications'] 
+                            }
+                        ]
+                    }
+                };
+                
+                this.roleColors = {
+                    manager: '#8b5cf6',
+                    devops: '#06b6d4',
+                    developer: '#3b82f6',
+                    qa: '#f59e0b',
+                    client: '#ec4899'
+                };
+                
+                this.roleAvatars = {
+                    manager: '👨‍💼',
+                    devops: '👨‍💻',
+                    developer: '👩‍💻',
+                    qa: '🧪',
+                    client: '👤'
+                };
+                
+                this.init();
+            }
+            
+            init() {
+                this.updateDashboard();
+                this.loadTheme();
+                this.initializeDragAndDrop();
+                this.showToast('🎯 Professional DevOps environment ready!', 'info');
+            }
+            
+            // THEME MANAGEMENT
+            loadTheme() {
+                const savedTheme = localStorage.getItem('devops-theme') || 'light';
+                if (savedTheme === 'dark') {
+                    document.body.setAttribute('data-theme', 'dark');
+                    document.getElementById('themeIcon').textContent = '☀️';
+                    document.getElementById('themeText').textContent = 'Light Mode';
+                }
+            }
+            
+            toggleTheme() {
+                const isDark = document.body.getAttribute('data-theme') === 'dark';
+                if (isDark) {
+                    document.body.removeAttribute('data-theme');
+                    document.getElementById('themeIcon').textContent = '🌙';
+                    document.getElementById('themeText').textContent = 'Dark Mode';
+                    localStorage.setItem('devops-theme', 'light');
+                    this.showToast('☀️ Switched to Light Mode', 'info');
+                } else {
+                    document.body.setAttribute('data-theme', 'dark');
+                    document.getElementById('themeIcon').textContent = '☀️';
+                    document.getElementById('themeText').textContent = 'Light Mode';
+                    localStorage.setItem('devops-theme', 'dark');
+                    this.showToast('🌙 Switched to Dark Mode', 'info');
+                }
+            }
+            
+            // DASHBOARD UPDATES
+            updateDashboard() {
+                const project = this.projects[this.currentProject];
+                const totalProjectTasks = project.sprints.reduce((sum, sprint) => sum + sprint.tasks.length, 0);
+                const completedTasks = document.querySelectorAll('#done-tasks .task-card').length;
+                const progressPercentage = totalProjectTasks > 0 ? (completedTasks / totalProjectTasks) * 100 : 0;
+                
+                // Update project info
+                document.getElementById('currentProjectTitle').textContent = project.name;
+                document.getElementById('currentProjectDesc').textContent = project.description;
+                
+                // Update progress
+                const progressFill = document.getElementById('projectProgressFill');
+                const progressText = document.getElementById('projectProgressText');
+                
+                if (progressFill) progressFill.style.width = `${progressPercentage}%`;
+                if (progressText) {
+                    if (progressPercentage === 0) {
+                        progressText.textContent = 'Ready to begin';
+                    } else if (progressPercentage >= 50 && this.currentSprint === 1) {
+                        progressText.textContent = `Sprint 1: ${Math.round(progressPercentage)}% Complete`;
+                    } else if (progressPercentage === 100) {
+                        progressText.textContent = 'Project Complete!';
+                    } else {
+                        progressText.textContent = `${Math.round(progressPercentage)}% Complete`;
+                    }
+                }
+                
+                // Update stats
+                document.getElementById('currentSprint').textContent = this.currentSprint;
+                document.getElementById('tasksCompleted').textContent = this.tasksCompleted;
+                document.getElementById('totalTasks').textContent = totalProjectTasks;
+                document.getElementById('daysWorked').textContent = this.daysWorked;
+            }
+            
+            // TEAM STATUS UPDATES
+            updateTeamMemberStatus(member, status) {
+                const statusEl = document.getElementById(`${member}-status`);
+                const teamMemberEl = document.getElementById(`team-${member}`);
+                
+                if (statusEl && teamMemberEl) {
+                    statusEl.textContent = status;
+                    if (status === 'Working') {
+                        statusEl.className = 'member-status working';
+                        teamMemberEl.classList.add('active');
+                    } else {
+                        statusEl.className = 'member-status';
+                        teamMemberEl.classList.remove('active');
+                    }
+                }
+            }
+            
+            // CINEMATIC SIDE ACTIVITY NOTIFICATIONS (2-SECOND DURATION) - AFTER MAIN NOTIFICATION CLOSED
+            showSideActivityNotification(icon, message, duration = 2000) {
+                if (this.isSideActivityShowing) {
+                    this.sideActivityQueue.push({icon, message, duration});
+                    return;
+                }
+                
+                this.isSideActivityShowing = true;
+                const container = document.getElementById('sideActivityContainer');
+                
+                if (container) {
+                    container.innerHTML = `
+                        <div class="side-activity-notification">
+                            <div class="side-activity-icon">${icon}</div>
+                            <div class="side-activity-message">${message}</div>
+                            <div class="side-activity-progress"></div>
+                        </div>
+                    `;
+                    container.classList.add('show');
+                    
+                    setTimeout(() => {
+                        container.classList.remove('show');
+                        this.isSideActivityShowing = false;
+                        
+                        // Process next activity in queue
+                        if (this.sideActivityQueue.length > 0) {
+                            setTimeout(() => {
+                                const next = this.sideActivityQueue.shift();
+                                this.showSideActivityNotification(next.icon, next.message, next.duration);
+                            }, 300);
+                        }
+                    }, duration);
+                }
+            }
+            
+            // SINGLE NOTIFICATION SYSTEM - NO OVERLAPPING
+            showNotification(role, name, jobTitle, message, actionText = 'Continue', actionType = null) {
+                // If notification is already showing, wait
+                if (this.isNotificationShowing) {
+                    return;
+                }
+                
+                this.isNotificationShowing = true;
+                this.currentAction = actionType;
+                
+                const overlay = document.getElementById('notificationOverlay');
+                const avatar = document.getElementById('notificationAvatar');
+                const nameEl = document.getElementById('notificationName');
+                const roleEl = document.getElementById('notificationRole');
+                const content = document.getElementById('notificationContent');
+                const actionBtn = document.getElementById('notificationActionBtn');
+                
+                // Set notification content
+                avatar.textContent = this.roleAvatars[role] || '👤';
+                avatar.style.background = this.roleColors[role] || '#6366f1';
+                nameEl.textContent = name;
+                roleEl.textContent = jobTitle;
+                content.textContent = message;
+                actionBtn.textContent = actionText;
+                
+                // Update team member status
+                this.updateTeamMemberStatus(role, 'Working');
+                
+                // Show with smooth animation
+                overlay.style.display = 'flex';
+                requestAnimationFrame(() => {
+                    overlay.classList.add('show');
+                });
+                
+                // Play realistic voice notification
+                this.playVoiceNotification(role, message);
+            }
+            
+            closeNotification() {
+                const overlay = document.getElementById('notificationOverlay');
+                overlay.classList.remove('show');
+                
+                setTimeout(() => {
+                    overlay.style.display = 'none';
+                    this.isNotificationShowing = false;
+                    
+                    // Reset all team member statuses
+                    ['manager', 'devops', 'developer', 'qa'].forEach(member => {
+                        this.updateTeamMemberStatus(member, 'Ready');
+                    });
+                }, 300);
+            }
+            
+            // ULTRA-REALISTIC WORKFLOW WITH REAL COMPANY PRACTICES
+            handleNotificationAction() {
+                this.closeNotification();
+                
+                // REAL COMPANY WORKFLOW: Client → Manager → DevOps → Developer → QA → DevOps (Branches & Merge Requests)
+                switch (this.currentAction) {
+                    case 'welcome':
+                        setTimeout(() => {
+                            this.showNotification('manager', 'Sarah Johnson', 'Product Manager', 
+                                '🎯 Perfect! Let me explain how real companies work. First, clients give requirements to Product Managers. Then we create Jira tickets, schedule team meetings, and set up proper Git workflow with branches.', 
+                                'Understand Workflow', 'start-workflow');
+                        }, 1000);
+                        break;
+                        
+                    case 'start-workflow':
+                        setTimeout(() => {
+                            this.showNotification('manager', 'Sarah Johnson', 'Product Manager', 
+                                '📋 I\'ve received client requirements for authentication system. Now I\'ll create Jira tickets with user stories, acceptance criteria, and estimate story points. Click Step 1 in timeline below.', 
+                                'Go to Planning', 'go-to-step-1');
+                        }, 1000);
+                        break;
+                        
+                    case 'go-to-step-1':
+                        this.highlightWorkflowStep(1);
+                        this.showToast('👆 Click on Step 1 in the timeline to start Jira planning!', 'info');
+                        break;
+                        
+                    case 'step-1-complete':
+                        // Manager completes planning with side activities AFTER notification closes
+                        setTimeout(() => {
+                            this.showSideActivityNotification('📝', 'Creating Jira Epic: User Authentication System', 2000);
+                        }, 500);
+                        setTimeout(() => {
+                            this.showSideActivityNotification('📋', 'Writing user stories with acceptance criteria', 2000);
+                        }, 2700);
+                        setTimeout(() => {
+                            this.showSideActivityNotification('👥', 'Assigning story points and team members', 2000);
+                        }, 4900);
+                        setTimeout(() => {
+                            this.addSingleSprintTask();
+                            this.showNotification('devops', 'You (DevOps)', 'Senior DevOps Engineer', 
+                                '🏗️ Great! Manager completed planning. Now I\'ll set up infrastructure. In real companies, DevOps engineers create AWS instances and repositories BEFORE developers start coding. Let me provision infrastructure.', 
+                                'Setup Infrastructure', 'devops-infrastructure');
+                        }, 7100);
+                        break;
+                        
+                    case 'devops-infrastructure':
+                        // Show realistic DevOps infrastructure setup activities AFTER notification closes
+                        setTimeout(() => {
+                            this.showSideActivityNotification('☁️', 'Launching AWS EC2 t3.medium instances with Ubuntu 20.04', 2000);
+                        }, 500);
+                        setTimeout(() => {
+                            this.showSideActivityNotification('🔧', 'Configuring VPC, Security Groups, Load Balancers', 2000);
+                        }, 2700);
+                        setTimeout(() => {
+                            this.showSideActivityNotification('🗂️', 'Creating GitHub repository: user-auth-system', 2000);
+                        }, 4900);
+                        setTimeout(() => {
+                            this.showSideActivityNotification('🌿', 'Setting up Git branches: main, develop, feature/testing', 2000);
+                        }, 7100);
+                        setTimeout(() => {
+                            this.showSideActivityNotification('🛡️', 'Configuring branch protection rules and team permissions', 2000);
+                        }, 9300);
+                        setTimeout(() => {
+                            this.showNotification('devops', 'You (DevOps)', 'Senior DevOps Engineer', 
+                                '✅ Infrastructure ready! Repository created with proper branches. Now I\'ll give Alex (Developer) access to clone and start coding. This is how real companies work - infrastructure first, then development.', 
+                                'Give Dev Access', 'developer-access');
+                        }, 11500);
+                        break;
+                        
+                    case 'developer-access':
+                        setTimeout(() => {
+                            this.showSideActivityNotification('🔑', 'Granting Alex Chen repository access and SSH keys', 2000);
+                        }, 500);
+                        setTimeout(() => {
+                            this.showNotification('developer', 'Alex Chen', 'Full-Stack Developer', 
+                                '💻 Perfect! I received repository access and infrastructure details. Now I\'ll clone the repo to my local machine and start coding. I\'ll work on the "feature/auth-core" branch as per Git workflow.', 
+                                'Start Coding', 'start-development');
+                        }, 2700);
+                        break;
+                        
+                    case 'start-development':
+                        // Realistic development workflow AFTER notification closes
+                        setTimeout(() => {
+                            this.showSideActivityNotification('📥', 'git clone https://github.com/company/user-auth-system.git', 2000);
+                        }, 500);
+                        setTimeout(() => {
+                            this.showSideActivityNotification('🌿', 'git checkout -b feature/auth-core', 2000);
+                        }, 2700);
+                        setTimeout(() => {
+                            this.showSideActivityNotification('📦', 'npm install - Installing React, Node.js, JWT dependencies', 2000);
+                        }, 4900);
+                        setTimeout(() => {
+                            this.moveTasksInWorkflow('backlog', 'progress');
+                            this.highlightWorkflowStep(2);
+                            this.showSideActivityNotification('💻', 'Writing React components: Login, Register, Dashboard', 2000);
+                        }, 7100);
+                        setTimeout(() => {
+                            this.showSideActivityNotification('🔐', 'Implementing JWT authentication and password hashing', 2000);
+                        }, 9300);
+                        setTimeout(() => {
+                            this.showSideActivityNotification('🧪', 'Writing unit tests with Jest - Coverage: 94%', 2000);
+                        }, 11500);
+                        setTimeout(() => {
+                            this.showNotification('developer', 'Alex Chen', 'Full-Stack Developer', 
+                                '✅ Development complete! Code tested locally. Now I\'ll push to testing branch and create merge request. In real companies, developers never push directly to main branch.', 
+                                'Push & Create MR', 'push-to-testing');
+                        }, 13700);
+                        break;
+                        
+                    case 'push-to-testing':
+                        // Real Git workflow with merge requests AFTER notification closes
+                        setTimeout(() => {
+                            this.showSideActivityNotification('⬆️', 'git push origin feature/auth-core', 2000);
+                        }, 500);
+                        setTimeout(() => {
+                            this.showSideActivityNotification('📋', 'Creating Merge Request: feature/auth-core → testing', 2000);
+                        }, 2700);
+                        setTimeout(() => {
+                            this.showSideActivityNotification('👥', 'Requesting code review from DevOps team', 2000);
+                        }, 4900);
+                        setTimeout(() => {
+                            this.showNotification('qa', 'Jordan Smith', 'QA Engineer', 
+                                '🧪 I see the merge request! Let me test the code in testing branch first. In real companies, QA tests BEFORE merging to main. I\'ll run functional, integration, and regression tests.', 
+                                'Start QA Testing', 'qa-testing-branch');
+                        }, 7100);
+                        break;
+                        
+                    case 'qa-testing-branch':
+                        // QA testing in testing branch AFTER notification closes  
+                        setTimeout(() => {
+                            this.showSideActivityNotification('📥', 'git checkout testing - QA testing environment', 2000);
+                        }, 500);
+                        setTimeout(() => {
+                            this.showSideActivityNotification('🧪', 'Running unit tests: 156/156 passed ✓', 2000);
+                        }, 2700);
+                        setTimeout(() => {
+                            this.showSideActivityNotification('🔄', 'Integration testing with Postman API collections', 2000);
+                        }, 4900);
+                        setTimeout(() => {
+                            this.showSideActivityNotification('🖱️', 'Selenium cross-browser testing: Chrome, Firefox, Safari', 2000);
+                        }, 7100);
+                        setTimeout(() => {
+                            this.showSideActivityNotification('⚡', 'Performance testing: Average response time 187ms ✓', 2000);
+                        }, 9300);
+                        setTimeout(() => {
+                            this.showSideActivityNotification('🔒', 'Security testing: Penetration tests passed ✓', 2000);
+                        }, 11500);
+                        setTimeout(() => {
+                            this.moveTasksInWorkflow('progress', 'review');
+                            this.highlightWorkflowStep(4);
+                            this.showNotification('qa', 'Jordan Smith', 'QA Engineer', 
+                                '✅ All testing complete! No bugs found. Code quality excellent. I\'m approving the merge request. Ready for DevOps to merge to release branch.', 
+                                'Approve MR', 'qa-approves-mr');
+                        }, 13700);
+                        break;
+                        
+                    case 'qa-approves-mr':
+                        // QA approves merge request AFTER notification closes
+                        setTimeout(() => {
+                            this.showSideActivityNotification('✅', 'QA Approval: Merge Request approved by Jordan Smith', 2000);
+                        }, 500);
+                        setTimeout(() => {
+                            this.showNotification('devops', 'You (DevOps)', 'Senior DevOps Engineer', 
+                                '🔍 Perfect! QA approved the merge request. Now I\'ll merge to release branch and start the real DevOps work: Docker images, CI/CD pipelines, and Kubernetes deployment.', 
+                                'Merge & Deploy', 'devops-merge-deploy');
+                        }, 2700);
+                        break;
+                        
+                    case 'devops-merge-deploy':
+                        // Real DevOps work starts: Docker, K8s, CI/CD AFTER notification closes
+                        setTimeout(() => {
+                            this.showSideActivityNotification('🔀', 'git merge testing → release - Merge approved', 2000);
+                        }, 500);
+                        setTimeout(() => {
+                            this.showSideActivityNotification('🐳', 'Creating Dockerfile and docker-compose.yml', 2000);
+                        }, 2700);
+                        setTimeout(() => {
+                            this.showSideActivityNotification('🏗️', 'Building Docker image: user-auth:v1.0', 2000);
+                        }, 4900);
+                        setTimeout(() => {
+                            this.showSideActivityNotification('📦', 'Pushing to AWS ECR registry', 2000);
+                        }, 7100);
+                        setTimeout(() => {
+                            this.showSideActivityNotification('☸️', 'Setting up Kubernetes cluster with kubectl', 2000);
+                        }, 9300);
+                        setTimeout(() => {
+                            this.showSideActivityNotification('🔧', 'Creating K8s deployments, services, and ingress', 2000);
+                        }, 11500);
+                        setTimeout(() => {
+                            this.showNotification('devops', 'You (DevOps)', 'Senior DevOps Engineer', 
+                                '🚀 Docker images built! Now I\'ll explain: Docker packages our app with all dependencies. Kubernetes orchestrates containers across multiple servers for scalability and reliability. Let me deploy to production cluster.', 
+                                'Deploy to K8s', 'kubernetes-deploy');
+                        }, 13700);
+                        break;
+                        
+                    case 'kubernetes-deploy':
+                        // Kubernetes deployment and monitoring AFTER notification closes
+                        setTimeout(() => {
+                            this.showSideActivityNotification('🚀', 'kubectl apply -f deployment.yaml', 2000);
+                        }, 500);
+                        setTimeout(() => {
+                            this.showSideActivityNotification('⚖️', 'Setting up Load Balancer and Auto Scaling (3-10 pods)', 2000);
+                        }, 2700);
+                        setTimeout(() => {
+                            this.showSideActivityNotification('🌐', 'Configuring Ingress Controller for URL routing', 2000);
+                        }, 4900);
+                        setTimeout(() => {
+                            this.showSideActivityNotification('📊', 'Setting up Prometheus monitoring and alerts', 2000);
+                        }, 7100);
+                        setTimeout(() => {
+                            this.showSideActivityNotification('📈', 'Configuring Grafana dashboards for metrics', 2000);
+                        }, 9300);
+                                                setTimeout(() => {
+                            this.showSideActivityNotification('🔍', 'ELK Stack: Elasticsearch, Logstash, Kibana for log analysis', 2000);
+                        }, 11500);
+                        setTimeout(() => {
+                            this.moveTasksInWorkflow('review', 'done');
+                            this.highlightWorkflowStep(5);
+                            this.tasksCompleted += 1;
+                            this.daysWorked += 1;
+                            this.updateDashboard();
+                            this.showSideActivityNotification('✅', 'Website LIVE! https://auth.company.com - Response time: 187ms ✓', 2000);
+                        }, 13700);
+                        setTimeout(() => {
+                            this.showNotification('devops', 'You (DevOps)', 'Production Manager', 
+                                '🎯 DEPLOYMENT SUCCESSFUL! Website is live with monitoring. CI/CD pipeline automatically runs tests, builds Docker images, and deploys to Kubernetes. Monitoring tools track performance 24/7.', 
+                                'Deployment Complete', 'deployment-complete');
+                        }, 15900);
+                        break;
+                        
+                    case 'deployment-complete':
+                        // Post-deployment monitoring AFTER notification closes
+                        setTimeout(() => {
+                            this.showSideActivityNotification('📊', 'Monitoring: CPU 15%, Memory 60%, Uptime 100%', 2000);
+                        }, 500);
+                        setTimeout(() => {
+                            this.showSideActivityNotification('🔔', 'Setting up alerts: Error rate >1%, Response time >500ms', 2000);
+                        }, 2700);
+                        setTimeout(() => {
+                            this.showNotification('client', 'Happy Client', 'Business Stakeholder', 
+                                '🎊 INCREDIBLE! Users are registering and logging in perfectly! Website loads in under 200ms. This is exactly what we needed. Ready for sprint retrospective and planning Sprint 2?', 
+                                'Complete Sprint', 'sprint-retrospective');
+                        }, 4900);
+                        break;
+                        
+                    case 'sprint-retrospective':
+                        this.highlightWorkflowStep(6);
+                        setTimeout(() => {
+                            this.showNotification('manager', 'Sarah Johnson', 'Product Manager', 
+                                '📈 Outstanding sprint! We followed industry best practices: proper Git workflow, branch protection, merge requests, Docker containers, Kubernetes orchestration, and comprehensive monitoring. Ready to celebrate?', 
+                                'Complete Sprint', 'complete-sprint');
+                        }, 1500);
+                        break;
+                        
+                    case 'complete-sprint':
+                        this.completeSprint();
+                        break;
+                        
+                    case 'start-sprint-2':
+                        this.playMeetingStartSound();
+                        this.showMeetingIndicator();
+                        setTimeout(() => {
+                            this.showNotification('manager', 'Sarah Johnson', 'Product Manager', 
+                                '📞 Sprint 2 planning meeting starting! We\'ll discuss advanced security features: 2FA, OAuth, and social login. Click the meeting indicator in top navigation.', 
+                                'Join Meeting', null);
+                        }, 1000);
+                        break;
+                        
+                    case 'meeting-complete':
+                        this.currentSprint++;
+                        setTimeout(() => {
+                            this.showSideActivityNotification('🌿', 'Creating new branch: feature/advanced-security', 2000);
+                        }, 500);
+                        setTimeout(() => {
+                            this.addSingleSprintTask();
+                            this.showNotification('manager', 'Sarah Johnson', 'Product Manager', 
+                                '✅ Sprint 2 planning complete! Created new feature branch for advanced security. DevOps will set up OAuth configurations and developers will implement 2FA and social login.', 
+                                'Start Sprint 2', 'continue-development');
+                        }, 2700);
+                        break;
+                        
+                    case 'continue-development':
+                        this.resetWorkflowSteps();
+                        this.showToast('🚀 Sprint 2 ready! Click Step 1 to begin advanced security features', 'info');
+                        break;
+                }
+            }
+            
+            // WORKFLOW MANAGEMENT
+            activateWorkflowStep(stepNumber) {
+                if (!this.journeyStarted) {
+                    this.showToast('Please start your professional journey first!', 'warning');
+                    return;
+                }
+                
+                // Prevent activation if notification is showing
+                if (this.isNotificationShowing) {
+                    this.showToast('Please complete the current task first!', 'warning');
+                    return;
+                }
+                
+                this.currentStep = stepNumber;
+                this.executeWorkflowStep(stepNumber);
+            }
+            
+            executeWorkflowStep(stepNumber) {
+                this.highlightWorkflowStep(stepNumber);
+                
+                switch (stepNumber) {
+                    case 1:
+                        this.showNotification('manager', 'Sarah Johnson', 'Product Manager', 
+                            '📋 Excellent! I\'ll start professional project planning. Creating Jira epic, writing detailed user stories with acceptance criteria, and estimating story points for the team.', 
+                            'Start Planning', 'step-1-complete');
+                        break;
+                        
+                    case 2:
+                        this.showNotification('developer', 'Alex Chen', 'Full-Stack Developer', 
+                            '⚡ Development phase! I\'ll clone the repository, create feature branch, implement authentication using React/Node.js, write tests, and follow coding standards.', 
+                            'Start Coding', 'step-2-complete');
+                        break;
+                        
+                    case 3:
+                        this.showNotification('devops', 'You (DevOps)', 'Senior DevOps Engineer', 
+                            '🔍 DevOps phase! I\'ll review merge requests, run CI/CD pipelines, create Docker images, and prepare Kubernetes deployments for production.', 
+                            'Start DevOps', 'step-3-complete');
+                        break;
+                        
+                    case 4:
+                        this.showNotification('qa', 'Jordan Smith', 'QA Engineer', 
+                            '🧪 Quality Assurance! I\'ll run comprehensive testing: Unit, Integration, Functional, Performance, Security, and User Acceptance Testing across all environments.', 
+                            'Start Testing', 'step-4-complete');
+                        break;
+                        
+                    case 5:
+                        this.showNotification('devops', 'You (DevOps)', 'Production Manager', 
+                            '🚀 Production Deployment! I\'ll deploy using Kubernetes, set up monitoring with Prometheus/Grafana, configure auto-scaling, and ensure 99.9% uptime.', 
+                            'Deploy Production', 'step-5-complete');
+                        break;
+                        
+                    case 6:
+                        this.showNotification('manager', 'Sarah Johnson', 'Scrum Master', 
+                            '📊 Sprint Retrospective! Let\'s analyze our performance metrics, identify improvements, celebrate achievements, and plan the next sprint iteration.', 
+                            'Complete Retrospective', 'sprint-retrospective');
+                        break;
+                }
+            }
+            
+            // HIGHLIGHT WORKFLOW STEP FUNCTION
+            highlightWorkflowStep(stepNumber) {
+                // Remove all highlights
+                document.querySelectorAll('.timeline-step').forEach(step => {
+                    step.classList.remove('active', 'completed');
+                });
+                
+                // Highlight current step
+                const currentStepEl = document.getElementById(`step-${stepNumber}`);
+                if (currentStepEl) {
+                    currentStepEl.classList.add('active');
+                }
+                
+                // Mark previous steps as completed
+                for (let i = 1; i < stepNumber; i++) {
+                    const stepEl = document.getElementById(`step-${i}`);
+                    if (stepEl) {
+                        stepEl.classList.add('completed');
+                    }
+                }
+            }
+            
+            resetWorkflowSteps() {
+                document.querySelectorAll('.timeline-step').forEach(step => {
+                    step.classList.remove('active', 'completed');
+                });
+            }
+            
+            // ENHANCED TASK MANAGEMENT - ONE TASK PER SPRINT STEP
+            initializeDragAndDrop() {
+                this.updateDragAndDrop();
+            }
+            
+            updateDragAndDrop() {
+                document.querySelectorAll('.task-card').forEach(card => {
+                    card.draggable = true;
+                    card.addEventListener('dragstart', this.handleDragStart.bind(this));
+                    card.addEventListener('dragend', this.handleDragEnd.bind(this));
+                });
+            }
+            
+            handleDragStart(e) {
+                e.dataTransfer.setData('text/plain', e.target.outerHTML);
+                e.dataTransfer.setData('text/html', e.target.outerHTML);
+                e.dataTransfer.effectAllowed = 'move';
+                e.target.classList.add('dragging');
+            }
+            
+            handleDragEnd(e) {
+                e.target.classList.remove('dragging');
+            }
+            
+            addSingleSprintTask() {
+                const project = this.projects[this.currentProject];
+                const sprintIndex = this.currentSprint - 1;
+                
+                if (sprintIndex >= 0 && sprintIndex < project.sprints.length) {
+                    const sprint = project.sprints[sprintIndex];
+                    const backlogContainer = document.getElementById('backlog-tasks');
+                    
+                    // Clear empty state
+                    const emptyState = backlogContainer.querySelector('.empty-state');
+                    if (emptyState) emptyState.remove();
+                    
+                    // Add only first task for this sprint
+                    if (sprint.tasks.length > 0) {
+                        this.createTaskCard(sprint.tasks[0], 'Alex Chen', 'backlog');
+                    }
+                    
+                    this.updateColumnCounts();
+                    this.updateDashboard();
+                    this.updateDragAndDrop();
+                }
+            }
+            
+            createTaskCard(title, assignee, column) {
+                const taskId = `TASK-${String(this.taskIdCounter).padStart(3, '0')}`;
+                this.taskIdCounter++;
+                
+                const container = document.getElementById(`${column}-tasks`);
+                if (!container) return;
+                
+                const taskCard = document.createElement('div');
+                taskCard.className = 'task-card';
+                taskCard.draggable = true;
+                taskCard.innerHTML = `
+                    <div class="task-title">${title}</div>
+                    <div class="task-meta">
+                        <span class="task-assignee">${assignee}</span>
+                        <span class="task-id">${taskId}</span>
+                    </div>
+                `;
+                
+                // Add drag event listeners
+                taskCard.addEventListener('dragstart', this.handleDragStart.bind(this));
+                taskCard.addEventListener('dragend', this.handleDragEnd.bind(this));
+                
+                container.appendChild(taskCard);
+            }
+            
+            moveTasksInWorkflow(fromColumn, toColumn) {
+                const fromContainer = document.getElementById(`${fromColumn}-tasks`);
+                const toContainer = document.getElementById(`${toColumn}-tasks`);
+                
+                if (!fromContainer || !toContainer) return;
+                
+                const tasks = fromContainer.querySelectorAll('.task-card');
+                if (tasks.length > 0) {
+                    // Clear empty state from target column
+                    const emptyState = toContainer.querySelector('.empty-state');
+                    if (emptyState) emptyState.remove();
+                    
+                    // Move first task
+                    const firstTask = tasks[0];
+                    toContainer.appendChild(firstTask);
+                    
+                    // Add empty state back if source column is empty
+                    if (fromContainer.querySelectorAll('.task-card').length === 0) {
+                        fromContainer.innerHTML = '<div class="empty-state"><div class="empty-icon">📝</div><p>No tasks</p></div>';
+                    }
+                    
+                    this.updateColumnCounts();
+                }
+            }
+            
+            updateColumnCounts() {
+                ['backlog', 'todo', 'progress', 'review', 'done'].forEach(column => {
+                    const container = document.getElementById(`${column}-tasks`);
+                    const countEl = document.getElementById(`${column}-count`);
+                    if (container && countEl) {
+                        const count = container.querySelectorAll('.task-card').length;
+                        countEl.textContent = count;
+                    }
+                });
+            }
+            
+            // FIXED SPRINT COMPLETION LOGIC WITH PROPER SCROLLING
+            completeSprint() {
+                const completedTasks = document.querySelectorAll('#done-tasks .task-card').length;
+                const project = this.projects[this.currentProject];
+                
+                // Fixed celebration modal content
+                const celebrationTitle = document.getElementById('celebrationTitle');
+                const celebrationMessage = document.getElementById('celebrationMessage');
+                const celebrationContinueBtn = document.getElementById('celebrationContinueBtn');
+                
+                if (this.currentSprint < 2) {
+                    // Sprint completion
+                    celebrationTitle.textContent = `🎉 SPRINT ${this.currentSprint} COMPLETED! 🎉`;
+                    celebrationMessage.textContent = 
+                        `🎊 Outstanding work! You have successfully completed Sprint ${this.currentSprint} with professional Git workflow, Docker deployment, and Kubernetes orchestration. ${completedTasks} task completed using industry best practices!`;
+                    celebrationContinueBtn.textContent = 'Continue to Sprint 2';
+                    celebrationContinueBtn.onclick = () => this.continueToNextSprint();
+                } else {
+                    // Project completion  
+                    celebrationTitle.textContent = `🎉 PROJECT COMPLETED! 🎉`;
+                    celebrationMessage.textContent = 
+                        `🎊 Amazing achievement! You have successfully completed ${project.name} following professional DevOps practices: Git workflow, CI/CD pipelines, Docker containers, Kubernetes deployment, and monitoring!`;
+                    celebrationContinueBtn.textContent = 'Continue to Next Project';
+                    celebrationContinueBtn.onclick = () => this.continueToNextProject();
+                }
+                    
+                document.getElementById('celebrationTasks').textContent = completedTasks;
+                document.getElementById('celebrationSprints').textContent = this.currentSprint;
+                
+                const celebrationModal = document.getElementById('celebrationModal');
+                if (celebrationModal) {
+                    celebrationModal.style.display = 'flex';
+                    // Enable scrolling within modal
+                    document.body.style.overflow = 'hidden';
+                }
+                
+                this.playCelebrationSound();
+            }
+            
+            continueToNextSprint() {
+                const celebrationModal = document.getElementById('celebrationModal');
+                if (celebrationModal) {
+                    celebrationModal.style.display = 'none';
+                    // Re-enable body scrolling
+                    document.body.style.overflow = 'auto';
+                }
+                
+                if (this.currentSprint < 2) {
+                    // Continue to Sprint 2
+                    setTimeout(() => {
+                        this.showNotification('manager', 'Sarah Johnson', 'Product Manager', 
+                            '🎯 Excellent progress! Ready for Sprint 2 with advanced security features? Let\'s schedule a planning meeting to discuss OAuth integration, 2FA, and social login implementations.', 
+                            'Schedule Meeting', 'start-sprint-2');
+                    }, 1000);
+                } else {
+                    // Complete project
+                    this.continueToNextProject();
+                }
+            }
+            
+            continueToNextProject() {
+                const celebrationModal = document.getElementById('celebrationModal');
+                if (celebrationModal) {
+                    celebrationModal.style.display = 'none';
+                    // Re-enable body scrolling
+                    document.body.style.overflow = 'auto';
+                }
+                
+                // Switch to next project
+                const projects = ['auth', 'shopping', 'social'];
+                const currentIndex = projects.indexOf(this.currentProject);
+                
+                if (currentIndex < projects.length - 1) {
+                    this.currentProject = projects[currentIndex + 1];
+                    this.currentSprint = 1;
+                    this.resetForNewProject();
+                    
+                    const project = this.projects[this.currentProject];
+                    setTimeout(() => {
+                        this.showNotification('client', 'New Client', 'Business Stakeholder', 
+                            `🎯 Congratulations on the authentication system! We have a new project: ${project.name}. ${project.description}. Apply the same professional DevOps practices you just mastered.`, 
+                            'Accept New Project', 'welcome');
+                    }, 1500);
+                } else {
+                    this.showFinalCelebration();
+                }
+            }
+            
+            resetForNewProject() {
+                // Clear all task columns
+                ['backlog', 'todo', 'progress', 'review', 'done'].forEach(column => {
+                    const container = document.getElementById(`${column}-tasks`);
+                    if (container) {
+                        container.innerHTML = '<div class="empty-state"><div class="empty-icon">📝</div><p>Ready for new project!</p></div>';
+                    }
+                });
+                
+                this.resetWorkflowSteps();
+                this.updateColumnCounts();
+                this.updateDashboard();
+            }
+            
+            showFinalCelebration() {
+                this.showNotification('manager', 'Sarah Johnson', 'CEO & Founder', 
+                    '🏆 INCREDIBLE MASTERY! You have completed 3 enterprise projects using professional DevOps practices: Git workflows, Docker containerization, Kubernetes orchestration, CI/CD pipelines, and production monitoring. Ready for FAANG companies!', 
+                    'DevOps Master!', null);
+            }
+            
+            // ENHANCED MEETING SYSTEM WITH REALISTIC VOICE SOUNDS
+            showMeetingIndicator() {
+                const indicator = document.getElementById('meetingIndicator');
+                if (indicator) {
+                    indicator.style.display = 'flex';
+                    this.playMeetingStartSound();
+                }
+            }
+            
+            hideMeetingIndicator() {
+                const indicator = document.getElementById('meetingIndicator');
+                if (indicator) {
+                    indicator.style.display = 'none';
+                }
+            }
+            
+            joinMeeting() {
+                this.hideMeetingIndicator();
+                const meetingRoom = document.getElementById('meetingRoom');
+                if (meetingRoom) {
+                    meetingRoom.style.display = 'flex';
+                    this.simulateRealisticMeeting();
+                    this.playMeetingJoinSound();
+                }
+            }
+            
+            simulateRealisticMeeting() {
+                const participants = ['manager', 'devops', 'developer', 'qa'];
+                let currentSpeaker = 0;
+                const meetingMessages = [
+                    "Welcome everyone! Let's review Sprint 2 goals: advanced security with 2FA, OAuth integration, and social login features.",
+                    "I'll configure OAuth providers, set up additional security infrastructure, and prepare deployment pipelines for new features.",
+                    "Excited to implement Google/Facebook login, two-factor authentication using TOTP, and enhanced security patterns.",
+                    "I'll create comprehensive test cases for social login flows, security testing, and multi-factor authentication scenarios."
+                ];
+                
+                const speakingSequence = () => {
+                    // Remove speaking class from all
+                    document.querySelectorAll('.participant-card').forEach(card => {
+                        card.classList.remove('speaking');
+                    });
+                    
+                    // Add speaking class to current speaker
+                    const currentParticipant = document.getElementById(`participant-${participants[currentSpeaker]}`);
+                    if (currentParticipant) {
+                        currentParticipant.classList.add('speaking');
+                        
+                        // Update message and play realistic voice
+                        const messageEl = currentParticipant.querySelector('.participant-message');
+                        if (messageEl && meetingMessages[currentSpeaker]) {
+                            messageEl.textContent = `"${meetingMessages[currentSpeaker]}"`;
+                        }
+                        
+                        // Play realistic speaking voice sound
+                        this.playMeetingVoiceSound(participants[currentSpeaker]);
+                    }
+                    
+                    currentSpeaker = (currentSpeaker + 1) % participants.length;
+                };
+                
+                // Start meeting simulation with realistic timing
+                this.meetingInterval = setInterval(speakingSequence, 5000);
+                speakingSequence(); // Start immediately
+            }
+            
+            endMeeting() {
+                const meetingRoom = document.getElementById('meetingRoom');
+                if (meetingRoom) {
+                    meetingRoom.style.display = 'none';
+                }
+                
+                if (this.meetingInterval) {
+                    clearInterval(this.meetingInterval);
+                }
+                
+                setTimeout(() => {
+                    this.showNotification('manager', 'Sarah Johnson', 'Product Manager', 
+                        '✅ Excellent meeting! Sprint 2 planning complete. I\'ve created feature branch "advanced-security" and updated Jira with new security stories. Ready to continue professional development?', 
+                        'Continue Sprint 2', 'meeting-complete');
+                }, 1000);
+            }
+            
+            // REALISTIC VOICE AND AUDIO SYSTEM
+            playVoiceNotification(role, message) {
+                // Realistic voice simulation based on role and message content
+                try {
+                    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    
+                    // Different tones for different roles
+                    const roleTones = {
+                        manager: [400, 500, 600], // Professional, authoritative
+                        developer: [350, 450, 550], // Technical, focused  
+                        devops: [300, 400, 500], // Deep, technical
+                        qa: [450, 550, 650], // Clear, precise
+                        client: [500, 600, 700] // Excited, business-focused
+                    };
+                    
+                    const tones = roleTones[role] || roleTones.manager;
+                    
+                    // Play notification sequence based on message length
+                    const messageLength = message.length;
+                    const duration = Math.min(1000 + (messageLength * 20), 3000); // Max 3 seconds
+                    
+                    tones.forEach((freq, index) => {
+                        setTimeout(() => {
+                            const oscillator = audioContext.createOscillator();
+                            const gainNode = audioContext.createGain();
+                            
+                            oscillator.connect(gainNode);
+                            gainNode.connect(audioContext.destination);
+                            
+                            oscillator.frequency.setValueAtTime(freq, audioContext.currentTime);
+                            gainNode.gain.setValueAtTime(0.05, audioContext.currentTime);
+                            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                            
+                            oscillator.start(audioContext.currentTime);
+                            oscillator.stop(audioContext.currentTime + 0.3);
+                        }, index * 100);
+                    });
+                } catch (error) {
+                    console.log('Voice audio not supported');
+                }
+            }
+            
+            playMeetingJoinSound() {
+                try {
+                    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    // Meeting join sound (like Zoom)
+                    const frequencies = [523, 659, 784, 1047]; // C-E-G-C chord
+                    
+                    frequencies.forEach((freq, index) => {
+                        setTimeout(() => {
+                            const oscillator = audioContext.createOscillator();
+                            const gainNode = audioContext.createGain();
+                            
+                            oscillator.connect(gainNode);
+                            gainNode.connect(audioContext.destination);
+                            
+                            oscillator.frequency.setValueAtTime(freq, audioContext.currentTime);
+                            gainNode.gain.setValueAtTime(0.08, audioContext.currentTime);
+                            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4);
+                            
+                            oscillator.start(audioContext.currentTime);
+                            oscillator.stop(audioContext.currentTime + 0.4);
+                        }, index * 150);
+                    });
+                } catch (error) {
+                    console.log('Meeting audio not supported');
+                }
+            }
+            
+            playMeetingStartSound() {
+                try {
+                    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    // Meeting start notification
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    
+                    oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+                    oscillator.frequency.setValueAtTime(1000, audioContext.currentTime + 0.1);
+                    gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                    
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.3);
+                } catch (error) {
+                    console.log('Audio not supported');
+                }
+            }
+            
+            playMeetingVoiceSound(role) {
+                try {
+                    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    
+                    // Realistic voice patterns for each role
+                    const voicePatterns = {
+                        manager: [600, 700, 650], // Authoritative speaking pattern
+                        developer: [500, 600, 550], // Technical explanation pattern
+                        devops: [450, 550, 500], // Deep technical voice
+                        qa: [650, 750, 700] // Clear, precise testing voice
+                    };
+                    
+                    const pattern = voicePatterns[role] || voicePatterns.manager;
+                    
+                    pattern.forEach((freq, index) => {
+                        setTimeout(() => {
+                            const oscillator = audioContext.createOscillator();
+                            const gainNode = audioContext.createGain();
+                            
+                            oscillator.connect(gainNode);
+                            gainNode.connect(audioContext.destination);
+                            
+                            oscillator.frequency.setValueAtTime(freq, audioContext.currentTime);
+                            gainNode.gain.setValueAtTime(0.03, audioContext.currentTime);
+                            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+                            
+                            oscillator.start(audioContext.currentTime);
+                            oscillator.stop(audioContext.currentTime + 0.2);
+                        }, index * 200);
+                    });
+                } catch (error) {
+                    console.log('Voice audio not supported');
+                }
+            }
+            
+            playCelebrationSound() {
+                try {
+                    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    // Epic celebration fanfare
+                    const celebrationSequence = [
+                        [523, 659, 784], // C major chord
+                        [659, 784, 988], // E major chord  
+                        [784, 988, 1175], // G major chord
+                        [1047, 1319, 1568] // High C major chord
+                    ];
+                    
+                    celebrationSequence.forEach((chord, chordIndex) => {
+                        setTimeout(() => {
+                            chord.forEach((freq, noteIndex) => {
+                                setTimeout(() => {
+                                    const oscillator = audioContext.createOscillator();
+                                    const gainNode = audioContext.createGain();
+                                    
+                                    oscillator.connect(gainNode);
+                                    gainNode.connect(audioContext.destination);
+                                    
+                                    oscillator.frequency.setValueAtTime(freq, audioContext.currentTime);
+                                    gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+                                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+                                    
+                                    oscillator.start(audioContext.currentTime);
+                                    oscillator.stop(audioContext.currentTime + 0.5);
+                                }, noteIndex * 50);
+                            });
+                        }, chordIndex * 300);
+                    });
+                } catch (error) {
+                    console.log('Celebration audio not supported');
+                }
+            }
+            
+            // TOAST NOTIFICATIONS - ONLY WHEN NO MODAL IS OPEN
+            showToast(message, type = 'info') {
+                // Don't show toast if notification is showing
+                if (this.isNotificationShowing) {
+                    return;
+                }
+                
+                const toast = document.getElementById('statusToast');
+                const messageEl = document.getElementById('toastMessage');
+                const iconEl = toast.querySelector('.toast-icon');
+                
+                if (!toast || !messageEl || !iconEl) return;
+                
+                const icons = {
+                    info: 'ℹ️',
+                    success: '✅',
+                    warning: '⚠️',
+                    error: '❌'
+                };
+                
+                iconEl.textContent = icons[type] || icons.info;
+                messageEl.textContent = message;
+                
+                toast.classList.add('show');
+                
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 4000);
+            }
+            
+            // PUBLIC METHODS FOR INTERACTION
+            startJourney() {
+                if (this.journeyStarted) {
+                    this.showToast('Journey already in progress!', 'warning');
+                    return;
+                }
+                
+                this.journeyStarted = true;
+                this.showNotification('manager', 'Sarah Johnson', 'Product Manager', 
+                    '👋 Welcome to professional DevOps excellence! I\'ll guide you through real-world practices used by companies like Netflix, Google, and Amazon. You\'ll learn Git workflows, Docker, Kubernetes, CI/CD pipelines, and production monitoring.', 
+                    'Let\'s Begin!', 'welcome');
+                    
+                setTimeout(() => {
+                    if (!this.isNotificationShowing) {
+                        this.showToast('🚀 Professional DevOps journey started!', 'success');
+                    }
+                }, 1000);
+            }
+        }
+        
+        // GLOBAL DRAG AND DROP HANDLERS
+        function allowDrop(ev) {
+            ev.preventDefault();
+            ev.currentTarget.classList.add('drag-over');
+        }
+        
+        function drop(ev) {
+            ev.preventDefault();
+            ev.currentTarget.classList.remove('drag-over');
+            
+            const data = ev.dataTransfer.getData('text/html');
+            const targetColumn = ev.currentTarget.getAttribute('data-column');
+            const targetContainer = document.getElementById(`${targetColumn}-tasks`);
+            
+            if (targetContainer) {
+                // Remove the dragged element from its current position
+                const draggedElement = document.querySelector('.dragging');
+                if (draggedElement) {
+                    // Clear empty state if exists
+                    const emptyState = targetContainer.querySelector('.empty-state');
+                    if (emptyState) emptyState.remove();
+                    
+                    // Move the element
+                    targetContainer.appendChild(draggedElement);
+                    
+                    // Add empty state to source column if now empty
+                    const sourceContainer = draggedElement.parentElement;
+                    if (sourceContainer && sourceContainer.querySelectorAll('.task-card').length === 0) {
+                        sourceContainer.innerHTML = '<div class="empty-state"><div class="empty-icon">📝</div><p>No tasks</p></div>';
+                    }
+                    
+                    // Update counts
+                    devopsSimulation.updateColumnCounts();
+                    if (!devopsSimulation.isNotificationShowing) {
+                        devopsSimulation.showToast(`Task moved to ${targetColumn}!`, 'success');
+                    }
+                }
+            }
+        }
+        
+        // Remove drag-over class when dragging leaves
+        document.addEventListener('dragleave', function(ev) {
+            if (ev.target.classList.contains('kanban-column')) {
+                ev.target.classList.remove('drag-over');
+            }
+        });
+        
+        // INITIALIZE THE SIMULATION
+        const devopsSimulation = new DevOpsSimulation();
+        
+        // GLOBAL FUNCTIONS FOR HTML INTERACTION
+        function startProfessionalJourney() {
+            devopsSimulation.startJourney();
+        }
+        
+        function toggleTheme() {
+            devopsSimulation.toggleTheme();
+        }
+        
+        function activateWorkflowStep(stepNumber) {
+            devopsSimulation.activateWorkflowStep(stepNumber);
+        }
+        
+        function closeNotification() {
+            devopsSimulation.closeNotification();
+        }
+        
+        function handleNotificationAction() {
+            devopsSimulation.handleNotificationAction();
+        }
+        
+        function joinMeeting() {
+            devopsSimulation.joinMeeting();
+        }
+        
+        function endMeeting() {
+            devopsSimulation.endMeeting();
+        }
+        
+        function continueToNextSprint() {
+            devopsSimulation.continueToNextSprint();
+        }
+        
+        function continueToNextProject() {
+            devopsSimulation.continueToNextProject();
+        }
+        
+        // MEETING INDICATOR CLICK HANDLER
+        document.getElementById('meetingIndicator')?.addEventListener('click', joinMeeting);
+        
+        console.log('🎯 Ultra-Realistic DevOps Professional Suite with Complete Company Workflow Loaded Successfully!');
+        console.log('🚀 Features: Git Branches, Merge Requests, Docker, Kubernetes, CI/CD Pipelines, Monitoring, Voice Notifications');
+    </script>
+</body>
+</html>

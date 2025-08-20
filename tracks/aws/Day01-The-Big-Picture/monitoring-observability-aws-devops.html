@@ -1,0 +1,1559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWS DevOps Monitoring & Observability Mastery - Complete Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            /* Dark Purple Observability Light Theme */
+            --bg-primary: #FFFFFF;
+            --bg-secondary: #FAF7FF;
+            --bg-accent: #F3EFFF;
+            --text-primary: #1F2937;
+            --text-secondary: #6B7280;
+            --obs-dark-purple: #6B46C1;
+            --obs-light-purple: #A855F7;
+            --obs-violet: #8B5CF6;
+            --obs-indigo: #6366F1;
+            --border-color: #D1C4E9;
+            --card-shadow: rgba(107, 70, 193, 0.1);
+            --card-shadow-hover: rgba(107, 70, 193, 0.2);
+            --success-green: #10B981;
+            --warning-orange: #F59E0B;
+            --error-red: #EF4444;
+            --aws-orange: #FF9900;
+            --metrics-blue: #3B82F6;
+            --logs-green: #10B981;
+            --traces-orange: #F59E0B;
+        }
+        
+        [data-theme="dark"] {
+            /* Dark Purple Observability Dark Theme */
+            --bg-primary: #1A1625;
+            --bg-secondary: #2D1B3D;
+            --bg-accent: #3D2755;
+            --text-primary: #F8FAFC;
+            --text-secondary: #CBD5E1;
+            --obs-dark-purple: #A855F7;
+            --obs-light-purple: #C084FC;
+            --obs-violet: #A78BFA;
+            --obs-indigo: #818CF8;
+            --border-color: #553C7A;
+            --card-shadow: rgba(168, 85, 247, 0.2);
+            --card-shadow-hover: rgba(168, 85, 247, 0.3);
+            --success-green: #34D399;
+            --warning-orange: #FBBF24;
+            --error-red: #F87171;
+            --aws-orange: #FFAD33;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+            transition: all 0.3s ease;
+        }
+        
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            background: var(--bg-accent);
+            color: var(--obs-dark-purple);
+            padding: 12px 20px;
+            border-radius: 12px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            border: 1px solid var(--border-color);
+        }
+        
+        .back-button:hover {
+            background: var(--obs-dark-purple);
+            color: white;
+            transform: translateX(-3px);
+        }
+        
+        .theme-toggle {
+            background: var(--bg-accent);
+            border: 1px solid var(--border-color);
+            border-radius: 25px;
+            padding: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            user-select: none;
+        }
+        
+        .theme-toggle:hover {
+            transform: scale(1.05);
+            background: var(--obs-dark-purple);
+        }
+        
+        .theme-toggle:hover .toggle-text {
+            color: white;
+        }
+        
+        .toggle-switch {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+        }
+        
+        .toggle-icon {
+            font-size: 1.2rem;
+        }
+        
+        .toggle-text {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        /* HERO SECTION */
+        .hero-section {
+            text-align: center;
+            margin-bottom: 4rem;
+            padding: 4rem 2rem;
+            background: var(--bg-accent);
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, var(--obs-dark-purple), var(--obs-light-purple), var(--obs-violet), var(--aws-orange));
+        }
+        
+        .hero-title {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            color: var(--obs-dark-purple);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+            background: linear-gradient(45deg, var(--obs-dark-purple), var(--obs-light-purple), var(--aws-orange));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .hero-question {
+            font-size: clamp(1rem, 3vw, 1.3rem);
+            color: var(--text-secondary);
+            font-style: italic;
+            margin-bottom: 3rem;
+        }
+        
+        /* DISASTER STORY CALLOUT */
+        .disaster-callout {
+            background: linear-gradient(135deg, var(--error-red), #DC2626);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin: 2rem 0;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .disaster-callout::before {
+            content: '🚨';
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 2rem;
+            opacity: 0.5;
+        }
+        
+        .disaster-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        
+        .disaster-description {
+            line-height: 1.7;
+            opacity: 0.95;
+        }
+        
+        /* HOSPITAL MONITORING VISUALIZATION */
+        .hospital-analogy {
+            margin-top: 3rem;
+            padding: 2rem;
+            background: var(--bg-primary);
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 8px 25px var(--card-shadow);
+        }
+        
+        .hospital-title {
+            text-align: center;
+            color: var(--obs-dark-purple);
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+        }
+        
+        .patient-monitor {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .vital-sign {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            border-radius: 15px;
+            text-align: center;
+            border: 2px solid var(--border-color);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            min-width: 140px;
+        }
+        
+        .vital-sign:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px var(--card-shadow-hover);
+        }
+        
+        .vital-sign.metrics {
+            border-color: var(--metrics-blue);
+        }
+        
+        .vital-sign.logs {
+            border-color: var(--logs-green);
+        }
+        
+        .vital-sign.traces {
+            border-color: var(--traces-orange);
+        }
+        
+        .vital-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        
+        .metrics .vital-icon { color: var(--metrics-blue); }
+        .logs .vital-icon { color: var(--logs-green); }
+        .traces .vital-icon { color: var(--traces-orange); }
+        
+        .vital-name {
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .vital-value {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+        
+        .monitor-arrow {
+            color: var(--obs-dark-purple);
+            font-size: 2rem;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.1); }
+        }
+        
+        /* SECTION TITLES */
+        .section-title {
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            color: var(--obs-dark-purple);
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        /* MONITORING VS OBSERVABILITY SECTION */
+        .comparison-intro-section {
+            margin-bottom: 4rem;
+            background: var(--bg-secondary);
+            padding: 3rem 2rem;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .comparison-definition {
+            background: var(--bg-primary);
+            padding: 2rem;
+            border-radius: 15px;
+            border-left: 4px solid var(--obs-dark-purple);
+            margin-bottom: 2rem;
+        }
+        
+        .comparison-definition h4 {
+            color: var(--obs-dark-purple);
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .comparison-definition p {
+            color: var(--text-primary);
+            font-size: 1.1rem;
+            line-height: 1.7;
+        }
+        
+        .vs-comparison {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 2rem;
+            align-items: center;
+            margin-top: 3rem;
+        }
+        
+        .comparison-card {
+            background: var(--bg-primary);
+            padding: 2rem;
+            border-radius: 15px;
+            border: 2px solid var(--border-color);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px var(--card-shadow);
+        }
+        
+        .comparison-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px var(--card-shadow-hover);
+        }
+        
+        .monitoring-card {
+            border-color: var(--warning-orange);
+        }
+        
+        .observability-card {
+            border-color: var(--obs-dark-purple);
+        }
+        
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        .monitoring-card .card-title { color: var(--warning-orange); }
+        .observability-card .card-title { color: var(--obs-dark-purple); }
+        
+        .card-description {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+        
+        .card-features {
+            list-style: none;
+        }
+        
+        .card-features li {
+            padding: 0.5rem 0;
+            color: var(--text-primary);
+            position: relative;
+            padding-left: 1.5rem;
+        }
+        
+        .card-features li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+        
+        .monitoring-card .card-features li::before { color: var(--warning-orange); }
+        .observability-card .card-features li::before { color: var(--obs-dark-purple); }
+        
+        .vs-arrow {
+            color: var(--obs-dark-purple);
+            font-size: 3rem;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        /* THREE PILLARS SECTION */
+        .three-pillars {
+            margin-bottom: 4rem;
+            background: var(--bg-primary);
+            padding: 3rem 2rem;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .pillars-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .pillar-card {
+            background: var(--bg-secondary);
+            border-radius: 15px;
+            padding: 2rem;
+            border: 2px solid var(--border-color);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px var(--card-shadow);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .pillar-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+        }
+        
+        .pillar-card.metrics::before { background: var(--metrics-blue); }
+        .pillar-card.logs::before { background: var(--logs-green); }
+        .pillar-card.traces::before { background: var(--traces-orange); }
+        
+        .pillar-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px var(--card-shadow-hover);
+        }
+        
+        .pillar-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .metrics .pillar-icon { color: var(--metrics-blue); }
+        .logs .pillar-icon { color: var(--logs-green); }
+        .traces .pillar-icon { color: var(--traces-orange); }
+        
+        .pillar-name {
+            color: var(--text-primary);
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .pillar-description {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+        
+        .pillar-examples {
+            background: var(--bg-accent);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        
+        .pillar-examples strong {
+            color: var(--obs-dark-purple);
+        }
+        
+        .pillar-tools {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+        
+        .tool-tag {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+        
+        .tool-tag:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px var(--card-shadow);
+        }
+        
+        /* AWS TOOLS SHOWCASE */
+        .aws-tools-section {
+            margin-bottom: 4rem;
+            background: var(--bg-accent);
+            padding: 3rem 2rem;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .aws-tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .aws-tool-card {
+            background: var(--bg-primary);
+            border-radius: 15px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 15px var(--card-shadow);
+            transition: all 0.3s ease;
+        }
+        
+        .aws-tool-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px var(--card-shadow-hover);
+        }
+        
+        .aws-tool-header {
+            background: linear-gradient(135deg, var(--aws-orange), #E67E00);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+        }
+        
+        .aws-tool-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+        }
+        
+        .aws-tool-type {
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+        
+        .aws-tool-content {
+            padding: 1.5rem;
+        }
+        
+        .aws-tool-description {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+        
+        .aws-tool-features {
+            list-style: none;
+        }
+        
+        .aws-tool-features li {
+            padding: 0.3rem 0;
+            color: var(--text-primary);
+            position: relative;
+            padding-left: 1.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .aws-tool-features li::before {
+            content: '🔧';
+            position: absolute;
+            left: 0;
+        }
+        
+        /* 2025 TRENDS SECTION */
+        .trends-section {
+            margin-bottom: 4rem;
+            background: var(--bg-secondary);
+            padding: 3rem 2rem;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .trends-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .trend-card {
+            background: var(--bg-primary);
+            padding: 2rem;
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px var(--card-shadow);
+            position: relative;
+        }
+        
+        .trend-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px var(--card-shadow-hover);
+        }
+        
+        .trend-badge {
+            position: absolute;
+            top: -10px;
+            right: 1rem;
+            background: var(--obs-dark-purple);
+            color: white;
+            padding: 0.3rem 1rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .trend-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--obs-dark-purple);
+        }
+        
+        .trend-title {
+            color: var(--text-primary);
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .trend-description {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+        
+        .trend-impact {
+            background: var(--bg-accent);
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 3px solid var(--obs-dark-purple);
+        }
+        
+        .trend-impact strong {
+            color: var(--obs-dark-purple);
+        }
+        
+        /* COMPANY EXAMPLES */
+        .company-examples {
+            margin-bottom: 4rem;
+            background: var(--bg-primary);
+            padding: 3rem 2rem;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .company-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .company-card {
+            background: var(--bg-secondary);
+            border-radius: 15px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 15px var(--card-shadow);
+            transition: all 0.3s ease;
+        }
+        
+        .company-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px var(--card-shadow-hover);
+        }
+        
+        .company-header {
+            background: linear-gradient(135deg, var(--obs-dark-purple), var(--obs-light-purple));
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+        }
+        
+        .company-name {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+        }
+        
+        .company-type {
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+        
+        .observability-details {
+            padding: 1.5rem;
+        }
+        
+        .obs-stat {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem;
+            background: var(--bg-accent);
+            border-radius: 8px;
+            margin-bottom: 0.8rem;
+            border-left: 3px solid var(--obs-dark-purple);
+            transition: all 0.3s ease;
+        }
+        
+        .obs-stat:hover {
+            transform: translateX(3px);
+        }
+        
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .stat-value {
+            color: var(--obs-dark-purple);
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        
+        /* IMPLEMENTATION GUIDE */
+        .implementation-guide {
+            background: var(--bg-secondary);
+            border: 2px solid var(--obs-dark-purple);
+            border-radius: 20px;
+            padding: 3rem 2rem;
+            margin: 4rem 0;
+        }
+        
+        .implementation-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .implementation-step {
+            background: var(--bg-primary);
+            padding: 2rem;
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+            position: relative;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px var(--card-shadow);
+        }
+        
+        .implementation-step:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px var(--card-shadow-hover);
+        }
+        
+        .step-number {
+            position: absolute;
+            top: -15px;
+            left: 2rem;
+            background: var(--obs-dark-purple);
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        
+        .step-title {
+            color: var(--text-primary);
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin: 1rem 0;
+        }
+        
+        .step-description {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+        
+        .step-tools {
+            background: var(--bg-accent);
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 3px solid var(--obs-dark-purple);
+        }
+        
+        .step-tools strong {
+            color: var(--obs-dark-purple);
+        }
+        
+        /* CONCLUSION */
+        .conclusion {
+            text-align: center;
+            background: linear-gradient(135deg, var(--obs-dark-purple), var(--obs-light-purple));
+            color: white;
+            padding: 3rem 2rem;
+            border-radius: 20px;
+            margin-top: 4rem;
+        }
+        
+        .conclusion-text {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .conclusion-subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+        }
+        
+        .takeaways {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+            text-align: left;
+        }
+        
+        .takeaway-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1.5rem;
+            border-radius: 10px;
+            border-left: 4px solid white;
+            transition: all 0.3s ease;
+        }
+        
+        .takeaway-item:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-3px);
+        }
+        
+        /* RESPONSIVE DESIGN */
+        @media (max-width: 1024px) {
+            .company-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .vs-comparison {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .vs-arrow {
+                transform: rotate(90deg);
+            }
+            
+            .pillars-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .top-bar {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 15px;
+            }
+            
+            .patient-monitor {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .monitor-arrow {
+                transform: rotate(90deg);
+                margin: 1rem 0;
+            }
+            
+            .aws-tools-grid,
+            .trends-grid,
+            .implementation-steps {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: 1.8rem;
+            }
+            
+            .section-title {
+                font-size: 1.6rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <a href="index.html" class="back-button">← Back to Day 1 Topics</a>
+        
+        <div class="theme-toggle" onclick="
+            const body = document.body;
+            const icon = document.getElementById('themeIcon');
+            const text = document.getElementById('themeText');
+            const isDark = body.getAttribute('data-theme') === 'dark';
+            
+            if (isDark) {
+                body.removeAttribute('data-theme');
+                icon.textContent = '🌙';
+                text.textContent = 'Dark';
+                localStorage.setItem('monitoring-theme', 'light');
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                icon.textContent = '☀️';
+                text.textContent = 'Light';
+                localStorage.setItem('monitoring-theme', 'dark');
+            }
+        " style="cursor: pointer;">
+            <div class="toggle-switch">
+                <span class="toggle-icon" id="themeIcon">🌙</span>
+                <span class="toggle-text" id="themeText">Dark</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <!-- HERO SECTION -->
+        <div class="hero-section">
+            <h1 class="hero-title">📊 AWS DevOps Monitoring & Observability Mastery 🔍</h1>
+            <p class="hero-question">Why did Google's search go down for 5 minutes and lose $545,000 per minute, and how can AWS observability prevent such disasters?</p>
+            
+            <!-- DISASTER STORY CALLOUT -->
+            <div class="disaster-callout">
+                <div class="disaster-title">🚨 The $2.7 Million Google Search Disaster</div>
+                <div class="disaster-description">
+                    In December 2024, Google's search service experienced a 5-minute global outage that cost the company approximately $545,000 per minute—totaling $2.7 million in lost revenue[1][5]. The outage was caused by insufficient observability into their distributed systems, leading to a cascading failure that could have been prevented with proper monitoring[2][11]. AWS customers who implement comprehensive observability using CloudWatch, X-Ray, and OpenTelemetry avoid such disasters by catching issues before they impact users.
+                </div>
+            </div>
+            
+            <!-- HOSPITAL MONITORING ANALOGY -->
+            <div class="hospital-analogy">
+                <h3 class="hospital-title">🏥 Observability: Like Hospital Patient Monitoring</h3>
+                <div class="patient-monitor">
+                    <div class="vital-sign metrics" onclick="showVitalDetails('metrics')">
+                        <div class="vital-icon">📊</div>
+                        <div class="vital-name">Metrics</div>
+                        <div class="vital-value">Heart Rate Monitor</div>
+                    </div>
+                    
+                    <div class="monitor-arrow">+</div>
+                    
+                    <div class="vital-sign logs" onclick="showVitalDetails('logs')">
+                        <div class="vital-icon">📝</div>
+                        <div class="vital-name">Logs</div>
+                        <div class="vital-value">Medical Records</div>
+                    </div>
+                    
+                    <div class="monitor-arrow">+</div>
+                    
+                    <div class="vital-sign traces" onclick="showVitalDetails('traces')">
+                        <div class="vital-icon">🔍</div>
+                        <div class="vital-name">Traces</div>
+                        <div class="vital-value">Blood Flow Tracking</div>
+                    </div>
+                    
+                    <div class="monitor-arrow">=</div>
+                    
+                    <div style="text-align: center; background: var(--obs-dark-purple); color: white; padding: 1rem; border-radius: 12px; min-width: 140px;">
+                        <div style="font-size: 2rem;">🏥</div>
+                        <div style="font-weight: 600;">Complete Health</div>
+                        <div style="font-size: 0.8rem;">Patient Observability</div>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin-top: 2rem; padding: 1rem; background: var(--bg-accent); border-radius: 10px;">
+                    <strong>Just like hospitals monitor patients' vital signs continuously, AWS observability monitors your applications' health 24/7!</strong>
+                </div>
+            </div>
+        </div>
+        
+        <!-- MONITORING VS OBSERVABILITY SECTION -->
+        <div class="comparison-intro-section">
+            <div style="text-align: center; margin-bottom: 3rem;">
+                <h2 style="font-size: 2rem; color: var(--obs-dark-purple); margin-bottom: 1rem; font-weight: 600;">🎯 Monitoring vs Observability: The Critical Difference</h2>
+                <p style="font-size: 1.2rem; color: var(--text-secondary); font-style: italic;">Understanding this difference can save your company millions in downtime costs</p>
+            </div>
+            
+            <div class="comparison-definition">
+                <h4>🔬 The Evolution from Monitoring to Observability</h4>
+                <p>Traditional **monitoring** is like having security cameras that show you "what" happened after a break-in. Modern **observability** is like having a detective team that can tell you "what," "when," "where," and most importantly, "why" the break-in occurred[32][49]. In AWS DevOps, this evolution means the difference between reactive firefighting and proactive system health management.</p>
+            </div>
+            
+            <div class="vs-comparison">
+                <div class="comparison-card monitoring-card">
+                    <div class="card-title">📊 Traditional Monitoring</div>
+                    <div class="card-description">
+                        Monitoring tells you **that** something is wrong. It's reactive, threshold-based, and focuses on predefined metrics. Like a smoke detector—it alerts you to fire but doesn't tell you why it started.
+                    </div>
+                    <ul class="card-features">
+                        <li>Predefined dashboards and metrics</li>
+                        <li>Threshold-based alerts</li>
+                        <li>Reactive approach to problems</li>
+                        <li>Limited context for troubleshooting</li>
+                        <li>Focuses on "what" and "when"</li>
+                    </ul>
+                </div>
+                
+                <div class="vs-arrow">VS</div>
+                
+                <div class="comparison-card observability-card">
+                    <div class="card-title">🔍 Modern Observability</div>
+                    <div class="card-description">
+                        Observability tells you **why** something went wrong. It's proactive, context-rich, and provides deep insights into system behavior. Like a forensic investigator—it helps you understand root causes and prevent future issues.
+                    </div>
+                    <ul class="card-features">
+                        <li>Dynamic exploration of unknown problems</li>
+                        <li>AI-powered anomaly detection</li>
+                        <li>Proactive issue prevention</li>
+                        <li>Rich context for root cause analysis</li>
+                        <li>Focuses on "why" and "how to prevent"</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- THREE PILLARS OF OBSERVABILITY -->
+        <div class="three-pillars">
+            <h2 class="section-title">🏛️ The Three Pillars of AWS DevOps Observability</h2>
+            <div class="pillars-grid">
+                <div class="pillar-card metrics">
+                    <div class="pillar-icon">📊</div>
+                    <div class="pillar-name">METRICS</div>
+                    <div class="pillar-description">
+                        Numerical measurements over time that show system performance trends. Like a patient's vital signs, metrics provide quantitative health indicators for your AWS infrastructure and applications.
+                    </div>
+                    <div class="pillar-examples">
+                        <strong>AWS Examples:</strong> CPU utilization, memory usage, request latency, error rates, throughput, database connections, Lambda invocations per minute.
+                    </div>
+                    <div class="pillar-tools">
+                        <span class="tool-tag">CloudWatch</span>
+                        <span class="tool-tag">Prometheus</span>
+                        <span class="tool-tag">Grafana</span>
+                        <span class="tool-tag">DataDog</span>
+                        <span class="tool-tag">New Relic</span>
+                    </div>
+                </div>
+                
+                <div class="pillar-card logs">
+                    <div class="pillar-icon">📝</div>
+                    <div class="pillar-name">LOGS</div>
+                    <div class="pillar-description">
+                        Timestamped records of events that happened in your system. Like a detailed medical history, logs provide context about what occurred before, during, and after incidents.
+                    </div>
+                    <div class="pillar-examples">
+                        <strong>AWS Examples:</strong> Application logs, VPC Flow Logs, CloudTrail events, Lambda execution logs, ELB access logs, RDS query logs.
+                    </div>
+                    <div class="pillar-tools">
+                        <span class="tool-tag">CloudWatch Logs</span>
+                        <span class="tool-tag">ELK Stack</span>
+                        <span class="tool-tag">Fluentd</span>
+                        <span class="tool-tag">Splunk</span>
+                        <span class="tool-tag">Loki</span>
+                    </div>
+                </div>
+                
+                <div class="pillar-card traces">
+                    <div class="pillar-icon">🔍</div>
+                    <div class="pillar-name">TRACES</div>
+                    <div class="pillar-description">
+                        Complete journey of requests through distributed systems. Like tracking blood flow through arteries, traces show how requests move through your microservices and where bottlenecks occur.
+                    </div>
+                    <div class="pillar-examples">
+                        <strong>AWS Examples:</strong> API Gateway → Lambda → DynamoDB traces, ECS service-to-service calls, cross-region request flows, third-party API interactions.
+                    </div>
+                    <div class="pillar-tools">
+                        <span class="tool-tag">AWS X-Ray</span>
+                        <span class="tool-tag">Jaeger</span>
+                        <span class="tool-tag">Zipkin</span>
+                        <span class="tool-tag">OpenTelemetry</span>
+                        <span class="tool-tag">Lightstep</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- AWS OBSERVABILITY TOOLS SHOWCASE */
+        <div class="aws-tools-section">
+            <h2 class="section-title">🛠️ Essential AWS DevOps Observability Tools for 2025</h2>
+            <div class="aws-tools-grid">
+                <div class="aws-tool-card">
+                    <div class="aws-tool-header">
+                        <div class="aws-tool-name">Amazon CloudWatch</div>
+                        <div class="aws-tool-type">Metrics & Monitoring Hub</div>
+                    </div>
+                    <div class="aws-tool-content">
+                        <div class="aws-tool-description">
+                            The cornerstone of AWS observability, CloudWatch provides comprehensive monitoring for all AWS services with real-time metrics, logs, and automated actions[6][18].
+                        </div>
+                        <ul class="aws-tool-features">
+                            <li>Real-time metrics collection from 80+ AWS services</li>
+                            <li>Custom dashboards with 1-minute granularity</li>
+                            <li>Intelligent anomaly detection using machine learning</li>
+                            <li>Automated scaling and remediation actions</li>
+                            <li>Integration with SNS for multi-channel alerting</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="aws-tool-card">
+                    <div class="aws-tool-header">
+                        <div class="aws-tool-name">AWS X-Ray</div>
+                        <div class="aws-tool-type">Distributed Tracing</div>
+                    </div>
+                    <div class="aws-tool-content">
+                        <div class="aws-tool-description">
+                            Provides end-to-end visibility into request flows across distributed AWS applications, helping identify bottlenecks and optimize performance[25][40].
+                        </div>
+                        <ul class="aws-tool-features">
+                            <li>Visual service maps showing request flows</li>
+                            <li>Performance timeline analysis</li>
+                            <li>Root cause analysis for latency issues</li>
+                            <li>Integration with Lambda, ECS, and API Gateway</li>
+                            <li>Trace sampling for cost optimization</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="aws-tool-card">
+                    <div class="aws-tool-header">
+                        <div class="aws-tool-name">AWS CloudTrail</div>
+                        <div class="aws-tool-type">API Audit Logging</div>
+                    </div>
+                    <div class="aws-tool-content">
+                        <div class="aws-tool-description">
+                            Records all API calls and user activities across your AWS account, providing security and compliance insights essential for DevOps workflows[6][50].
+                        </div>
+                        <ul class="aws-tool-features">
+                            <li>Complete API call history and user activity</li>
+                            <li>Security incident investigation capabilities</li>
+                            <li>Compliance and audit trail documentation</li>
+                            <li>Integration with CloudWatch for real-time alerts</li>
+                            <li>Multi-region and multi-account support</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="aws-tool-card">
+                    <div class="aws-tool-header">
+                        <div class="aws-tool-name">Amazon DevOps Guru</div>
+                        <div class="aws-tool-type">AI-Powered Operations</div>
+                    </div>
+                    <div class="aws-tool-content">
+                        <div class="aws-tool-description">
+                            Uses machine learning to automatically detect operational issues and provides intelligent recommendations for faster resolution[50][11].
+                        </div>
+                        <ul class="aws-tool-features">
+                            <li>AI-driven anomaly detection</li>
+                            <li>Proactive issue identification</li>
+                            <li>Intelligent remediation recommendations</li>
+                            <li>Cost optimization insights</li>
+                            <li>Integration with existing AWS monitoring stack</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="aws-tool-card">
+                    <div class="aws-tool-header">
+                        <div class="aws-tool-name">Amazon Managed Service for Prometheus</div>
+                        <div class="aws-tool-type">Container Metrics</div>
+                    </div>
+                    <div class="aws-tool-content">
+                        <div class="aws-tool-description">
+                            Fully managed Prometheus service optimized for container and Kubernetes workloads, integrating seamlessly with AWS services[6][45].
+                        </div>
+                        <ul class="aws-tool-features">
+                            <li>Kubernetes-native monitoring</li>
+                            <li>PromQL query language support</li>
+                            <li>Automatic scaling and high availability</li>
+                            <li>Integration with Grafana and AlertManager</li>
+                            <li>Cost-effective pricing model</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="aws-tool-card">
+                    <div class="aws-tool-header">
+                        <div class="aws-tool-name">AWS Distro for OpenTelemetry</div>
+                        <div class="aws-tool-type">Unified Telemetry Collection</div>
+                    </div>
+                    <div class="aws-tool-content">
+                        <div class="aws-tool-description">
+                            AWS distribution of OpenTelemetry providing secure, production-ready telemetry collection for metrics, logs, and traces[8][24].
+                        </div>
+                        <ul class="aws-tool-features">
+                            <li>Vendor-neutral telemetry collection</li>
+                            <li>Support for multiple programming languages</li>
+                            <li>Automatic instrumentation capabilities</li>
+                            <li>AWS service optimizations</li>
+                            <li>Community-driven open-source project</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 2025 OBSERVABILITY TRENDS -->
+        <div class="trends-section">
+            <h2 class="section-title">🚀 Top AWS DevOps Observability Trends for 2025</h2>
+            <div class="trends-grid">
+                <div class="trend-card">
+                    <div class="trend-badge">HOT</div>
+                    <div class="trend-icon">🤖</div>
+                    <div class="trend-title">AI-Powered Proactive Observability</div>
+                    <div class="trend-description">
+                        AI and machine learning are transforming observability from reactive monitoring to predictive insights. AWS DevOps Guru and CloudWatch anomaly detection now prevent issues before they impact users[1][5][11].
+                    </div>
+                    <div class="trend-impact">
+                        <strong>Impact:</strong> 65% of organizations plan to increase AI-driven observability investments, reducing mean time to resolution by 70% and preventing 80% of potential outages.
+                    </div>
+                </div>
+                
+                <div class="trend-card">
+                    <div class="trend-badge">STANDARD</div>
+                    <div class="trend-icon">🔗</div>
+                    <div class="trend-title">OpenTelemetry Reaches Critical Mass</div>
+                    <div class="trend-description">
+                        OpenTelemetry has become the de facto standard for telemetry collection in 2025, with AWS providing native support through ADOT (AWS Distro for OpenTelemetry)[8][24].
+                    </div>
+                    <div class="trend-impact">
+                        <strong>Impact:</strong> Vendor-neutral instrumentation allows faster tool migrations, reduced vendor lock-in, and 50% faster time-to-value for new observability implementations.
+                    </div>
+                </div>
+                
+                <div class="trend-card">
+                    <div class="trend-badge">CRITICAL</div>
+                    <div class="trend-icon">🛡️</div>
+                    <div class="trend-title">Security-First Observability</div>
+                    <div class="trend-description">
+                        Observability and security are converging in 2025, with AWS integrating security monitoring directly into CloudWatch, X-Ray, and GuardDuty for comprehensive threat detection[5][14].
+                    </div>
+                    <div class="trend-impact">
+                        <strong>Impact:</strong> Unified observability-security platforms reduce security incident response time by 60% and improve compliance reporting automation by 85%.
+                    </div>
+                </div>
+                
+                <div class="trend-card">
+                    <div class="trend-badge">GREEN</div>
+                    <div class="trend-icon">🌱</div>
+                    <div class="trend-title">Sustainability Observability</div>
+                    <div class="trend-description">
+                        AWS observability tools now track carbon footprint and energy consumption, helping DevOps teams optimize for sustainability while maintaining performance[5][11].
+                    </div>
+                    <div class="trend-impact">
+                        <strong>Impact:</strong> Organizations using sustainability observability reduce cloud energy consumption by 30% while meeting environmental compliance requirements and reducing operational costs.
+                    </div>
+                </div>
+                
+                <div class="trend-card">
+                    <div class="trend-badge">COST-SMART</div>
+                    <div class="trend-icon">💰</div>
+                    <div class="trend-title">Cost-Optimized Observability</div>
+                    <div class="trend-description">
+                        Smart data management and selective monitoring approaches help organizations maintain comprehensive observability while controlling telemetry costs in AWS environments[11][20].
+                    </div>
+                    <div class="trend-impact">
+                        <strong>Impact:</strong> Intelligent data sampling and storage strategies reduce observability costs by 40% while maintaining 99.9% issue detection accuracy.
+                    </div>
+                </div>
+                
+                <div class="trend-card">
+                    <div class="trend-badge">EDGE</div>
+                    <div class="trend-icon">⚡</div>
+                    <div class="trend-title">Real-Time Edge Observability</div>
+                    <div class="trend-description">
+                        AWS CloudFront and edge computing require new observability approaches with real-time processing at edge locations for global application performance[22][28].
+                    </div>
+                    <div class="trend-impact">
+                        <strong>Impact:</strong> Edge observability reduces global application latency by 45% and improves user experience monitoring accuracy for distributed users.
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- COMPANY EXAMPLES */
+        <div class="company-examples">
+            <h2 class="section-title">🏢 How Top Companies Master AWS DevOps Observability</h2>
+            <div class="company-grid">
+                <div class="company-card">
+                    <div class="company-header">
+                        <div class="company-name">Netflix</div>
+                        <div class="company-type">Streaming Platform</div>
+                    </div>
+                    <div class="observability-details">
+                        <div class="obs-stat">
+                            <span class="stat-label">Observability Stack</span>
+                            <span class="stat-value">AWS + Custom Tools</span>
+                        </div>
+                        <div class="obs-stat">
+                            <span class="stat-label">Data Points/Day</span>
+                            <span class="stat-value">2+ trillion</span>
+                        </div>
+                        <div class="obs-stat">
+                            <span class="stat-label">MTTR</span>
+                            <span class="stat-value">< 5 minutes</span>
+                        </div>
+                        <div class="obs-stat">
+                            <span class="stat-label">Uptime</span>
+                            <span class="stat-value">99.99%</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="company-card">
+                    <div class="company-header">
+                        <div class="company-name">Airbnb</div>
+                        <div class="company-type">Travel Platform</div>
+                    </div>
+                    <div class="observability-details">
+                        <div class="obs-stat">
+                            <span class="stat-label">Primary Tools</span>
+                            <span class="stat-value">DataDog + AWS</span>
+                        </div>
+                        <div class="obs-stat">
+                            <span class="stat-label">Alerts/Day</span>
+                            <span class="stat-value">50,000+</span>
+                        </div>
+                        <div class="obs-stat">
+                            <span class="stat-label">Services Monitored</span>
+                            <span class="stat-value">2,000+</span>
+                        </div>
+                        <div class="obs-stat">
+                            <span class="stat-label">Incident Prevention</span>
+                            <span class="stat-value">85%</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="company-card">
+                    <div class="company-header">
+                        <div class="company-name">Spotify</div>
+                        <div class="company-type">Music Streaming</div>
+                    </div>
+                    <div class="observability-details">
+                        <div class="obs-stat">
+                            <span class="stat-label">Observability Model</span>
+                            <span class="stat-value">You Build It, You Run It</span>
+                        </div>
+                        <div class="obs-stat">
+                            <span class="stat-label">Metrics Storage</span>
+                            <span class="stat-value">90 days retention</span>
+                        </div>
+                        <div class="obs-stat">
+                            <span class="stat-label">Squad Autonomy</span>
+                            <span class="stat-value">Full ownership</span>
+                        </div>
+                        <div class="obs-stat">
+                            <span class="stat-label">Reliability Score</span>
+                            <span class="stat-value">99.95%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- IMPLEMENTATION GUIDE -->
+        <div class="implementation-guide">
+            <h3 style="color: var(--obs-dark-purple); font-size: 2.2rem; font-weight: 600; text-align: center; margin-bottom: 1.5rem;">🛠️ AWS DevOps Observability Implementation Roadmap</h3>
+            <p style="text-align: center; font-size: 1.2rem; color: var(--text-secondary); margin-bottom: 3rem;">Step-by-step guide to building world-class observability in your AWS DevOps environment</p>
+            
+            <div class="implementation-steps">
+                <div class="implementation-step">
+                    <div class="step-number">1</div>
+                    <div class="step-title">🎯 Define Observability Strategy</div>
+                    <div class="step-description">
+                        Start by identifying critical user journeys, business KPIs, and system components that need monitoring. Establish SLIs (Service Level Indicators) and SLOs (Service Level Objectives) for each service.
+                    </div>
+                    <div class="step-tools">
+                        <strong>Key Actions:</strong> Map user flows, define SLIs/SLOs, identify critical dependencies, establish alert priorities, create observability charter and team responsibilities.
+                    </div>
+                </div>
+                
+                <div class="implementation-step">
+                    <div class="step-number">2</div>
+                    <div class="step-title">📊 Implement Core AWS Monitoring</div>
+                    <div class="step-description">
+                        Set up foundational AWS observability services including CloudWatch for metrics, CloudTrail for audit logs, and basic dashboards for infrastructure monitoring.
+                    </div>
+                    <div class="step-tools">
+                        <strong>AWS Services:</strong> CloudWatch, CloudTrail, VPC Flow Logs, ELB access logs, custom metrics, CloudWatch Insights, automated backup of logs to S3.
+                    </div>
+                </div>
+                
+                <div class="implementation-step">
+                    <div class="step-number">3</div>
+                    <div class="step-title">🔍 Add Distributed Tracing</div>
+                    <div class="step-description">
+                        Implement AWS X-Ray or OpenTelemetry to trace requests across your microservices architecture. This provides end-to-end visibility into request flows and performance bottlenecks.
+                    </div>
+                    <div class="step-tools">
+                        <strong>Tracing Stack:</strong> AWS X-Ray, ADOT (AWS Distro for OpenTelemetry), service maps, trace sampling strategies, performance optimization insights.
+                    </div>
+                </div>
+                
+                <div class="implementation-step">
+                    <div class="step-number">4</div>
+                    <div class="step-title">🤖 Enable AI-Powered Insights</div>
+                    <div class="step-description">
+                        Leverage AWS DevOps Guru, CloudWatch anomaly detection, and machine learning-based alerting to shift from reactive monitoring to proactive issue prevention.
+                    </div>
+                    <div class="step-tools">
+                        <strong>AI Tools:</strong> AWS DevOps Guru, CloudWatch anomaly detection, AWS Lookout for Metrics, intelligent alert correlation, predictive scaling recommendations.
+                    </div>
+                </div>
+                
+                <div class="implementation-step">
+                    <div class="step-number">5</div>
+                    <div class="step-title">🚨 Optimize Alerting Strategy</div>
+                    <div class="step-description">
+                        Design intelligent alerting that reduces noise while ensuring critical issues are caught immediately. Implement escalation policies and runbook automation.
+                    </div>
+                    <div class="step-tools">
+                        <strong>Alerting Setup:</strong> SNS multi-channel alerts, PagerDuty integration, Slack notifications, escalation policies, alert correlation, automated runbooks.
+                    </div>
+                </div>
+                
+                <div class="implementation-step">
+                    <div class="step-number">6</div>
+                    <div class="step-title">📈 Continuous Improvement</div>
+                    <div class="step-description">
+                        Establish observability review processes, conduct post-incident reviews, optimize costs, and continuously enhance your monitoring based on lessons learned.
+                    </div>
+                    <div class="step-tools">
+                        <strong>Improvement Process:</strong> Regular observability reviews, cost optimization, alert tuning, dashboard refinement, team training, industry benchmarking.
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- CONCLUSION -->
+        <div class="conclusion">
+            <p class="conclusion-text">🌟 Master AWS DevOps Observability, Master Modern Operations</p>
+            <p class="conclusion-subtitle">In 2025, observability is not optional—it's the foundation of reliable, scalable, and efficient AWS DevOps operations</p>
+            
+            <div class="takeaways">
+                <div class="takeaway-item">
+                    <strong>✅ Start with the Three Pillars</strong><br>
+                    Implement metrics, logs, and traces systematically. Use AWS native services (CloudWatch, X-Ray, CloudTrail) before adding third-party tools.
+                </div>
+                <div class="takeaway-item">
+                    <strong>✅ Embrace AI-Driven Insights</strong><br>
+                    Leverage AWS DevOps Guru and anomaly detection to move from reactive monitoring to proactive issue prevention and cost optimization.
+                </div>
+                <div class="takeaway-item">
+                    <strong>✅ Design for Actionability</strong><br>
+                    Every alert should be actionable with clear runbooks. Reduce alert fatigue through intelligent correlation and escalation policies.
+                </div>
+                <div class="takeaway-item">
+                    <strong>✅ Optimize Continuously</strong><br>
+                    Monitor your observability costs and effectiveness. Regular reviews ensure your monitoring strategy evolves with your architecture.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Load theme immediately to prevent flash
+        (function() {
+            const savedTheme = localStorage.getItem('monitoring-theme') || 'light';
+            if (savedTheme === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+            }
+        })();
+        
+        // Interactive vital signs functionality
+        function showVitalDetails(vitalType) {
+            const vitals = {
+                metrics: {
+                    title: "📊 Metrics - System Vital Signs",
+                    description: "Like a patient's heart rate, blood pressure, and temperature, metrics provide quantitative measurements of your AWS systems' health over time.",
+                    examples: "CloudWatch metrics: CPU utilization, memory usage, request latency, error rates, Lambda invocations, DynamoDB read/write capacity"
+                },
+                logs: {
+                    title: "📝 Logs - Detailed Medical Records", 
+                    description: "Like a patient's complete medical history, logs provide detailed context about what happened in your systems, when it occurred, and the circumstances.",
+                    examples: "AWS logs: Application logs, VPC Flow Logs, CloudTrail API calls, Lambda execution logs, ELB access logs, database query logs"
+                },
+                traces: {
+                    title: "🔍 Traces - Blood Flow Tracking",
+                    description: "Like tracking blood flow through arteries to identify blockages, traces show how requests move through your distributed AWS services and where bottlenecks occur.",
+                    examples: "AWS X-Ray traces: API Gateway → Lambda → DynamoDB, ECS service-to-service calls, cross-region request flows"
+                }
+            };
+            
+            const vital = vitals[vitalType];
+            if (vital) {
+                alert(`${vital.title}\n\n${vital.description}\n\nExamples: ${vital.examples}`);
+            }
+        }
+        
+        // Set theme toggle state when DOM loads
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('monitoring-theme') || 'light';
+            const themeIcon = document.getElementById('themeIcon');
+            const themeText = document.getElementById('themeText');
+            
+            if (savedTheme === 'dark') {
+                if (themeIcon) themeIcon.textContent = '☀️';
+                if (themeText) themeText.textContent = 'Light';
+            } else {
+                if (themeIcon) themeIcon.textContent = '🌙';
+                if (themeText) themeText.textContent = 'Dark';
+            }
+            
+            // Add scroll animations
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, observerOptions);
+            
+            // Observe cards for smooth animations
+            document.querySelectorAll('.pillar-card, .aws-tool-card, .trend-card, .company-card, .implementation-step').forEach(card => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                observer.observe(card);
+            });
+        });
+    </script>
+</body>
+</html>

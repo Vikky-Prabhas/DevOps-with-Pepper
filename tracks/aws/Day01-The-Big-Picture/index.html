@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 1: The Big Picture</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            /* Light mode colors */
+            --bg-primary: #FFFFFF;
+            --bg-secondary: #F2F2F7;
+            --text-primary: #000000;
+            --text-secondary: #8E8E93;
+            --border-color: #E5E5EA;
+            --border-hover: #D1D1D6;
+            --card-shadow: rgba(0, 0, 0, 0.08);
+            --card-shadow-hover: rgba(0, 0, 0, 0.15);
+        }
+        
+        [data-theme="dark"] {
+            /* Dark mode colors */
+            --bg-primary: #000000;
+            --bg-secondary: #1C1C1E;
+            --text-primary: #FFFFFF;
+            --text-secondary: #8E8E93;
+            --border-color: #38383A;
+            --border-hover: #48484A;
+            --card-shadow: rgba(255, 255, 255, 0.05);
+            --card-shadow-hover: rgba(255, 255, 255, 0.1);
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            background: var(--bg-secondary);
+            color: #007AFF;
+            padding: 12px 20px;
+            border-radius: 12px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            border: 1px solid var(--border-color);
+        }
+        
+        .back-button:hover {
+            background: var(--border-color);
+            transform: translateX(-3px);
+        }
+        
+        .theme-toggle {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 25px;
+            padding: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px var(--card-shadow);
+        }
+        
+        .theme-toggle:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 25px var(--card-shadow-hover);
+        }
+        
+        .toggle-switch {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+        }
+        
+        .toggle-icon {
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+        
+        .toggle-text {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding: 3rem 2rem;
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+        
+        .header p {
+            font-size: 1.3rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+            font-weight: 400;
+        }
+        
+        .topics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 2rem;
+        }
+        
+        .topic-box {
+            background: var(--bg-primary);
+            border-radius: 16px;
+            padding: 2rem;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            box-shadow: 0 4px 20px var(--card-shadow);
+        }
+        
+        .topic-box:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px var(--card-shadow-hover);
+            border-color: var(--border-hover);
+        }
+        
+        .topic-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        
+        .topic-title {
+            font-size: 1.6rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            text-align: center;
+            color: var(--text-primary);
+        }
+        
+        .topic-description {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        
+        .topic-features {
+            list-style: none;
+            margin-bottom: 1.5rem;
+        }
+        
+        .topic-features li {
+            padding: 8px 0;
+            position: relative;
+            padding-left: 25px;
+            color: var(--text-secondary);
+        }
+        
+        .topic-features li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            font-weight: 600;
+        }
+        
+        .topic-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+        }
+        
+        .tag {
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            border: 1px solid var(--border-color);
+        }
+        
+        /* Netflix Box - AWS Orange Theme */
+        .netflix-box .topic-icon {
+            color: #FF9900;
+        }
+        
+        .netflix-box .topic-features li:before {
+            color: #FF9900;
+        }
+        
+        .netflix-box .tag {
+            background: rgba(255, 153, 0, 0.1);
+            color: #FF9900;
+            border-color: rgba(255, 153, 0, 0.2);
+        }
+        
+        /* Microservices Box - Docker Blue Theme */
+        .microservices-box .topic-icon {
+            color: #2496ED;
+        }
+        
+        .microservices-box .topic-features li:before {
+            color: #2496ED;
+        }
+        
+        .microservices-box .tag {
+            background: rgba(36, 150, 237, 0.1);
+            color: #2496ED;
+            border-color: rgba(36, 150, 237, 0.2);
+        }
+        
+        /* DevOps Box - Kubernetes Blue Theme */
+        .devops-box .topic-icon {
+            color: #326CE5;
+        }
+        
+        .devops-box .topic-features li:before {
+            color: #326CE5;
+        }
+        
+        .devops-box .tag {
+            background: rgba(50, 108, 229, 0.1);
+            color: #326CE5;
+            border-color: rgba(50, 108, 229, 0.2);
+        }
+        
+        @media (max-width: 768px) {
+            .topics-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2.2rem;
+            }
+            
+            .top-bar {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="top-bar">
+            <a href="../index.html" class="back-button">← Back to Dashboard</a>
+            
+            <!-- Dark Mode Toggle -->
+            <div class="theme-toggle" onclick="toggleTheme()">
+                <div class="toggle-switch">
+                    <span class="toggle-icon" id="themeIcon">🌙</span>
+                    <span class="toggle-text" id="themeText">Dark</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="header">
+            <h1>Day 1: The Big Picture</h1>
+            <p>Understanding modern application architectures and DevOps fundamentals</p>
+        </div>
+        
+        <div class="topics-grid">
+            <!-- Topic 1: Netflix Streaming Architecture -->
+            <a href="netflix-architecture.html" class="topic-box netflix-box">
+                <div class="topic-icon">🎬</div>
+                <div class="topic-title">Netflix Streaming Architecture</div>
+                <div class="topic-description">
+                    Explore Netflix's 3-tier architecture, microservices approach, and how they handle millions of users streaming content globally.
+                </div>
+                <ul class="topic-features">
+                    <li>3-Tier Architecture Deep Dive</li>
+                    <li>Global Content Delivery Network</li>
+                    <li>Real-time Analytics Engine</li>
+                </ul>
+                <div class="topic-tags">
+                    <span class="tag">AWS Infrastructure</span>
+                    <span class="tag">CDN</span>
+                    <span class="tag">Scalability</span>
+                </div>
+            </a>
+            
+            <!-- Topic 2: Modern Microservices Architecture -->
+            <a href="microservices-architecture.html" class="topic-box microservices-box">
+                <div class="topic-icon">🏗️</div>
+                <div class="topic-title">Modern Microservices Architecture</div>
+                <div class="topic-description">
+                    Learn the fundamentals of microservices, containerization, and distributed system patterns used by modern applications.
+                </div>
+                <ul class="topic-features">
+                    <li>Microservices vs Monolith</li>
+                    <li>Service Communication Patterns</li>
+                    <li>Container Orchestration</li>
+                    <li>Database Per Service</li>
+                </ul>
+                <div class="topic-tags">
+                    <span class="tag">Docker</span>
+                    <span class="tag">Kubernetes</span>
+                    <span class="tag">API Gateway</span>
+                    <span class="tag">Service Mesh</span>
+                </div>
+            </a>
+            
+
+            <!-- Topic 3: DevOps Overview -->
+            <!-- Web Servers vs Application Servers Topic Card -->
+<a href="devops-overview.html" class="topic-box devops-box">
+    <div class="topic-icon">🌐</div>
+    <div class="topic-title">Web Servers vs Application Servers</div>
+    <div class="topic-description">
+        Understanding the critical differences between web servers (Apache, Nginx) and application servers (Tomcat, Node.js), and how they work together in modern infrastructure.
+    </div>
+    <ul class="topic-features">
+        <li>Static vs Dynamic Content Serving</li>
+        <li>HTTP Processing vs Business Logic</li>
+        <li>Performance & Scalability Patterns</li>
+        <li>Real-World Implementation Examples</li>
+    </ul>
+    <div class="topic-tags">
+        <span class="tag">Apache</span>
+        <span class="tag">Nginx</span>
+        <span class="tag">Tomcat</span>
+        <span class="tag">Node.js</span>
+    </div>
+</a>
+
+    <!-- SDLC vs DevOps Transformation Topic Card -->
+<a href="sdlc-devops-transformation.html" class="topic-box transformation-box">
+    <div class="topic-icon">🔄</div>
+    <div class="topic-title">SDLC vs DevOps Transformation</div>
+    <div class="topic-description">
+        The evolution from traditional waterfall methodology to modern DevOps practices. Learn why companies like Netflix and Amazon transformed their development processes.
+    </div>
+    <ul class="topic-features">
+        <li>Waterfall Problems & Solutions</li>
+        <li>Agile to DevOps Evolution</li>
+        <li>Real Company Transformations</li>
+        <li>Implementation Roadmap</li>
+    </ul>
+    <div class="topic-tags">
+        <span class="tag">Agile</span>
+        <span class="tag">Waterfall</span>
+        <span class="tag">CI/CD</span>
+        <span class="tag">Culture</span>
+    </div>
+</a>
+
+        <!-- CI/CD Pipeline Fundamentals Topic Card -->
+<a href="cicd-pipeline-fundamentals.html" class="topic-box pipeline-box">
+    <div class="topic-icon">🎯</div>
+    <div class="topic-title">CI/CD Pipeline Fundamentals</div>
+    <div class="topic-description">
+        Master Continuous Integration and Continuous Deployment pipelines that enable companies like Netflix to deploy 4,000+ times per day safely and reliably.
+    </div>
+    <ul class="topic-features">
+        <li>CI vs CD vs Continuous Deployment</li>
+        <li>Interactive Pipeline Visualization</li>
+        <li>Real Company CI/CD Examples</li>
+        <li>Step-by-Step Implementation Guide</li>
+    </ul>
+    <div class="topic-tags">
+        <span class="tag">Jenkins</span>
+        <span class="tag">GitHub Actions</span>
+        <span class="tag">Docker</span>
+        <span class="tag">Automation</span>
+    </div>
+</a>
+
+<!-- DevOps Lifecycle & Tools Topic Card -->
+<a href="devops-lifecycle-tools.html" class="topic-box tools-box">
+    <div class="topic-icon">🛠️</div>
+    <div class="topic-title">DevOps Lifecycle & Tools</div>
+    <div class="topic-description">
+        Master the complete DevOps lifecycle and essential toolchain. Learn how top companies like Netflix and Spotify structure their DevOps tools for maximum efficiency.
+    </div>
+    <ul class="topic-features">
+        <li>Interactive 8-Stage Lifecycle Visualization</li>
+        <li>Essential Tools for Each Stage</li>
+        <li>Real Company Toolchain Examples</li>
+        <li>Tool Selection Guide & Best Practices</li>
+    </ul>
+    <div class="topic-tags">
+        <span class="tag">Jenkins</span>
+        <span class="tag">Docker</span>
+        <span class="tag">Kubernetes</span>
+        <span class="tag">Monitoring</span>
+    </div>
+</a>
+
+<!-- Deployment Strategies Topic Card -->
+<a href="deployment-strategies.html" class="topic-box deployment-box">
+    <div class="topic-icon">🚀</div>
+    <div class="topic-title">Deployment Strategies Mastery</div>
+    <div class="topic-description">
+        Master 6 critical deployment strategies used by Netflix, Amazon, and Google. Learn when to use Blue-Green, Canary, Rolling updates, and more with interactive simulations.
+    </div>
+    <ul class="topic-features">
+        <li>Interactive Strategy Simulator</li>
+        <li>Risk vs Speed Decision Matrix</li>
+        <li>Real Company Examples & Disasters</li>
+        <li>Step-by-Step Implementation Guide</li>
+    </ul>
+    <div class="topic-tags">
+        <span class="tag">Blue-Green</span>
+        <span class="tag">Canary</span>
+        <span class="tag">Rolling</span>
+        <span class="tag">A/B Testing</span>
+    </div>
+</a>
+
+<!-- AWS DevOps Monitoring & Observability Topic Card -->
+<a href="monitoring-observability-aws-devops.html" class="topic-box monitoring-box">
+    <div class="topic-icon">📊</div>
+    <div class="topic-title">AWS DevOps Monitoring & Observability</div>
+    <div class="topic-description">
+        Master the three pillars of observability (Metrics, Logs, Traces) with AWS native tools. Learn 2025's latest AI-powered monitoring trends and prevent million-dollar outages.
+    </div>
+    <ul class="topic-features">
+        <li>Hospital Patient Monitoring Analogy</li>
+        <li>AWS Tools: CloudWatch, X-Ray, CloudTrail</li>
+        <li>2025 AI-Powered Observability Trends</li>
+        <li>Real Company Examples & Implementations</li>
+    </ul>
+    <div class="topic-tags">
+        <span class="tag">CloudWatch</span>
+        <span class="tag">X-Ray</span>
+        <span class="tag">OpenTelemetry</span>
+        <span class="tag">AI Monitoring</span>
+    </div>
+</a>
+
+<!-- DevSecOps & Security with Agile Integration Topic Card -->
+<a href="devsecops-security-agile-integration.html" class="topic-box security-box">
+    <div class="topic-icon">🔐</div>
+    <div class="topic-title">DevSecOps & Security + Agile</div>
+    <div class="topic-description">
+        Master comprehensive DevSecOps with Agile integration, bug tracking workflows, Scrum/Kanban methodologies, and security-first development practices for 2025.
+    </div>
+    <ul class="topic-features">
+        <li>Agile Bug Tracking & Security Issues</li>
+        <li>Scrum vs Kanban for DevSecOps</li>
+        <li>Complete Agile Workflow Integration</li>
+        <li>Security Testing Tools & Automation</li>
+    </ul>
+    <div class="topic-tags">
+        <span class="tag">Bug Tracking</span>
+        <span class="tag">Scrum</span>
+        <span class="tag">Kanban</span>
+        <span class="tag">DevSecOps</span>
+    </div>
+</a>
+
+<!-- 1) Security Basics (TLS/SSL, HTTPS) Topic Card -->
+<a href="Security-Basics.html" class="topic-box security-basics-box">
+  <div class="topic-icon">🔒</div>
+  <div class="topic-title">Security Basics: HTTPS, TLS/SSL, Certificates</div>
+  <div class="topic-description">
+    Understand the browser lock icon, why HTTPS is required, how TLS encrypts traffic, and how certificates/Certificate Authorities work.
+    Includes a simple handshake walkthrough and a “check the certificate” quick practice.
+  </div>
+  <ul class="topic-features">
+    <li>HTTP vs HTTPS (plain vs encrypted)</li>
+    <li>What TLS/SSL actually does</li>
+    <li>What a certificate contains (DV/OV/EV, CA, validity)</li>
+    <li>Common HTTPS errors and quick fixes</li>
+  </ul>
+  <div class="topic-tags">
+    <span class="tag">TLS</span>
+    <span class="tag">SSL</span>
+    <span class="tag">HTTPS</span>
+    <span class="tag">Certificates</span>
+  </div>
+</a>
+
+<!-- 2) Bug/Task Tracking (Jira/Bugzilla) Topic Card -->
+<a href="Bug-Tracking.html" class="topic-box bug-tracking-box">
+  <div class="topic-icon">🐞</div>
+  <div class="topic-title">Bug & Task Tracking with Jira/Bugzilla</div>
+  <div class="topic-description">
+    See a practical bug lifecycle and Kanban workflow with real screenshots. Learn statuses, priorities, assignees, and how teams move work from To Do to Done.
+  </div>
+  <ul class="topic-features">
+    <li>Bug lifecycle: To Do → In Progress → QA → Done</li>
+    <li>Jira board & backlog examples</li>
+    <li>Ticket fields: summary, status, priority, assignee</li>
+    <li>Beginner-friendly mini Kanban</li>
+  </ul>
+  <div class="topic-tags">
+    <span class="tag">Jira</span>
+    <span class="tag">Bugzilla</span>
+    <span class="tag">Kanban</span>
+    <span class="tag">Workflow</span>
+  </div>
+</a>
+
+
+
+<!-- Interactive Agile Work Structure Topic Card 
+<a href="interactive-agile-work-structure.html" class="topic-box agile-work-box">
+    <div class="topic-icon">🌊</div>
+    <div class="topic-title">Interactive Agile Work Structure</div>
+    <div class="topic-description">
+        Experience real-time drag & drop Kanban board with live notifications, task management, and progress tracking. Perfect for understanding Agile workflows.
+    </div>
+    <ul class="topic-features">
+        <li>Drag & Drop Task Management</li>
+        <li>Real-Time Notifications System</li>
+        <li>Live Progress Tracking</li>
+        <li>Interactive Kanban Board</li>
+    </ul>
+    <div class="topic-tags">
+        <span class="tag">Drag & Drop</span>
+        <span class="tag">Kanban</span>
+        <span class="tag">Interactive</span>
+        <span class="tag">Real-Time</span>
+    </div>
+</a>-->
+
+
+
+        </div>
+    </div>
+
+    <script>
+        // Dark mode functionality
+        function toggleTheme() {
+            const body = document.body;
+            const themeIcon = document.getElementById('themeIcon');
+            const themeText = document.getElementById('themeText');
+            
+            if (body.getAttribute('data-theme') === 'dark') {
+                body.removeAttribute('data-theme');
+                themeIcon.textContent = '🌙';
+                themeText.textContent = 'Dark';
+                localStorage.setItem('theme', 'light');
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                themeIcon.textContent = '☀️';
+                themeText.textContent = 'Light';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+        
+        // Load saved theme on page load
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const themeIcon = document.getElementById('themeIcon');
+            const themeText = document.getElementById('themeText');
+            
+            if (savedTheme === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+                themeIcon.textContent = '☀️';
+                themeText.textContent = 'Light';
+            }
+        }
+        
+        // Initialize theme on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadTheme();
+        });
+    </script>
+</body>
+</html>
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>DevOps Workflow - Modal Notification System</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+.blur-active {
+    filter: blur(5px);
+    transition: filter 0.2s ease;
+}
+.timeline-step {
+    border: 1px solid #ccc;
+    padding: 1rem;
+    margin: 1rem;
+    cursor: pointer;
+}
+.timeline-step.active {
+    border-color: #6366F1;
+}
+
+/* Central Notification Modal */
+.notification-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(6px);
+    background: rgba(0,0,0,0.4);
+    z-index: 9999;
+}
+.notification-modal {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    max-width: 450px;
+    width: 90%;
+    position: relative;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+}
+.notification-close {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    border: none;
+    background: #eee;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+}
+.notification-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+.notification-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: #8B5CF6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    margin-right: 1rem;
+    color: white;
+}
+.notification-info h3 {
+    margin: 0;
+    font-size: 1.2rem;
+}
+.notification-info p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #666;
+}
+.notification-message {
+    font-size: 1rem;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+}
+.notification-next-action {
+    background: #EEF2FF;
+    border-left: 4px solid #6366F1;
+    padding: 0.75rem;
+    font-size: 0.9rem;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+}
+.notification-actions {
+    text-align: right;
+}
+.primary-btn {
+    background: #6366F1;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+}
+</style>
+</head>
+<body>
+
+

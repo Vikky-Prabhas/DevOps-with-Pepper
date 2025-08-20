@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Microservices Architecture - Complete Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            /* Docker Light Theme */
+            --bg-primary: #FFFFFF;
+            --bg-secondary: #F0F8FF;
+            --bg-accent: #E6F3FF;
+            --text-primary: #000000;
+            --text-secondary: #8E8E93;
+            --docker-blue: #2496ED;
+            --docker-dark-blue: #1B7CCC;
+            --border-color: #CCE7FF;
+            --card-shadow: rgba(36, 150, 237, 0.08);
+            --card-shadow-hover: rgba(36, 150, 237, 0.15);
+        }
+        
+        [data-theme="dark"] {
+            /* Docker Dark Theme */
+            --bg-primary: #0F1419;
+            --bg-secondary: #1A2332;
+            --bg-accent: #1E2B3A;
+            --text-primary: #FFFFFF;
+            --text-secondary: #B3B3B3;
+            --docker-blue: #2496ED;
+            --docker-dark-blue: #1B7CCC;
+            --border-color: #2A3441;
+            --card-shadow: rgba(36, 150, 237, 0.1);
+            --card-shadow-hover: rgba(36, 150, 237, 0.2);
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+            transition: all 0.3s ease;
+        }
+        
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            background: var(--bg-accent);
+            color: var(--docker-blue);
+            padding: 12px 20px;
+            border-radius: 12px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            border: 1px solid var(--border-color);
+        }
+        
+        .back-button:hover {
+            background: var(--docker-blue);
+            color: white;
+            transform: translateX(-3px);
+        }
+        
+        .theme-toggle {
+            background: var(--bg-accent);
+            border: 1px solid var(--border-color);
+            border-radius: 25px;
+            padding: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .theme-toggle:hover {
+            transform: scale(1.05);
+            background: var(--docker-blue);
+        }
+        
+        .theme-toggle:hover .toggle-text {
+            color: white;
+        }
+        
+        .toggle-switch {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+        }
+        
+        .toggle-icon {
+            font-size: 1.2rem;
+        }
+        
+        .toggle-text {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        /* EDUCATIONAL INTRODUCTION SECTION */
+        .hero-section {
+            text-align: center;
+            margin-bottom: 4rem;
+            padding: 4rem 2rem;
+            background: var(--bg-accent);
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, var(--docker-blue), var(--docker-dark-blue));
+        }
+        
+        .hero-title {
+            font-size: 3rem;
+            color: var(--docker-blue);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+        
+        .hero-question {
+            font-size: 1.3rem;
+            color: var(--text-secondary);
+            font-style: italic;
+            margin-bottom: 1rem;
+        }
+        
+        .hero-emoji {
+            font-size: 2rem;
+            margin: 0 0.5rem;
+        }
+        
+        /* PROBLEM SECTION */
+        .problem-section {
+            margin-bottom: 4rem;
+        }
+        
+        .section-title {
+            font-size: 2.2rem;
+            color: var(--docker-blue);
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .problem-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+        
+        .problem-card {
+            background: var(--bg-primary);
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px var(--card-shadow);
+        }
+        
+        .problem-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px var(--card-shadow-hover);
+            border-color: var(--docker-blue);
+        }
+        
+        .problem-emoji {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+        
+        .problem-text {
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        
+        /* CONCEPT EDUCATION SECTION */
+        .concept-section {
+            margin-bottom: 4rem;
+            background: var(--bg-primary);
+            padding: 3rem 2rem;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .concept-intro {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .concept-title {
+            font-size: 2rem;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+        
+        .concept-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+        
+        .concept-explanation {
+            background: var(--bg-accent);
+            padding: 2rem;
+            border-radius: 15px;
+            margin: 2rem 0;
+            border-left: 4px solid var(--docker-blue);
+        }
+        
+        .concept-explanation h4 {
+            color: var(--docker-blue);
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .concept-explanation p {
+            color: var(--text-primary);
+            font-size: 1.1rem;
+            line-height: 1.7;
+        }
+        
+        /* CORE COMPONENTS SECTION */
+        .components-section {
+            margin-bottom: 4rem;
+        }
+        
+        .component-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .component-card {
+            background: var(--bg-primary);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+        
+        .component-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px var(--card-shadow-hover);
+        }
+        
+        .component-header {
+            background: linear-gradient(135deg, var(--docker-blue), var(--docker-dark-blue));
+            color: white;
+            padding: 1.5rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+        
+        .component-content {
+            padding: 2rem;
+        }
+        
+        .component-what {
+            margin-bottom: 1.5rem;
+        }
+        
+        .component-what h4 {
+            color: var(--docker-blue);
+            font-size: 1.1rem;
+            margin-bottom: 0.8rem;
+        }
+        
+        .component-what p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+        
+        .component-example {
+            background: var(--bg-accent);
+            padding: 1rem;
+            border-radius: 10px;
+            border-left: 3px solid var(--docker-blue);
+            margin-top: 1rem;
+        }
+        
+        .component-example strong {
+            color: var(--docker-blue);
+        }
+        
+        /* BENEFITS SECTION */
+        .benefits-section {
+            background: var(--bg-accent);
+            padding: 3rem 2rem;
+            border-radius: 20px;
+            margin-bottom: 4rem;
+            border: 1px solid var(--border-color);
+        }
+        
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .benefit-card {
+            background: var(--bg-primary);
+            text-align: center;
+            padding: 2rem;
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+        
+        .benefit-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px var(--card-shadow-hover);
+        }
+        
+        .benefit-emoji {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+        
+        .benefit-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+        
+        .benefit-description {
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+        
+        /* VISUAL DEMO SECTION */
+        .visual-demo-section {
+            margin: 4rem 0;
+            padding: 3rem 0;
+            border-top: 2px solid var(--border-color);
+            border-bottom: 2px solid var(--border-color);
+        }
+        
+        .demo-intro {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .demo-intro h2 {
+            font-size: 2.2rem;
+            color: var(--docker-blue);
+            margin-bottom: 1rem;
+        }
+        
+        .demo-intro p {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+        }
+        
+        /* EXISTING VISUAL ARCHITECTURE STYLES */
+        .architecture-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+        
+        .layer-section {
+            background: var(--bg-primary);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 2px solid var(--border-color);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 25px var(--card-shadow);
+        }
+        
+        .layer-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            border-radius: 20px 20px 0 0;
+        }
+        
+        .presentation::before {
+            background: linear-gradient(90deg, #10B981, #34D399);
+        }
+        
+        .application::before {
+            background: linear-gradient(90deg, var(--docker-blue), var(--docker-dark-blue));
+        }
+        
+        .data::before {
+            background: linear-gradient(90deg, #EF4444, #F87171);
+        }
+        
+        .layer-section:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px var(--card-shadow-hover);
+            border-color: var(--docker-blue);
+        }
+        
+        .layer-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+            justify-content: center;
+        }
+        
+        .layer-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-align: center;
+            color: white;
+        }
+        
+        .presentation .layer-title {
+            background: linear-gradient(135deg, #10B981, #34D399);
+        }
+        
+        .application .layer-title {
+            background: linear-gradient(135deg, var(--docker-blue), var(--docker-dark-blue));
+        }
+        
+        .data .layer-title {
+            background: linear-gradient(135deg, #EF4444, #F87171);
+        }
+        
+        .layer-icon {
+            font-size: 2rem;
+            margin-left: 1rem;
+        }
+        
+        .microservices-container {
+            background: var(--bg-accent);
+            border: 2px dashed var(--border-color);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+        
+        .microservices-label {
+            position: absolute;
+            top: -12px;
+            left: 1rem;
+            background: var(--docker-blue);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .service-box {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.2rem;
+            margin: 0.8rem 0;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .service-box:hover {
+            transform: scale(1.05);
+            background: var(--docker-blue);
+            color: white;
+            box-shadow: 0 8px 25px var(--card-shadow-hover);
+        }
+        
+        .service-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        
+        .service-name {
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 0.3rem;
+        }
+        
+        .service-description {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+        
+        .tech-stack {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .tech-item {
+            background: var(--bg-accent);
+            border-radius: 10px;
+            padding: 0.8rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid var(--border-color);
+        }
+        
+        .tech-item:hover {
+            background: var(--docker-blue);
+            color: white;
+            transform: translateY(-3px);
+        }
+        
+        .tech-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.3rem;
+            display: block;
+        }
+        
+        .tech-name {
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+        
+        /* REAL-WORLD EXAMPLE SECTION */
+        .example-section {
+            background: var(--bg-primary);
+            border: 2px solid var(--docker-blue);
+            border-radius: 20px;
+            padding: 3rem 2rem;
+            margin: 4rem 0;
+        }
+        
+        .example-title {
+            color: var(--docker-blue);
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        
+        .example-subtitle {
+            text-align: center;
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+        
+        .example-steps {
+            list-style: none;
+            counter-reset: step-counter;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .example-steps li {
+            counter-increment: step-counter;
+            padding: 1.5rem 0;
+            position: relative;
+            padding-left: 4rem;
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--border-color);
+            font-size: 1.1rem;
+        }
+        
+        .example-steps li:last-child {
+            border-bottom: none;
+        }
+        
+        .example-steps li:before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            top: 1.5rem;
+            background: var(--docker-blue);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        /* CHALLENGES SECTION */
+        .challenges-section {
+            background: var(--bg-accent);
+            padding: 3rem 2rem;
+            border-radius: 20px;
+            margin-bottom: 4rem;
+            border: 1px solid var(--border-color);
+        }
+        
+        .challenge-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .challenge-item {
+            background: var(--bg-primary);
+            padding: 2rem;
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+        
+        .challenge-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px var(--card-shadow-hover);
+        }
+        
+        .challenge-problem {
+            color: #EF4444;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+        
+        .challenge-solution {
+            color: var(--docker-blue);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .challenge-description {
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+        
+        /* CONCLUSION SECTION */
+        .conclusion {
+            text-align: center;
+            background: linear-gradient(135deg, var(--docker-blue), var(--docker-dark-blue));
+            color: white;
+            padding: 3rem 2rem;
+            border-radius: 20px;
+            margin-top: 4rem;
+        }
+        
+        .conclusion-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .conclusion-subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .takeaways {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+            text-align: left;
+        }
+        
+        .takeaway-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            border-radius: 10px;
+            border-left: 3px solid white;
+        }
+        
+        /* RESPONSIVE DESIGN */
+        @media (max-width: 1200px) {
+            .architecture-container {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .component-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+            
+            .problem-stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .benefits-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 1rem;
+            }
+            
+            .top-bar {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .takeaways {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <a href="index.html" class="back-button">← Back to Day 1 Topics</a>
+        
+        <div class="theme-toggle" onclick="toggleTheme()">
+            <div class="toggle-switch">
+                <span class="toggle-icon" id="themeIcon">🌙</span>
+                <span class="toggle-text" id="themeText">Dark</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <!-- EDUCATIONAL INTRODUCTION SECTION -->
+        <div class="hero-section">
+            <h1 class="hero-title">🏗️ Modern Microservices Architecture: Building Apps That Scale to Millions <span class="hero-emoji">🚀</span></h1>
+            <p class="hero-question">How companies like Netflix, Amazon, and Spotify build unbreakable applications</p>
+        </div>
+        
+        <!-- THE PROBLEM SECTION -->
+        <div class="problem-section">
+            <h2 class="section-title">💥 The Challenge with Traditional Apps</h2>
+            <div class="problem-stats">
+                <div class="problem-card">
+                    <span class="problem-emoji">🏢</span>
+                    <div class="problem-text">Monolithic apps crash everything when one part fails</div>
+                </div>
+                <div class="problem-card">
+                    <span class="problem-emoji">👨‍💻</span>
+                    <div class="problem-text">100+ developers working on same codebase = chaos</div>
+                </div>
+                <div class="problem-card">
+                    <span class="problem-emoji">🚀</span>
+                    <div class="problem-text">Deploy new feature = risk entire application going down</div>
+                </div>
+                <div class="problem-card">
+                    <span class="problem-emoji">📈</span>
+                    <div class="problem-text">Scale one part = scale everything (expensive!)</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- CONCEPT EDUCATION SECTION -->
+        <div class="concept-section">
+            <div class="concept-intro">
+                <h2 class="concept-title">What are Microservices?</h2>
+                <p class="concept-subtitle">"Think of it like building with LEGO blocks instead of carving from stone..."</p>
+            </div>
+            
+            <div class="concept-explanation">
+                <h4>🧱 Microservices Explained Simply</h4>
+                <p><strong>Microservices</strong> are like building with LEGO blocks instead of carving from a single piece of stone. Instead of one massive application doing everything, you break it into small, independent services that each do ONE job perfectly. Like LEGO blocks, each service can be developed, deployed, and scaled independently - but they work together to create something amazing.</p>
+            </div>
+            
+            <div class="concept-explanation">
+                <h4>🎯 Why Companies Choose Microservices</h4>
+                <p>Traditional <strong>"Monolithic"</strong> applications are like stone sculptures - beautiful but fragile. Change one part, and you might break everything. Microservices are like LEGO constructions - you can replace, upgrade, or scale individual pieces without affecting the whole structure. That's why Netflix, Amazon, and Spotify use them to serve millions of users reliably.</p>
+            </div>
+        </div>
+        
+        <!-- CORE COMPONENTS SECTION -->
+        <div class="components-section">
+            <h2 class="section-title">🔧 Core Components Deep Dive</h2>
+            <div class="component-grid">
+                <div class="component-card">
+                    <div class="component-header">
+                        🎯 API Gateway - "The Front Door"
+                    </div>
+                    <div class="component-content">
+                        <div class="component-what">
+                            <h4>What it does:</h4>
+                            <p>Single entry point that routes requests to appropriate microservices, like a receptionist directing visitors to different departments.</p>
+                        </div>
+                        <div class="component-what">
+                            <h4>Why it's needed:</h4>
+                            <p>Without it, clients would need to know about every service. API Gateway handles authentication, rate limiting, and request routing centrally.</p>
+                        </div>
+                        <div class="component-example">
+                            <strong>Real Example:</strong> When you visit Amazon.com, the API Gateway routes your login request to User Service, product searches to Catalog Service, and checkout to Payment Service.
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="component-card">
+                    <div class="component-header">
+                        🏠 Service Registry - "The Phone Book"
+                    </div>
+                    <div class="component-content">
+                        <div class="component-what">
+                            <h4>What it does:</h4>
+                            <p>Keeps track of all available services and their locations, like a phone book for microservices to find each other.</p>
+                        </div>
+                        <div class="component-what">
+                            <h4>Why it's needed:</h4>
+                            <p>Services come and go, change locations, or scale up/down. Service Registry ensures services can always find each other dynamically.</p>
+                        </div>
+                        <div class="component-example">
+                            <strong>Real Example:</strong> Netflix's Eureka service registry helps their 700+ microservices discover and communicate with each other across thousands of servers.
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="component-card">
+                    <div class="component-header">
+                        ⚖️ Load Balancer - "The Traffic Director"
+                    </div>
+                    <div class="component-content">
+                        <div class="component-what">
+                            <h4>What it does:</h4>
+                            <p>Distributes incoming requests across multiple instances of the same service to prevent overload and ensure reliability.</p>
+                        </div>
+                        <div class="component-what">
+                            <h4>Why it's needed:</h4>
+                            <p>One service instance can't handle millions of users. Load balancers distribute traffic evenly and route around failed instances.</p>
+                        </div>
+                        <div class="component-example">
+                            <strong>Real Example:</strong> Spotify runs multiple instances of their Music Streaming Service. Load balancers ensure your music keeps playing even if one server fails.
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="component-card">
+                    <div class="component-header">
+                        📨 Message Broker - "The Post Office"
+                    </div>
+                    <div class="component-content">
+                        <div class="component-what">
+                            <h4>What it does:</h4>
+                            <p>Enables asynchronous communication between services through message queues, like a post office handling mail delivery.</p>
+                        </div>
+                        <div class="component-what">
+                            <h4>Why it's needed:</h4>
+                            <p>Services don't always need immediate responses. Message brokers allow services to communicate without waiting, improving performance and reliability.</p>
+                        </div>
+                        <div class="component-example">
+                            <strong>Real Example:</strong> When you place an Amazon order, the Order Service sends messages to Inventory, Payment, and Shipping services without waiting for each to complete.
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="component-card">
+                    <div class="component-header">
+                        🐳 Containerization - "The Shipping Container"
+                    </div>
+                    <div class="component-content">
+                        <div class="component-what">
+                            <h4>What it does:</h4>
+                            <p>Packages each microservice with its dependencies into lightweight, portable containers that run consistently anywhere.</p>
+                        </div>
+                        <div class="component-what">
+                            <h4>Why it's needed:</h4>
+                            <p>Ensures "it works on my machine" becomes "it works everywhere." Containers provide isolation, consistency, and easy deployment.</p>
+                        </div>
+                        <div class="component-example">
+                            <strong>Real Example:</strong> Netflix packages each of their 700+ microservices in Docker containers, allowing them to deploy thousands of times per day reliably.
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="component-card">
+                    <div class="component-header">
+                        🗄️ Database per Service - "Individual Storage Units"
+                    </div>
+                    <div class="component-content">
+                        <div class="component-what">
+                            <h4>What it does:</h4>
+                            <p>Each microservice owns its data and database, preventing tight coupling and allowing independent evolution.</p>
+                        </div>
+                        <div class="component-what">
+                            <h4>Why it's needed:</h4>
+                            <p>Shared databases create dependencies and bottlenecks. Separate databases allow services to choose optimal storage for their specific needs.</p>
+                        </div>
+                        <div class="component-example">
+                            <strong>Real Example:</strong> Amazon's User Service uses relational database for user profiles, while Product Recommendation Service uses graph database for relationship data.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- BENEFITS SECTION -->
+        <div class="benefits-section">
+            <h2 class="section-title">🏆 Why This Architecture Wins</h2>
+            <div class="benefits-grid">
+                <div class="benefit-card">
+                    <span class="benefit-emoji">🚀</span>
+                    <div class="benefit-title">Scalability</div>
+                    <div class="benefit-description">Scale only what you need. If your search feature gets heavy traffic, scale just the search service, not the entire application.</div>
+                </div>
+                <div class="benefit-card">
+                    <span class="benefit-emoji">🛡️</span>
+                    <div class="benefit-title">Fault Isolation</div>
+                    <div class="benefit-description">One service fails, others keep running. Netflix can lose individual services while users keep watching movies seamlessly.</div>
+                </div>
+                <div class="benefit-card">
+                    <span class="benefit-emoji">⚡</span>
+                    <div class="benefit-title">Fast Development</div>
+                    <div class="benefit-description">Teams work independently without stepping on each other. Deploy new features without waiting for other teams.</div>
+                </div>
+                <div class="benefit-card">
+                    <span class="benefit-emoji">🌐</span>
+                    <div class="benefit-title">Technology Freedom</div>
+                    <div class="benefit-description">Use best tool for each job. Python for AI, Java for high-performance services, Node.js for real-time features.</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- VISUAL ARCHITECTURE DEMO SECTION (EXISTING) -->
+        <div class="visual-demo-section">
+            <div class="demo-intro">
+                <h2>🎨 Interactive Microservices Visualization</h2>
+                <p>See how microservices work together in a real application architecture</p>
+            </div>
+            
+            <div class="architecture-container">
+                <!-- Presentation Layer -->
+                <div class="layer-section presentation">
+                    <div class="layer-header">
+                        <div class="layer-title">Presentation Layer</div>
+                        <span class="layer-icon">💻</span>
+                    </div>
+                    
+                    <div class="microservices-container">
+                        <div class="microservices-label">
+                            <span>⚡</span> Microservices
+                        </div>
+                        
+                        <div class="service-box">
+                            <span class="service-icon">👤</span>
+                            <div class="service-name">Account Service</div>
+                            <div class="service-description">User authentication & profiles</div>
+                        </div>
+                        
+                        <div class="service-box">
+                            <span class="service-icon">🔍</span>
+                            <div class="service-name">Search Service</div>
+                            <div class="service-description">Content discovery & filtering</div>
+                        </div>
+                    </div>
+                    
+                    <div class="tech-stack">
+                        <div class="tech-item">
+                            <span class="tech-icon">🅰️</span>
+                            <div class="tech-name">Angular</div>
+                        </div>
+                        <div class="tech-item">
+                            <span class="tech-icon">⚛️</span>
+                            <div class="tech-name">React</div>
+                        </div>
+                        <div class="tech-item">
+                            <span class="tech-icon">🐘</span>
+                            <div class="tech-name">PHP</div>
+                        </div>
+                        <div class="tech-item">
+                            <span class="tech-icon">📜</span>
+                            <div class="tech-name">jQuery</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Application Layer -->
+                <div class="layer-section application">
+                    <div class="layer-header">
+                        <div class="layer-title">Application Layer</div>
+                        <span class="layer-icon">⚙️</span>
+                    </div>
+                    
+                    <div class="microservices-container">
+                        <div class="microservices-label">
+                            <span>⚡</span> Microservices
+                        </div>
+                        
+                        <div class="service-box">
+                            <span class="service-icon">🔥</span>
+                            <div class="service-name">Trending Service</div>
+                            <div class="service-description">Popular content analytics</div>
+                        </div>
+                        
+                        <div class="service-box">
+                            <span class="service-icon">🔄</span>
+                            <div class="service-name">Watch Again Service</div>
+                            <div class="service-description">Continue watching features</div>
+                        </div>
+                        
+                        <div class="service-box">
+                            <span class="service-icon">🤖</span>
+                            <div class="service-name">Recommendation</div>
+                            <div class="service-description">AI-powered suggestions</div>
+                        </div>
+                    </div>
+                    
+                    <div class="tech-stack">
+                        <div class="tech-item">
+                            <span class="tech-icon">☕</span>
+                            <div class="tech-name">Java</div>
+                        </div>
+                        <div class="tech-item">
+                            <span class="tech-icon">🍃</span>
+                            <div class="tech-name">Spring</div>
+                        </div>
+                        <div class="tech-item">
+                            <span class="tech-icon">🌐</span>
+                            <div class="tech-name">.NET</div>
+                        </div>
+                        <div class="tech-item">
+                            <span class="tech-icon">📟</span>
+                            <div class="tech-name">Node.js</div>
+                        </div>
+                        <div class="tech-item">
+                            <span class="tech-icon">🐍</span>
+                            <div class="tech-name">Python</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Data Layer -->
+                <div class="layer-section data">
+                    <div class="layer-header">
+                        <div class="layer-title">Data Layer</div>
+                        <span class="layer-icon">🗄️</span>
+                    </div>
+                    
+                    <div class="microservices-container">
+                        <div class="microservices-label">
+                            <span>⚡</span> Databases
+                        </div>
+                        
+                        <div class="service-box">
+                            <span class="service-icon">🗃️</span>
+                            <div class="service-name">Primary DB</div>
+                            <div class="service-description">User data & content</div>
+                        </div>
+                        
+                        <div class="service-box">
+                            <span class="service-icon">📊</span>
+                            <div class="service-name">Analytics DB</div>
+                            <div class="service-description">Usage patterns & metrics</div>
+                        </div>
+                        
+                        <div class="service-box">
+                            <span class="service-icon">⚡</span>
+                            <div class="service-name">Cache Layer</div>
+                            <div class="service-description">Fast data access</div>
+                        </div>
+                    </div>
+                    
+                    <div class="tech-stack">
+                        <div class="tech-item">
+                            <span class="tech-icon">🐬</span>
+                            <div class="tech-name">MySQL</div>
+                        </div>
+                        <div class="tech-item">
+                            <span class="tech-icon">🍃</span>
+                            <div class="tech-name">MongoDB</div>
+                        </div>
+                        <div class="tech-item">
+                            <span class="tech-icon">🔶</span>
+                            <div class="tech-name">Oracle</div>
+                        </div>
+                        <div class="tech-item">
+                            <span class="tech-icon">🐘</span>
+                            <div class="tech-name">PostgreSQL</div>
+                        </div>
+                        <div class="tech-item">
+                            <span class="tech-icon">🔺</span>
+                            <div class="tech-name">Cassandra</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- REAL-WORLD EXAMPLE SECTION -->
+        <div class="example-section">
+            <h3 class="example-title">💡 Real-World Example</h3>
+            <p class="example-subtitle">When you order from Amazon: 🛒</p>
+            <ol class="example-steps">
+                <li>🛍️ Place Order → Order Service validates your cart and creates order record</li>
+                <li>💳 Payment → Payment Service processes credit card through secure gateway</li>
+                <li>📦 Inventory → Inventory Service reserves items and updates stock levels</li>
+                <li>🚚 Shipping → Logistics Service calculates delivery routes and schedules pickup</li>
+                <li>📧 Notification → Notification Service sends order confirmation and tracking updates</li>
+            </ol>
+            <div style="text-align: center; margin-top: 2rem; padding: 1rem; background: var(--bg-accent); border-radius: 10px;">
+                <strong>Amazing part:</strong> All these services work independently. If Payment Service is slow, your order is still created and will process when payment clears!
+            </div>
+        </div>
+        
+        <!-- CHALLENGES & SOLUTIONS SECTION -->
+        <div class="challenges-section">
+            <h2 class="section-title">⚠️ Challenges & Solutions</h2>
+            <div class="challenge-grid">
+                <div class="challenge-item">
+                    <div class="challenge-problem">🌐 Problem: Service Communication</div>
+                    <div class="challenge-solution">→ Solution: API Gateway Pattern</div>
+                    <div class="challenge-description">Central entry point manages all service communication, authentication, and routing. Think of it as a smart receptionist for your services.</div>
+                </div>
+                <div class="challenge-item">
+                    <div class="challenge-problem">🔍 Problem: Service Discovery</div>
+                    <div class="challenge-solution">→ Solution: Service Registry Pattern</div>
+                    <div class="challenge-description">Dynamic registry keeps track of all services and their locations. Services can find each other automatically as they scale up/down.</div>
+                </div>
+                <div class="challenge-item">
+                    <div class="challenge-problem">💥 Problem: Service Failures</div>
+                    <div class="challenge-solution">→ Solution: Circuit Breaker Pattern</div>
+                    <div class="challenge-description">Automatically stops calling failing services and provides fallback responses. Like a circuit breaker in your house - prevents system-wide failures.</div>
+                </div>
+                <div class="challenge-item">
+                    <div class="challenge-problem">📊 Problem: Data Consistency</div>
+                    <div class="challenge-solution">→ Solution: Event-Driven Architecture</div>
+                    <div class="challenge-description">Services communicate through events to maintain data consistency. When something changes, interested services get notified automatically.</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- CONCLUSION & TAKEAWAYS SECTION -->
+        <div class="conclusion">
+            <p class="conclusion-text">Microservices: Building the Future of Software 🚀</p>
+            <p class="conclusion-subtitle">Transform your understanding from monolithic thinking to microservice architecture mastery</p>
+            
+            <div class="takeaways">
+                <div class="takeaway-item">
+                    <strong>✅ Start Small</strong><br>
+                    Begin with 2-3 services, not 50. Learn the patterns before scaling.
+                </div>
+                <div class="takeaway-item">
+                    <strong>✅ One Job Per Service</strong><br>
+                    Each service should do ONE thing exceptionally well.
+                </div>
+                <div class="takeaway-item">
+                    <strong>✅ Design for Failure</strong><br>
+                    Assume services will fail and plan accordingly from day one.
+                </div>
+                <div class="takeaway-item">
+                    <strong>✅ Monitor Everything</strong><br>
+                    Observability is critical - you can't fix what you can't see.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dark mode functionality
+        function toggleTheme() {
+            const body = document.body;
+            const themeIcon = document.getElementById('themeIcon');
+            const themeText = document.getElementById('themeText');
+            
+            if (body.getAttribute('data-theme') === 'dark') {
+                body.removeAttribute('data-theme');
+                themeIcon.textContent = '🌙';
+                themeText.textContent = 'Dark';
+                localStorage.setItem('theme', 'light');
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                themeIcon.textContent = '☀️';
+                themeText.textContent = 'Light';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+        
+        // Load saved theme on page load
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const themeIcon = document.getElementById('themeIcon');
+            const themeText = document.getElementById('themeText');
+            
+            if (savedTheme === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+                themeIcon.textContent = '☀️';
+                themeText.textContent = 'Light';
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', loadTheme);
+    </script>
+</body>
+</html>

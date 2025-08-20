@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevOps AWS Mastery - 40 Days Journey</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            /* Light mode colors */
+            --bg-primary: #FFFFFF;
+            --bg-secondary: #F2F2F7;
+            --text-primary: #000000;
+            --text-secondary: #8E8E93;
+            --border-color: #E5E5EA;
+            --border-hover: #D1D1D6;
+            --card-shadow: rgba(0, 0, 0, 0.08);
+            --card-shadow-hover: rgba(0, 0, 0, 0.15);
+        }
+        
+        [data-theme="dark"] {
+            /* Dark mode colors */
+            --bg-primary: #000000;
+            --bg-secondary: #1C1C1E;
+            --text-primary: #FFFFFF;
+            --text-secondary: #8E8E93;
+            --border-color: #38383A;
+            --border-hover: #48484A;
+            --card-shadow: rgba(255, 255, 255, 0.05);
+            --card-shadow-hover: rgba(255, 255, 255, 0.1);
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            min-height: 100vh;
+            color: var(--text-primary);
+            padding: 20px;
+            line-height: 1.6;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        .theme-toggle {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            z-index: 1000;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 25px;
+            padding: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px var(--card-shadow);
+        }
+        
+        .theme-toggle:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 25px var(--card-shadow-hover);
+        }
+        
+        .toggle-switch {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+        }
+        
+        .toggle-icon {
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+        
+        .toggle-text {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+        
+        .hero-section {
+            text-align: center;
+            padding: 4rem 2rem;
+            margin-bottom: 3rem;
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.3rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            font-weight: 400;
+        }
+        
+        .progress-section {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .progress-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+        
+        .progress-bar {
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            height: 8px;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+            border: 1px solid var(--border-color);
+        }
+        
+        .progress-fill {
+            background: linear-gradient(90deg, #007AFF, #34C759);
+            height: 100%;
+            width: 2.5%;
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-text {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            text-align: center;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        /* SIMPLE FEATURES SECTION (NO BOXES) */
+        .features-section {
+            text-align: center;
+            padding: 3rem 2rem;
+            margin-bottom: 4rem;
+        }
+        
+        .features-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+        
+        .features-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+        }
+        
+        .features-list {
+            list-style: none;
+            font-size: 1.1rem;
+            line-height: 2;
+            color: var(--text-primary);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .features-list li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .section-header {
+            text-align: center;
+            margin: 4rem 0 3rem;
+        }
+        
+        .section-title {
+            font-size: 2.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+            letter-spacing: -0.01em;
+        }
+        
+        .section-description {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            font-weight: 400;
+        }
+        
+        .days-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+        
+        .day-card {
+            background: var(--bg-primary);
+            border-radius: 16px;
+            padding: 2rem;
+            text-decoration: none;
+            color: inherit;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            box-shadow: 0 4px 20px var(--card-shadow);
+        }
+        
+        .day-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px var(--card-shadow-hover);
+            border-color: var(--border-hover);
+        }
+        
+        .day-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .day-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-right: 1rem;
+            color: #007AFF;
+            min-width: 70px;
+        }
+        
+        .day-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            line-height: 1.3;
+        }
+        
+        .day-description {
+            color: var(--text-secondary);
+            line-height: 1.5;
+            margin-bottom: 1.5rem;
+            font-size: 1rem;
+        }
+        
+        .topics-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .topic-tag {
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            padding: 0.4rem 0.8rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            border: 1px solid var(--border-color);
+        }
+        
+        .topic-tag.aws {
+            background: rgba(255, 153, 0, 0.1);
+            color: #FF9900;
+            border-color: rgba(255, 153, 0, 0.2);
+        }
+        
+        .topic-tag.docker {
+            background: rgba(36, 150, 237, 0.1);
+            color: #2496ED;
+            border-color: rgba(36, 150, 237, 0.2);
+        }
+        
+        .topic-tag.kubernetes {
+            background: rgba(50, 108, 229, 0.1);
+            color: #326CE5;
+            border-color: rgba(50, 108, 229, 0.2);
+        }
+        
+        .day-status {
+            font-size: 0.9rem;
+            padding: 0.6rem 1rem;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: 600;
+            border: none;
+        }
+        
+        .available {
+            background: #34C759;
+            color: #FFFFFF;
+        }
+        
+        .coming-soon {
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+        }
+        
+        .coming-soon-card {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+        
+        .coming-soon-card:hover {
+            transform: none;
+            box-shadow: 0 4px 20px var(--card-shadow);
+        }
+        
+        /* Add this CSS for the intro box */
+
+/* Replace existing .intro-box CSS with this Apple theme version */
+.intro-box {
+    display: inline-block;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    padding: 15px 25px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+    cursor: pointer;
+    text-decoration: none;
+    border: 2px solid var(--border-color);
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 20px var(--card-shadow);
+}
+
+.intro-box:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px var(--card-shadow-hover);
+    border-color: var(--border-hover);
+    background: var(--bg-secondary);
+}
+        
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            .days-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            .day-number {
+                font-size: 2rem;
+            }
+            .theme-toggle {
+                top: 20px;
+                right: 20px;
+            }
+            .features-section {
+                padding: 2rem 1rem;
+            }
+        }
+
+        /* ADD THIS NEW CSS FOR THE BACK BUTTON */
+        .back-link {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            z-index: 1000;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            padding: 14px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-decoration: none;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 20px var(--card-shadow);
+            transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 25px var(--card-shadow-hover);
+        }
+
+        /* Media query for smaller screens */
+        @media (max-width: 768px) {
+            .back-link {
+                top: 20px;
+                left: 20px;
+                padding: 10px 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="../../index.html" class="back-link">← Back to Playground</a>
+
+    <div class="theme-toggle" onclick="toggleTheme()">
+        <div class="toggle-switch">
+            <span class="toggle-icon" id="themeIcon">🌙</span>
+            <span class="toggle-text" id="themeText">Dark</span>
+        </div>
+    </div>
+
+    <div class="hero-section">
+        <h1 class="hero-title">DevOps AWS Mastery</h1>
+        <p class="hero-subtitle">Master DevOps, AWS, and Cloud Engineering through 40 days of hands-on learning</p>
+        
+        <div class="progress-section">
+            <div class="progress-label">Course Progress</div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-text">1 of 40 days completed</div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="features-section">
+            <h2 class="features-title">🎯 Master DevOps From Zero to Hero 🚀</h2>
+            <p class="features-subtitle">
+                Learn real-world DevOps skills through practical, day-by-day lessons. 
+                From basic concepts to AWS deployment — build job-ready expertise with hands-on projects. 💪
+            </p>
+            
+            <ul class="features-list">
+                <li>✅ 60-day structured learning path 📅</li>
+                <li>✅ Real industry scenarios & tools 🛠️</li>
+                <li>✅ Beginner-friendly explanations 📚</li>
+                <li>✅ Practical labs & commands 💻</li>
+            </ul>
+        </div>
+        
+        <div style="text-align: center; margin-bottom: 2rem;">
+    <a href="devops-intro.html" class="intro-box">
+        💼 DevOps Introduction — Real-Life Workflow
+    </a>
+</div>
+
+<div class="section-header">
+            <h2 class="section-title">Week 1: DevOps Fundamentals</h2>
+            <p class="section-description">Build strong foundations in DevOps culture and practices</p>
+        </div>
+
+        <div class="days-grid">
+            <a href="Day01-The-Big-Picture/index.html" class="day-card">
+                <div class="day-header">
+                    <div class="day-number">01</div>
+                    <div class="day-title">The Big Picture</div>
+                </div>
+                <div class="day-description">
+                    Understanding modern application architectures, 3-tier systems, and how companies like Netflix build scalable platforms
+                </div>
+                <div class="topics-preview">
+                    <span class="topic-tag aws">Netflix Architecture</span>
+                    <span class="topic-tag docker">Microservices</span>
+                    <span class="topic-tag">3-Tier Design</span>
+                </div>
+                <div class="day-status available">✓ Available</div>
+            </a>
+
+            <div class="day-card coming-soon-card">
+                <div class="day-header">
+                    <div class="day-number">02</div>
+                    <div class="day-title">AWS Fundamentals</div>
+                </div>
+                <div class="day-description">
+                    Introduction to AWS cloud services, regions, availability zones, and core compute services
+                </div>
+                <div class="topics-preview">
+                    <span class="topic-tag aws">EC2 Instances</span>
+                    <span class="topic-tag aws">S3 Storage</span>
+                    <span class="topic-tag aws">VPC Networking</span>
+                </div>
+                <div class="day-status coming-soon">Coming Soon</div>
+            </div>
+
+            <div class="day-card coming-soon-card">
+                <div class="day-header">
+                    <div class="day-number">03</div>
+                    <div class="day-title">Linux & Command Line</div>
+                </div>
+                <div class="day-description">
+                    Master essential Linux commands, file systems, and shell scripting for DevOps automation
+                </div>
+                <div class="topics-preview">
+                    <span class="topic-tag">Linux Commands</span>
+                    <span class="topic-tag">Shell Scripting</span>
+                    <span class="topic-tag">File Systems</span>
+                </div>
+                <div class="day-status coming-soon">Coming Soon</div>
+            </div>
+
+            <div class="day-card coming-soon-card">
+                <div class="day-header">
+                    <div class="day-number">04</div>
+                    <div class="day-title">Version Control</div>
+                </div>
+                <div class="day-description">
+                    Git fundamentals, branching strategies, and collaborative development workflows
+                </div>
+                <div class="topics-preview">
+                    <span class="topic-tag">Git Basics</span>
+                    <span class="topic-tag">GitHub</span>
+                    <span class="topic-tag">Branching</span>
+                </div>
+                <div class="day-status coming-soon">Coming Soon</div>
+            </div>
+
+            <div class="day-card coming-soon-card">
+                <div class="day-header">
+                    <div class="day-number">05</div>
+                    <div class="day-title">Infrastructure as Code</div>
+                </div>
+                <div class="day-description">
+                    Introduction to Terraform, CloudFormation, and managing infrastructure through code
+                </div>
+                <div class="topics-preview">
+                    <span class="topic-tag aws">Terraform</span>
+                    <span class="topic-tag aws">CloudFormation</span>
+                    <span class="topic-tag">IaC Principles</span>
+                </div>
+                <div class="day-status coming-soon">Coming Soon</div>
+            </div>
+
+            <div class="day-card coming-soon-card">
+                <div class="day-header">
+                    <div class="day-number">06</div>
+                    <div class="day-title">Configuration Management</div>
+                </div>
+                <div class="day-description">
+                    Ansible, Puppet, and Chef for automating server configuration and application deployment
+                </div>
+                <div class="topics-preview">
+                    <span class="topic-tag">Ansible</span>
+                    <span class="topic-tag">Configuration</span>
+                    <span class="topic-tag">Automation</span>
+                </div>
+                <div class="day-status coming-soon">Coming Soon</div>
+            </div>
+
+            <div class="day-card coming-soon-card">
+                <div class="day-header">
+                    <div class="day-number">07</div>
+                    <div class="day-title">Week 1 Project</div>
+                </div>
+                <div class="day-description">
+                    Build your first AWS infrastructure project using the tools and concepts learned this week
+                </div>
+                <div class="topics-preview">
+                    <span class="topic-tag aws">Hands-on Project</span>
+                    <span class="topic-tag aws">AWS Setup</span>
+                    <span class="topic-tag">Integration</span>
+                </div>
+                <div class="day-status coming-soon">Coming Soon</div>
+            </div>
+        </div>
+
+        <div class="section-header">
+            <h2 class="section-title">Week 2: Containerization & Orchestration</h2>
+            <p class="section-description">Master Docker and Kubernetes for modern application deployment</p>
+        </div>
+
+        <div class="days-grid">
+            <div class="day-card coming-soon-card">
+                <div class="day-header">
+                    <div class="day-number">08</div>
+                    <div class="day-title">Docker Fundamentals</div>
+                </div>
+                <div class="day-description">
+                    Container basics, Dockerfile creation, and Docker image management
+                </div>
+                <div class="topics-preview">
+                    <span class="topic-tag docker">Docker Basics</span>
+                    <span class="topic-tag docker">Containers</span>
+                    <span class="topic-tag docker">Images</span>
+                </div>
+                <div class="day-status coming-soon">Coming Soon</div>
+            </div>
+
+            <div class="day-card coming-soon-card">
+                <div class="day-header">
+                    <div class="day-number">09</div>
+                    <div class="day-title">Kubernetes Basics</div>
+                </div>
+                <div class="day-description">
+                    Container orchestration, pods, services, and deployments
+                </div>
+                <div class="topics-preview">
+                    <span class="topic-tag kubernetes">Kubernetes</span>
+                    <span class="topic-tag kubernetes">Pods</span>
+                    <span class="topic-tag kubernetes">Services</span>
+                </div>
+                <div class="day-status coming-soon">Coming Soon</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dark mode functionality
+        function toggleTheme() {
+            const body = document.body;
+            const themeIcon = document.getElementById('themeIcon');
+            const themeText = document.getElementById('themeText');
+            
+            if (body.getAttribute('data-theme') === 'dark') {
+                body.removeAttribute('data-theme');
+                themeIcon.textContent = '🌙';
+                themeText.textContent = 'Dark';
+                localStorage.setItem('theme', 'light');
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                themeIcon.textContent = '☀️';
+                themeText.textContent = 'Light';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+        
+        // Load saved theme on page load
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const themeIcon = document.getElementById('themeIcon');
+            const themeText = document.getElementById('themeText');
+            
+            if (savedTheme === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+                themeIcon.textContent = '☀️';
+                themeText.textContent = 'Light';
+            }
+        }
+        
+        // Update progress based on completed days
+        function updateProgress() {
+            const totalDays = 40;
+            const completedDays = 1;
+            const progressPercentage = (completedDays / totalDays) * 100;
+            document.getElementById('progressFill').style.width = progressPercentage + '%';
+        }
+        
+        // Initialize everything on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadTheme();
+            updateProgress();
+        });
+
+        // Add click handlers for coming soon cards
+        document.querySelectorAll('.coming-soon-card').forEach(card => {
+            card.addEventListener('click', (e) => {
+                e.preventDefault();
+                alert('This day is coming soon! Stay tuned for updates.');
+            });
+        });
+    </script>
+</body>
+</html>

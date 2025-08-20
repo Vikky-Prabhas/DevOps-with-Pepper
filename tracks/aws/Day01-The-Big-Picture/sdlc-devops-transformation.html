@@ -1,0 +1,1598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SDLC vs DevOps Transformation - Complete Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            /* Transformation Orange Light Theme */
+            --bg-primary: #FFFFFF;
+            --bg-secondary: #FFF8F0;
+            --bg-accent: #FFEDD5;
+            --text-primary: #1F2937;
+            --text-secondary: #6B7280;
+            --transformation-orange: #F97316;
+            --transformation-dark-orange: #EA580C;
+            --border-color: #FED7AA;
+            --card-shadow: rgba(249, 115, 22, 0.1);
+            --card-shadow-hover: rgba(249, 115, 22, 0.2);
+            --success-green: #10B981;
+            --error-red: #EF4444;
+        }
+        
+        [data-theme="dark"] {
+            /* Transformation Orange Dark Theme - FIXED */
+            --bg-primary: #1A1A1A;
+            --bg-secondary: #2A2A2A;
+            --bg-accent: #3A3A3A;
+            --text-primary: #FFFFFF;
+            --text-secondary: #E2E8F0;
+            --transformation-orange: #F97316;
+            --transformation-dark-orange: #EA580C;
+            --border-color: #4A4A4A;
+            --card-shadow: rgba(249, 115, 22, 0.2);
+            --card-shadow-hover: rgba(249, 115, 22, 0.3);
+            --success-green: #34D399;
+            --error-red: #F87171;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+            transition: all 0.3s ease;
+        }
+        
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            background: var(--bg-accent);
+            color: var(--transformation-orange);
+            padding: 12px 20px;
+            border-radius: 12px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            border: 1px solid var(--border-color);
+        }
+        
+        .back-button:hover {
+            background: var(--transformation-orange);
+            color: white;
+            transform: translateX(-3px);
+        }
+        
+        .theme-toggle {
+            background: var(--bg-accent);
+            border: 1px solid var(--border-color);
+            border-radius: 25px;
+            padding: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            user-select: none;
+        }
+        
+        .theme-toggle:hover {
+            transform: scale(1.05);
+            background: var(--transformation-orange);
+        }
+        
+        .theme-toggle:hover .toggle-text {
+            color: white;
+        }
+        
+        .toggle-switch {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+        }
+        
+        .toggle-icon {
+            font-size: 1.2rem;
+        }
+        
+        .toggle-text {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        /* HERO SECTION */
+        .hero-section {
+            text-align: center;
+            margin-bottom: 4rem;
+            padding: 4rem 2rem;
+            background: var(--bg-accent);
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, var(--transformation-orange), var(--transformation-dark-orange));
+        }
+        
+        .hero-title {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            color: var(--transformation-orange);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+        
+        .hero-question {
+            font-size: clamp(1rem, 3vw, 1.3rem);
+            color: var(--text-secondary);
+            font-style: italic;
+            margin-bottom: 3rem;
+        }
+        
+        /* TRANSFORMATION VISUALIZATION - FIXED ALIGNMENT */
+        .transformation-visual {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 2rem;
+            align-items: center;
+            justify-items: center;
+            margin-top: 3rem;
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .methodology-mockup {
+            width: 100%;
+            max-width: 320px;
+            min-height: 400px;
+            background: linear-gradient(145deg, #2c2c2c, #1a1a1a);
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .methodology-mockup:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7);
+        }
+        
+        .mockup-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .mockup-title {
+            color: white;
+            font-weight: bold;
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .waterfall-mockup .mockup-title {
+            color: var(--error-red);
+        }
+        
+        .devops-mockup .mockup-title {
+            color: var(--transformation-orange);
+        }
+        
+        .mockup-subtitle {
+            color: #888;
+            font-size: 0.9rem;
+        }
+        
+        .mockup-screen {
+            background: #000;
+            border-radius: 15px;
+            padding: 1.5rem;
+            min-height: 280px;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .phase-item {
+            background: rgba(239, 68, 68, 0.1);
+            padding: 0.8rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: white;
+            border-left: 3px solid var(--error-red);
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        
+        .phase-item:hover {
+            transform: translateX(5px);
+            background: rgba(239, 68, 68, 0.2);
+        }
+        
+        .devops-mockup .phase-item {
+            background: rgba(249, 115, 22, 0.1);
+            border-left-color: var(--transformation-orange);
+        }
+        
+        .devops-mockup .phase-item:hover {
+            background: rgba(249, 115, 22, 0.2);
+        }
+        
+        .phase-duration {
+            font-size: 0.7rem;
+            opacity: 0.8;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+        }
+        
+        .transformation-arrow {
+            font-size: 3rem;
+            color: var(--transformation-orange);
+            animation: pulse 2s infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 60px;
+            background: var(--bg-accent);
+            border-radius: 50%;
+            border: 2px solid var(--transformation-orange);
+        }
+        
+        @keyframes pulse {
+            0%, 100% { 
+                opacity: 0.7; 
+                transform: scale(1); 
+            }
+            50% { 
+                opacity: 1; 
+                transform: scale(1.1); 
+            }
+        }
+        
+        /* SECTION TITLES */
+        .section-title {
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            color: var(--transformation-orange);
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        /* WHAT IS SDLC SECTION */
+        .sdlc-section {
+            margin-bottom: 4rem;
+            background: var(--bg-secondary);
+            padding: 3rem 2rem;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .sdlc-intro {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .sdlc-title {
+            font-size: 2rem;
+            color: var(--transformation-orange);
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        
+        .sdlc-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            font-style: italic;
+            margin-bottom: 2rem;
+        }
+        
+        .sdlc-definition {
+            background: var(--bg-primary);
+            padding: 2rem;
+            border-radius: 15px;
+            border-left: 4px solid var(--transformation-orange);
+            margin-bottom: 2rem;
+        }
+        
+        .sdlc-definition h4 {
+            color: var(--transformation-orange);
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .sdlc-definition p {
+            color: var(--text-primary);
+            font-size: 1.1rem;
+            line-height: 1.7;
+        }
+        
+        .sdlc-phases {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .phase-card {
+            background: var(--bg-primary);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .phase-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px var(--card-shadow-hover);
+        }
+        
+        .phase-number {
+            background: var(--transformation-orange);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin: 0 auto 1rem;
+        }
+        
+        .phase-name {
+            color: var(--text-primary);
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .phase-desc {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        /* DEVOPS SECTION */
+        .devops-section {
+            margin-bottom: 4rem;
+            background: var(--bg-primary);
+            padding: 3rem 2rem;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .devops-intro {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .devops-title {
+            font-size: 2rem;
+            color: var(--transformation-orange);
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        
+        .devops-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            font-style: italic;
+            margin-bottom: 2rem;
+        }
+        
+        .devops-definition {
+            background: var(--bg-secondary);
+            padding: 2rem;
+            border-radius: 15px;
+            border-left: 4px solid var(--transformation-orange);
+            margin-bottom: 2rem;
+        }
+        
+        .devops-definition h4 {
+            color: var(--transformation-orange);
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .devops-definition p {
+            color: var(--text-primary);
+            font-size: 1.1rem;
+            line-height: 1.7;
+        }
+        
+        .devops-phases {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        /* PROBLEM ANALYSIS SECTION - FIXED SIDE BY SIDE */
+        .problem-section {
+            margin-bottom: 4rem;
+            background: var(--bg-primary);
+            padding: 3rem 2rem;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .problem-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .problem-card {
+            background: var(--bg-secondary);
+            padding: 2rem;
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            position: relative;
+            box-shadow: 0 4px 15px var(--card-shadow);
+        }
+        
+        .problem-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px var(--card-shadow-hover);
+        }
+        
+        .problem-card::before {
+            content: '⚠️';
+            position: absolute;
+            top: -15px;
+            left: 2rem;
+            background: var(--error-red);
+            color: white;
+            padding: 0.5rem;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .problem-title {
+            color: var(--error-red);
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .problem-description {
+            color: var(--text-primary);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+        
+        .problem-examples {
+            background: var(--bg-accent);
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 3px solid var(--error-red);
+        }
+        
+        .problem-examples strong {
+            color: var(--error-red);
+        }
+        
+        /* DEVOPS BENEFITS SECTION - FIXED SIDE BY SIDE */
+        .benefits-section {
+            background: var(--bg-accent);
+            padding: 3rem 2rem;
+            border-radius: 20px;
+            margin-bottom: 4rem;
+            border: 1px solid var(--border-color);
+        }
+        
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .benefit-card {
+            background: var(--bg-primary);
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px var(--card-shadow);
+        }
+        
+        .benefit-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 15px 35px var(--card-shadow-hover);
+        }
+        
+        .benefit-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+        
+        .benefit-title {
+            color: var(--transformation-orange);
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .benefit-description {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+        
+        .benefit-metric {
+            background: var(--bg-accent);
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 3px solid var(--transformation-orange);
+            font-weight: 700;
+            color: var(--transformation-orange);
+            font-size: 1.1rem;
+        }
+        
+        /* COMPANY TRANSFORMATION EXAMPLES - FIXED SIDE BY SIDE LAYOUT */
+        .company-examples {
+            margin-bottom: 4rem;
+            background: var(--bg-primary);
+            padding: 3rem 2rem;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .company-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .company-card {
+            background: var(--bg-secondary);
+            border-radius: 15px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 15px var(--card-shadow);
+            transition: all 0.3s ease;
+            max-width: 100%;
+        }
+        
+        .company-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px var(--card-shadow-hover);
+        }
+        
+        .company-header {
+            background: linear-gradient(135deg, var(--transformation-orange), var(--transformation-dark-orange));
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+        }
+        
+        .company-name {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+        }
+        
+        .company-industry {
+            opacity: 0.9;
+            font-size: 0.85rem;
+        }
+        
+        .company-content {
+            padding: 1.5rem;
+        }
+        
+        .transformation-stat {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem;
+            background: var(--bg-accent);
+            border-radius: 8px;
+            margin-bottom: 0.8rem;
+            border-left: 3px solid var(--transformation-orange);
+            transition: all 0.3s ease;
+        }
+        
+        .transformation-stat:hover {
+            transform: translateX(3px);
+        }
+        
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .stat-value {
+            color: var(--transformation-orange);
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        
+        /* SIDE-BY-SIDE COMPARISON TABLES - FIXED */
+        .comparison-section {
+            background: var(--bg-secondary);
+            padding: 3rem 2rem;
+            border-radius: 20px;
+            margin-bottom: 4rem;
+            border: 1px solid var(--border-color);
+        }
+        
+        .tables-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .table-wrapper {
+            background: var(--bg-primary);
+            border-radius: 15px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 15px var(--card-shadow);
+            transition: all 0.3s ease;
+        }
+        
+        .table-wrapper:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px var(--card-shadow-hover);
+        }
+        
+        .table-header {
+            padding: 1.5rem;
+            text-align: center;
+            color: white;
+        }
+        
+        .waterfall-header {
+            background: linear-gradient(135deg, var(--error-red), #DC2626);
+        }
+        
+        .devops-header {
+            background: linear-gradient(135deg, var(--transformation-orange), var(--transformation-dark-orange));
+        }
+        
+        .table-header h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .table-header p {
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+        
+        .comparison-table {
+            padding: 0;
+            overflow-x: auto;
+        }
+        
+        .comparison-table table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--bg-secondary);
+        }
+        
+        .comparison-table th,
+        .comparison-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.9rem;
+        }
+        
+        .comparison-table th {
+            background: var(--bg-accent);
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 1rem;
+        }
+        
+        .comparison-table tr:hover {
+            background: var(--bg-accent);
+        }
+        
+        .comparison-table .traditional {
+            color: var(--error-red);
+            font-weight: 500;
+        }
+        
+        .comparison-table .devops {
+            color: var(--success-green);
+            font-weight: 500;
+        }
+        
+        /* DEVOPS BENEFITS SUMMARY */
+        .devops-summary {
+            margin-top: 3rem;
+            background: var(--bg-accent);
+            padding: 2rem;
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .devops-benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .benefit-summary {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: var(--bg-primary);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+        
+        .benefit-summary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px var(--card-shadow-hover);
+        }
+        
+        .benefit-icon-small {
+            font-size: 2rem;
+            min-width: 50px;
+            text-align: center;
+        }
+        
+        .benefit-content strong {
+            color: var(--transformation-orange);
+            font-size: 1.1rem;
+            display: block;
+            margin-bottom: 0.3rem;
+        }
+        
+        .benefit-content p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        /* CONCLUSION */
+        .conclusion {
+            text-align: center;
+            background: linear-gradient(135deg, var(--transformation-orange), var(--transformation-dark-orange));
+            color: white;
+            padding: 3rem 2rem;
+            border-radius: 20px;
+            margin-top: 4rem;
+        }
+        
+        .conclusion-text {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .conclusion-subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+        }
+        
+        .takeaways {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+            text-align: left;
+        }
+        
+        .takeaway-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1.5rem;
+            border-radius: 10px;
+            border-left: 4px solid white;
+            transition: all 0.3s ease;
+        }
+        
+        .takeaway-item:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-3px);
+        }
+        
+        /* RESPONSIVE DESIGN - FIXED AND ORGANIZED */
+        @media (min-width: 1200px) {
+            .problem-grid,
+            .benefits-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 2rem;
+            }
+        }
+        
+        @media (min-width: 1025px) and (max-width: 1199px) {
+            .problem-grid,
+            .benefits-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1.5rem;
+            }
+        }
+        
+        @media (max-width: 1024px) {
+            .transformation-visual {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .transformation-arrow {
+                transform: rotate(90deg);
+                margin: 1rem 0;
+            }
+            
+            .company-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .tables-container {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .problem-grid,
+            .benefits-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .top-bar {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 15px;
+            }
+            
+            .methodology-mockup {
+                max-width: 300px;
+            }
+            
+            .mockup-screen {
+                min-height: 250px;
+                padding: 1rem;
+            }
+            
+            .phase-item {
+                font-size: 0.8rem;
+                padding: 0.6rem;
+            }
+            
+            .benefits-grid,
+            .problem-grid,
+            .sdlc-phases,
+            .devops-phases {
+                grid-template-columns: 1fr;
+            }
+            
+            .devops-benefits-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .benefit-summary {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .comparison-table th,
+            .comparison-table td {
+                padding: 0.6rem;
+                font-size: 0.8rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: 1.8rem;
+            }
+            
+            .methodology-mockup {
+                max-width: 280px;
+            }
+            
+            .mockup-screen {
+                min-height: 220px;
+            }
+            
+            .section-title {
+                font-size: 1.6rem;
+            }
+            
+            .transformation-arrow {
+                font-size: 2rem;
+                width: 50px;
+                height: 50px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <a href="index.html" class="back-button">← Back to Day 1 Topics</a>
+        
+        <div class="theme-toggle" onclick="
+            const body = document.body;
+            const icon = document.getElementById('themeIcon');
+            const text = document.getElementById('themeText');
+            const isDark = body.getAttribute('data-theme') === 'dark';
+            
+            if (isDark) {
+                body.removeAttribute('data-theme');
+                icon.textContent = '🌙';
+                text.textContent = 'Dark';
+                localStorage.setItem('sdlc-theme', 'light');
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                icon.textContent = '☀️';
+                text.textContent = 'Light';
+                localStorage.setItem('sdlc-theme', 'dark');
+            }
+        " style="cursor: pointer;">
+            <div class="toggle-switch">
+                <span class="toggle-icon" id="themeIcon">🌙</span>
+                <span class="toggle-text" id="themeText">Dark</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <!-- HERO SECTION -->
+        <div class="hero-section">
+            <h1 class="hero-title">🔄 SDLC vs DevOps Transformation 🚀</h1>
+            <p class="hero-question">From Traditional Waterfall Chaos to Modern DevOps Success: The Evolution Every Company Must Make</p>
+            
+            <!-- TRANSFORMATION VISUALIZATION - FIXED ALIGNMENT -->
+            <div class="transformation-visual">
+                <!-- Waterfall Mockup -->
+                <div class="methodology-mockup waterfall-mockup">
+                    <div class="mockup-header">
+                        <div class="mockup-title">❌ Traditional Waterfall</div>
+                        <div class="mockup-subtitle">Rigid & Slow Process</div>
+                    </div>
+                    <div class="mockup-screen">
+                        <div class="phase-item">
+                            <span>📋 Requirements Gathering</span>
+                            <span class="phase-duration">3-6 months</span>
+                        </div>
+                        <div class="phase-item">
+                            <span>🎨 System Design</span>
+                            <span class="phase-duration">2-4 months</span>
+                        </div>
+                        <div class="phase-item">
+                            <span>💻 Development Phase</span>
+                            <span class="phase-duration">6-12 months</span>
+                        </div>
+                        <div class="phase-item">
+                            <span>🧪 Testing Phase</span>
+                            <span class="phase-duration">2-3 months</span>
+                        </div>
+                        <div class="phase-item">
+                            <span>🚀 Deployment</span>
+                            <span class="phase-duration">1-2 months</span>
+                        </div>
+                        <div class="phase-item">
+                            <span>🔧 Maintenance</span>
+                            <span class="phase-duration">Ongoing</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="transformation-arrow">→</div>
+                
+                <!-- DevOps Mockup -->
+                <div class="methodology-mockup devops-mockup">
+                    <div class="mockup-header">
+                        <div class="mockup-title">✅ Modern DevOps</div>
+                        <div class="mockup-subtitle">Agile & Continuous</div>
+                    </div>
+                    <div class="mockup-screen">
+                        <div class="phase-item">
+                            <span>🎯 Sprint Planning</span>
+                            <span class="phase-duration">1-2 weeks</span>
+                        </div>
+                        <div class="phase-item">
+                            <span>⚡ Continuous Development</span>
+                            <span class="phase-duration">Daily commits</span>
+                        </div>
+                        <div class="phase-item">
+                            <span>🤖 Automated Testing</span>
+                            <span class="phase-duration">Minutes</span>
+                        </div>
+                        <div class="phase-item">
+                            <span>🔄 Continuous Integration</span>
+                            <span class="phase-duration">Every commit</span>
+                        </div>
+                        <div class="phase-item">
+                            <span>🚀 Continuous Deployment</span>
+                            <span class="phase-duration">Multiple/day</span>
+                        </div>
+                        <div class="phase-item">
+                            <span>📊 Monitor & Feedback</span>
+                            <span class="phase-duration">Real-time</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- WHAT IS SDLC SECTION -->
+        <div class="sdlc-section">
+            <div class="sdlc-intro">
+                <h2 class="sdlc-title">🎯 What is SDLC?</h2>
+                <p class="sdlc-subtitle">"Think of it like a recipe for building software applications"</p>
+            </div>
+            
+            <div class="sdlc-definition">
+                <h4>📚 SDLC (Software Development Life Cycle) Explained Simply</h4>
+                <p><strong>SDLC</strong> is a structured, step-by-step process that organizations follow to design, develop, test, and deploy software applications. Just like building a house has phases (planning → design → construction → inspection → move-in), software development follows similar phases to ensure high-quality, reliable applications that meet user needs.</p>
+            </div>
+            
+            <div class="sdlc-definition">
+                <h4>🏗️ Real-World Analogy: Building a House</h4>
+                <p>Imagine you're building a house. You don't just start hammering nails randomly! You follow a process: <strong>Plan</strong> what you want → <strong>Design</strong> blueprints → <strong>Build</strong> foundation first → <strong>Construct</strong> walls and roof → <strong>Test</strong> electrical and plumbing → <strong>Move in</strong> and live there → <strong>Maintain</strong> when things break. SDLC works the same way for software!</p>
+            </div>
+            
+            <h3 style="text-align: center; color: var(--transformation-orange); font-size: 1.8rem; margin: 2rem 0;">📋 The 7 SDLC Phases</h3>
+            <div class="sdlc-phases">
+                <div class="phase-card">
+                    <div class="phase-number">1</div>
+                    <div class="phase-name">📋 Planning</div>
+                    <div class="phase-desc">Define project goals, scope, timelines, and resources needed</div>
+                </div>
+                <div class="phase-card">
+                    <div class="phase-number">2</div>
+                    <div class="phase-name">📊 Requirements Analysis</div>
+                    <div class="phase-desc">Gather detailed user needs and system specifications</div>
+                </div>
+                <div class="phase-card">
+                    <div class="phase-number">3</div>
+                    <div class="phase-name">🎨 System Design</div>
+                    <div class="phase-desc">Create architecture, UI/UX design, and technical blueprints</div>
+                </div>
+                <div class="phase-card">
+                    <div class="phase-number">4</div>
+                    <div class="phase-name">💻 Development</div>
+                    <div class="phase-desc">Write actual code and build the application features</div>
+                </div>
+                <div class="phase-card">
+                    <div class="phase-number">5</div>
+                    <div class="phase-name">🧪 Testing</div>
+                    <div class="phase-desc">Find bugs, verify functionality, ensure quality standards</div>
+                </div>
+                <div class="phase-card">
+                    <div class="phase-number">6</div>
+                    <div class="phase-name">🚀 Deployment</div>
+                    <div class="phase-desc">Release software to production environment for users</div>
+                </div>
+                <div class="phase-card">
+                    <div class="phase-number">7</div>
+                    <div class="phase-name">🔧 Maintenance</div>
+                    <div class="phase-desc">Ongoing support, bug fixes, and feature updates</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- WHAT IS DEVOPS SECTION -->
+        <div class="devops-section">
+            <div class="devops-intro">
+                <h2 class="devops-title">🚀 What is DevOps?</h2>
+                <p class="devops-subtitle">"The modern evolution that transformed how software is built and delivered"</p>
+            </div>
+            
+            <div class="devops-definition">
+                <h4>⚡ DevOps Explained Simply</h4>
+                <p><strong>DevOps</strong> combines Development (Dev) and Operations (Ops) into a unified approach that emphasizes collaboration, automation, and continuous delivery. Instead of throwing code "over the wall" from development to operations, DevOps creates cross-functional teams that own the entire software lifecycle - from planning to production monitoring.</p>
+            </div>
+            
+            <div class="devops-definition">
+                <h4>🔧 Why DevOps Revolutionized Software Development</h4>
+                <p>Traditional SDLC treated development and operations as separate entities, creating bottlenecks and delays. DevOps breaks down these silos, automates manual processes, and enables organizations like Netflix to deploy 4,000+ times per day while maintaining 99.99% uptime. It's not just about tools - it's a cultural transformation that makes teams faster, more reliable, and more responsive to customer needs.</p>
+            </div>
+            
+            <h3 style="text-align: center; color: var(--transformation-orange); font-size: 1.8rem; margin: 2rem 0;">🔄 The DevOps Lifecycle</h3>
+            <div class="devops-phases">
+                <div class="phase-card">
+                    <div class="phase-number">1</div>
+                    <div class="phase-name">📋 Plan</div>
+                    <div class="phase-desc">Define features, user stories, and sprint goals collaboratively</div>
+                </div>
+                <div class="phase-card">
+                    <div class="phase-number">2</div>
+                    <div class="phase-name">💻 Code</div>
+                    <div class="phase-desc">Develop features with version control and collaborative coding</div>
+                </div>
+                <div class="phase-card">
+                    <div class="phase-number">3</div>
+                    <div class="phase-name">🔨 Build</div>
+                    <div class="phase-desc">Automated compilation, packaging, and dependency management</div>
+                </div>
+                <div class="phase-card">
+                    <div class="phase-number">4</div>
+                    <div class="phase-name">🧪 Test</div>
+                    <div class="phase-desc">Automated unit, integration, and security testing</div>
+                </div>
+                <div class="phase-card">
+                    <div class="phase-number">5</div>
+                    <div class="phase-name">🚀 Release</div>
+                    <div class="phase-desc">Automated deployment pipelines and release management</div>
+                </div>
+                <div class="phase-card">
+                    <div class="phase-number">6</div>
+                    <div class="phase-name">📊 Monitor</div>
+                    <div class="phase-desc">Real-time observability, logging, and performance monitoring</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- PROBLEM ANALYSIS SECTION - FIXED SIDE BY SIDE -->
+        <div class="problem-section">
+            <h2 class="section-title">💥 Why Traditional SDLC Fails in Today's Digital World</h2>
+            <div class="problem-grid">
+                <div class="problem-card">
+                    <div class="problem-title">🐌 Painfully Slow Time-to-Market</div>
+                    <div class="problem-description">
+                        Traditional waterfall SDLC takes 12-18 months to deliver even simple features. By the time you launch, competitors have already captured the market and user needs have completely changed. The business world moves at digital speed, but waterfall crawls.
+                    </div>
+                    <div class="problem-examples">
+                        <strong>Real Impact:</strong> Blackberry took 2 years to respond to iPhone's touchscreen innovation. Nokia's Windows Phone came 4 years too late. Blockbuster couldn't adapt to Netflix's streaming model fast enough because of slow development cycles.
+                    </div>
+                </div>
+                
+                <div class="problem-card">
+                    <div class="problem-title">🎯 Late Feedback = Building Wrong Product</div>
+                    <div class="problem-description">
+                        No user feedback until final deployment means building the wrong product for months or years. Testing happens at the very end when it's expensive to fix critical issues. One major failure can sink the entire project and millions of dollars.
+                    </div>
+                    <div class="problem-examples">
+                        <strong>Real Impact:</strong> Healthcare.gov launch disaster cost $1.7 billion because major usability and performance issues were discovered only during final testing phase, not during development.
+                    </div>
+                </div>
+                
+                <div class="problem-card">
+                    <div class="problem-title">⏳ Massive Resource Waste & Bottlenecks</div>
+                    <div class="problem-description">
+                        Teams sit idle for months waiting for previous phases to complete. Developers can't start until design is 100% finished. Testers wait months for any code to test. Massive coordination overhead destroys productivity.
+                    </div>
+                    <div class="problem-examples">
+                        <strong>Real Impact:</strong> Studies show 60-70% of development time is wasted in handoffs and waiting periods. Teams of 100+ people using waterfall often deliver less value than teams of 10 using modern DevOps practices.
+                    </div>
+                </div>
+                
+                <div class="problem-card">
+                    <div class="problem-title">🐛 Quality & Reliability Disasters</div>
+                    <div class="problem-description">
+                        Integration happens at the end, causing massive compatibility issues between components. Manual testing misses critical edge cases. Deployment is a scary, error-prone manual process that frequently fails in production.
+                    </div>
+                    <div class="problem-examples">
+                        <strong>Real Impact:</strong> Knight Capital lost $440 million in 45 minutes due to a manual deployment error. Traditional manual methods create higher risk of catastrophic failures in production.
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- DEVOPS BENEFITS SECTION - FIXED SIDE BY SIDE -->
+        <div class="benefits-section">
+            <h2 class="section-title">🏆 Why DevOps Completely Dominates Traditional SDLC</h2>
+            <div class="benefits-grid">
+                <div class="benefit-card">
+                    <span class="benefit-icon">⚡</span>
+                    <div class="benefit-title">Lightning Speed & Agility</div>
+                    <div class="benefit-description">
+                        Deploy features in hours instead of months. Respond to market changes instantly. Fail fast, learn faster, and stay ahead of competitors who are still stuck in waterfall thinking.
+                    </div>
+                    <div class="benefit-metric">200x faster deployment frequency than traditional methods</div>
+                </div>
+                
+                <div class="benefit-card">
+                    <span class="benefit-icon">🛡️</span>
+                    <div class="benefit-title">Superior Quality & Reliability</div>
+                    <div class="benefit-description">
+                        Automated testing catches bugs early when they're cheap to fix. Continuous monitoring prevents outages before they impact users. Small, frequent releases dramatically reduce deployment risk.
+                    </div>
+                    <div class="benefit-metric">24x faster recovery from failures with 3x lower failure rates</div>
+                </div>
+                
+                <div class="benefit-card">
+                    <span class="benefit-icon">🎯</span>
+                    <div class="benefit-title">Laser Customer Focus</div>
+                    <div class="benefit-description">
+                        Get real user feedback within days of development. A/B test features quickly with actual users. Build exactly what customers want and need, not what you think they might want.
+                    </div>
+                    <div class="benefit-metric">3x higher customer satisfaction and retention rates</div>
+                </div>
+                
+                <div class="benefit-card">
+                    <span class="benefit-icon">💰</span>
+                    <div class="benefit-title">Massive Cost Efficiency</div>
+                    <div class="benefit-description">
+                        Automation eliminates expensive manual work. Cloud infrastructure scales precisely with demand. Early bug detection saves millions in post-release fixes and reputation damage.
+                    </div>
+                    <div class="benefit-metric">50% reduction in operational costs and 40% faster feature delivery</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- COMPANY TRANSFORMATION EXAMPLES - FIXED SIDE BY SIDE SMALL BOXES -->
+        <div class="company-examples">
+            <h2 class="section-title">🏢 Real Company DevOps Transformations</h2>
+            <div class="company-grid">
+                <div class="company-card">
+                    <div class="company-header">
+                        <div class="company-name">Netflix</div>
+                        <div class="company-industry">Streaming Entertainment</div>
+                    </div>
+                    <div class="company-content">
+                        <div class="transformation-stat">
+                            <span class="stat-label">Daily Deployments</span>
+                            <span class="stat-value">4,000+</span>
+                        </div>
+                        <div class="transformation-stat">
+                            <span class="stat-label">Microservices</span>
+                            <span class="stat-value">700+ services</span>
+                        </div>
+                        <div class="transformation-stat">
+                            <span class="stat-label">Global Users</span>
+                            <span class="stat-value">260+ million</span>
+                        </div>
+                        <div class="transformation-stat">
+                            <span class="stat-label">Uptime</span>
+                            <span class="stat-value">99.99%</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="company-card">
+                    <div class="company-header">
+                        <div class="company-name">Amazon</div>
+                        <div class="company-industry">E-commerce & Cloud</div>
+                    </div>
+                    <div class="company-content">
+                        <div class="transformation-stat">
+                            <span class="stat-label">Deployment Speed</span>
+                            <span class="stat-value">Every 11.7 sec</span>
+                        </div>
+                        <div class="transformation-stat">
+                            <span class="stat-label">Team Size</span>
+                            <span class="stat-value">2-pizza teams</span>
+                        </div>
+                        <div class="transformation-stat">
+                            <span class="stat-label">Services</span>
+                            <span class="stat-value">1,000+ micro</span>
+                        </div>
+                        <div class="transformation-stat">
+                            <span class="stat-label">AWS Revenue</span>
+                            <span class="stat-value">$80B annually</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="company-card">
+                    <div class="company-header">
+                        <div class="company-name">Spotify</div>
+                        <div class="company-industry">Music Streaming</div>
+                    </div>
+                    <div class="company-content">
+                        <div class="transformation-stat">
+                            <span class="stat-label">Squad Model</span>
+                            <span class="stat-value">Autonomous</span>
+                        </div>
+                        <div class="transformation-stat">
+                            <span class="stat-label">Daily Releases</span>
+                            <span class="stat-value">1,000+</span>
+                        </div>
+                        <div class="transformation-stat">
+                            <span class="stat-label">A/B Tests</span>
+                            <span class="stat-value">1,000+ running</span>
+                        </div>
+                        <div class="transformation-stat">
+                            <span class="stat-label">Users</span>
+                            <span class="stat-value">400+ million</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- COMPARISON TABLES - SIDE BY SIDE LAYOUT FIXED -->
+        <div class="comparison-section">
+            <h2 class="section-title">📊 Traditional SDLC vs DevOps: Complete Comparison</h2>
+            
+            <!-- Side-by-Side Tables Container -->
+            <div class="tables-container">
+                <!-- Traditional SDLC Table -->
+                <div class="table-wrapper">
+                    <div class="table-header waterfall-header">
+                        <h3>❌ Traditional SDLC (Waterfall)</h3>
+                        <p>Sequential, Rigid, Slow Process</p>
+                    </div>
+                    <div class="comparison-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Aspect</th>
+                                    <th>Waterfall Approach</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Development Approach</strong></td>
+                                    <td class="traditional">Sequential phases, rigid structure</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Team Structure</strong></td>
+                                    <td class="traditional">Specialized silos, handoffs between teams</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Deployment Frequency</strong></td>
+                                    <td class="traditional">Once every 6-12 months</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Testing Strategy</strong></td>
+                                    <td class="traditional">Manual testing at the end</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Feedback Loop</strong></td>
+                                    <td class="traditional">After project completion (months/years)</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Change Management</strong></td>
+                                    <td class="traditional">Changes are expensive and discouraged</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Risk Level</strong></td>
+                                    <td class="traditional">High risk, big-bang releases</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Quality Assurance</strong></td>
+                                    <td class="traditional">Dedicated QA phase at end</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Infrastructure</strong></td>
+                                    <td class="traditional">Manual setup and configuration</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>User Involvement</strong></td>
+                                    <td class="traditional">Minimal until final delivery</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- DevOps Table -->
+                <div class="table-wrapper">
+                    <div class="table-header devops-header">
+                        <h3>✅ Modern DevOps</h3>
+                        <p>Continuous, Collaborative, Fast Process</p>
+                    </div>
+                    <div class="comparison-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Aspect</th>
+                                    <th>DevOps Approach</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Development Approach</strong></td>
+                                    <td class="devops">Iterative, continuous, flexible</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Team Structure</strong></td>
+                                    <td class="devops">Cross-functional, collaborative teams</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Deployment Frequency</strong></td>
+                                    <td class="devops">Multiple times per day</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Testing Strategy</strong></td>
+                                    <td class="devops">Automated testing throughout pipeline</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Feedback Loop</strong></td>
+                                    <td class="devops">Continuous, real-time feedback</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Change Management</strong></td>
+                                    <td class="devops">Changes are expected and embraced</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Risk Level</strong></td>
+                                    <td class="devops">Low risk, small incremental releases</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Quality Assurance</strong></td>
+                                    <td class="devops">Quality built-in throughout process</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Infrastructure</strong></td>
+                                    <td class="devops">Infrastructure as Code, automated</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>User Involvement</strong></td>
+                                    <td class="devops">Continuous user feedback and testing</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DevOps Key Benefits Summary -->
+            <div class="devops-summary">
+                <h3 style="text-align: center; color: var(--transformation-orange); font-size: 1.8rem; margin: 2rem 0;">🚀 Why DevOps Wins</h3>
+                <div class="devops-benefits-grid">
+                    <div class="benefit-summary">
+                        <span class="benefit-icon-small">⚡</span>
+                        <div class="benefit-content">
+                            <strong>200x Faster Deployments</strong>
+                            <p>Deploy features in hours, not months</p>
+                        </div>
+                    </div>
+                    <div class="benefit-summary">
+                        <span class="benefit-icon-small">🛡️</span>
+                        <div class="benefit-content">
+                            <strong>24x Faster Recovery</strong>
+                            <p>Fix issues quickly with automated rollbacks</p>
+                        </div>
+                    </div>
+                    <div class="benefit-summary">
+                        <span class="benefit-icon-small">🎯</span>
+                        <div class="benefit-content">
+                            <strong>3x Higher Satisfaction</strong>
+                            <p>Customers get what they want, when they want it</p>
+                        </div>
+                    </div>
+                    <div class="benefit-summary">
+                        <span class="benefit-icon-small">💰</span>
+                        <div class="benefit-content">
+                            <strong>50% Cost Reduction</strong>
+                            <p>Automation eliminates expensive manual work</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- CONCLUSION -->
+        <div class="conclusion">
+            <p class="conclusion-text">🌟 The Future Belongs to DevOps Organizations</p>
+            <p class="conclusion-subtitle">Companies that fail to transform will be left behind in the digital transformation revolution</p>
+            
+            <div class="takeaways">
+                <div class="takeaway-item">
+                    <strong>✅ Start Small, Think Big</strong><br>
+                    Begin transformation with one high-impact team and one critical project. Prove measurable value before scaling organization-wide.
+                </div>
+                <div class="takeaway-item">
+                    <strong>✅ Automate Everything Possible</strong><br>
+                    If a task is done manually more than twice, automate it completely. Automation is the foundation of DevOps success.
+                </div>
+                <div class="takeaway-item">
+                    <strong>✅ Measure & Optimize Continuously</strong><br>
+                    Use real data and metrics to track transformation progress. Continuously optimize based on evidence, not assumptions.
+                </div>
+                <div class="takeaway-item">
+                    <strong>✅ Embrace Failure as Learning</strong><br>
+                    Fail fast, learn faster, recover quickly. Build organizational resilience through experimentation and rapid iteration.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Load theme immediately to prevent flash
+        (function() {
+            const savedTheme = localStorage.getItem('sdlc-theme') || 'light';
+            if (savedTheme === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+            }
+        })();
+        
+        // Set theme toggle state when DOM loads
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('sdlc-theme') || 'light';
+            const themeIcon = document.getElementById('themeIcon');
+            const themeText = document.getElementById('themeText');
+            
+            if (savedTheme === 'dark') {
+                if (themeIcon) themeIcon.textContent = '☀️';
+                if (themeText) themeText.textContent = 'Light';
+            } else {
+                if (themeIcon) themeIcon.textContent = '🌙';
+                if (themeText) themeText.textContent = 'Dark';
+            }
+            
+            // Add scroll animations
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, observerOptions);
+            
+            // Observe cards for smooth animations
+            document.querySelectorAll('.problem-card, .benefit-card, .company-card, .phase-card').forEach(card => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                observer.observe(card);
+            });
+        });
+    </script>
+</body>
+</html>

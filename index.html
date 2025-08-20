@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="auto">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>DevOps Tracks — Learn Free, Beginner‑Friendly</title>
+  <meta name="description" content="Learn DevOps the free way: AWS, Azure, GCP, CloudOps, Shell Scripting, and DevOps Tools. Beginner‑friendly, practical tracks." />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Explore DevOps Tracks — AWS, Azure, GCP, CloudOps, Shell, Tools" />
+  <meta property="og:description" content="Pick a track and start learning DevOps the free way. Beginner‑friendly, hands‑on, and practical." />
+
+  <link rel="stylesheet" href="styles.css" />
+  <script>
+    // Lightweight theme toggle that persists preference
+    (function(){
+      const root = document.documentElement;
+      const key = 'ui:theme';
+      const saved = localStorage.getItem(key);
+
+      function system() {
+        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+      function apply(mode) {
+        if (mode === 'auto') {
+          root.setAttribute('data-theme', system());
+        } else {
+          root.setAttribute('data-theme', mode);
+        }
+      }
+
+      apply(saved || 'auto');
+
+      const mq = window.matchMedia('(prefers-color-scheme: dark)');
+      mq.addEventListener('change', () => {
+        const pref = localStorage.getItem(key) || 'auto';
+        if (pref === 'auto') apply('auto');
+      });
+
+      window.__toggleTheme = function(){
+        const pref = localStorage.getItem(key) || 'auto';
+        const next = pref === 'auto' ? 'light' : (pref === 'light' ? 'dark' : 'auto');
+        localStorage.setItem(key, next);
+        apply(next);
+        const btn = document.querySelector('.theme-toggle');
+        if (btn) btn.setAttribute('data-mode', next);
+      };
+
+      document.addEventListener('DOMContentLoaded', ()=>{
+        const btn = document.querySelector('.theme-toggle');
+        if (btn) btn.setAttribute('data-mode', localStorage.getItem(key) || 'auto');
+      });
+    })();
+  </script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="brand">
+      <span class="dot" aria-hidden="true"></span>
+      <span class="title">DevOps Playground</span>
+    </div>
+    <nav class="site-nav" aria-label="Primary">
+      <!-- Removed “Tracks” per your request -->
+      <button class="theme-toggle" type="button" aria-label="Toggle theme" onclick="__toggleTheme()">
+        <span class="mode auto">Auto</span>
+        <span class="mode light">Light</span>
+        <span class="mode dark">Dark</span>
+      </button>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" aria-labelledby="hero-title">
+      <h1 id="hero-title">Explore DevOps tracks</h1>
+      <p class="subtitle">Choose a track and start learning—free, beginner‑friendly, practical.</p>
+      <div class="hero-clouds" aria-hidden="true"></div>
+    </section>
+
+    <!-- Fixed 3-per-row grid (responsive to 2 and 1) -->
+    <section id="tracks" class="deck" aria-labelledby="deck-title">
+      <h2 id="deck-title" class="section-title">DevOps Track Cards</h2>
+
+      <!-- Row 1 -->
+      <a class="card" href="tracks/aws/index.html" aria-label="Open AWS DevOps track">
+        <img src="assets/logos/aws.svg" width="68" height="68" alt="" class="card-icon" />
+        <div class="card-head">
+          <h3 class="card-title">AWS DevOps</h3>
+          <span class="level">Beginner</span>
+        </div>
+        <p class="card-desc">Cloud + CI/CD on AWS. Start from Day 1.</p>
+        <div class="card-meta">
+          <span class="chip tiny">Git</span>
+          <span class="chip tiny">CI/CD</span>
+        </div>
+      </a>
+
+      <a class="card" href="tracks/azure/index.html" aria-label="Open Azure DevOps track">
+        <img src="assets/logos/azure.svg" width="68" height="68" alt="" class="card-icon" />
+        <div class="card-head">
+          <h3 class="card-title">Azure DevOps</h3>
+          <span class="level">Beginner</span>
+        </div>
+        <p class="card-desc">Pipelines, Repos, and cloud fundamentals.</p>
+        <div class="card-meta">
+          <span class="chip tiny">Repos</span>
+          <span class="chip tiny">Pipelines</span>
+        </div>
+      </a>
+
+      <a class="card" href="tracks/gcp/index.html" aria-label="Open GCP DevOps track">
+        <img src="assets/logos/gcp.svg" width="68" height="68" alt="" class="card-icon" />
+        <div class="card-head">
+          <h3 class="card-title">GCP DevOps</h3>
+          <span class="level">Beginner</span>
+        </div>
+        <p class="card-desc">Cloud Build, GKE, artifacts, observability.</p>
+        <div class="card-meta">
+          <span class="chip tiny">Cloud Build</span>
+          <span class="chip tiny">GKE</span>
+        </div>
+      </a>
+
+      <!-- Row 2 -->
+      <a class="card" href="tracks/cloudops/index.html" aria-label="Open CloudOps track">
+        <img src="assets/logos/cloudops.svg" width="68" height="68" alt="" class="card-icon" />
+        <div class="card-head">
+          <h3 class="card-title">CloudOps</h3>
+          <span class="level">Core</span>
+        </div>
+        <p class="card-desc">Reliability, monitoring, cost control, SRE basics.</p>
+        <div class="card-meta">
+          <span class="chip tiny">SRE</span>
+          <span class="chip tiny">Monitoring</span>
+        </div>
+      </a>
+
+      <a class="card" href="tracks/shell/index.html" aria-label="Open Shell Scripting track">
+        <!-- TEMP icon until you add assets/logos/shell.svg -->
+        <img src="assets/logos/shell.svg" width="68" height="68" alt="" class="card-icon" />
+        <div class="card-head">
+          <h3 class="card-title">Shell Scripting</h3>
+          <span class="level">Beginner</span>
+        </div>
+        <p class="card-desc">Bash fundamentals, automation, cron jobs, parsing logs, and safe scripting habits.</p>
+        <div class="card-meta">
+          <span class="chip tiny">Bash</span>
+          <span class="chip tiny">Automation</span>
+        </div>
+      </a>
+
+      <a class="card" href="tracks/tools/index.html" aria-label="Open DevOps Tools track">
+        <!-- TEMP icon until you add assets/logos/tools.svg -->
+        <img src="assets/logos/tools.svg" width="68" height="68" alt="" class="card-icon" />
+        <div class="card-head">
+          <h3 class="card-title">DevOps Tools</h3>
+          <span class="level">Core</span>
+        </div>
+        <p class="card-desc">Tools across DevOps: Git, Docker, K8s, IaC, CI/CD, monitoring.</p>
+        <div class="card-meta">
+          <span class="chip tiny">Git</span>
+          <span class="chip tiny">Docker</span>
+          <span class="chip tiny">K8s</span>
+        </div>
+      </a>
+    </section>
+
+    <!-- Helper + teaser under grid -->
+    <section class="below-deck">
+      <p class="helper">Not sure where to start? <strong>Pick AWS</strong>—it has the most beginner labs and jobs.</p>
+
+      <a class="info-card info-link" href="what-is-devops/" aria-label="Open What is DevOps page">
+        <div class="info-head">
+          <h3 class="info-title">What is DevOps?</h3>
+          <span class="pill">Beginner guide</span>
+        </div>
+        <p class="info-teaser">A simple intro for absolute beginners: what it is, why it matters, and the main paths.</p>
+        <div class="info-actions">
+          <span class="btn primary">Read guide →</span>
+        </div>
+      </a>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>Made with ❤️ for learners · Free and Open Source © Pepper</p>
+  </footer>
+</body>
+</html>

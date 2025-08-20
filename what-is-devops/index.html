@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>What is DevOps? — Beginner Guide</title>
+  <meta name="description" content="A simple DevOps introduction for absolute beginners: what it is, why it matters, and common learning paths." />
+  <link rel="stylesheet" href="../styles.css" />
+  <script src="../app.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="brand">
+      <span class="dot" aria-hidden="true"></span>
+      <a class="title nav-link" href="../">DevOps Playground</a>
+    </div>
+    <nav class="site-nav" aria-label="Primary">
+      <a href="../#tracks" class="nav-link">Tracks</a>
+      <button class="theme-toggle" aria-label="Toggle dark or light theme">
+        <span class="sun" aria-hidden="true">☀️</span>
+        <span class="moon" aria-hidden="true">🌙</span>
+      </button>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" aria-labelledby="title">
+      <h1 id="title">What is DevOps?</h1>
+      <p class="subtitle">A simple guide for absolute beginners.</p>
+      <div class="hero-clouds" aria-hidden="true"></div>
+    </section>
+
+    <section class="how" style="max-width: 900px;">
+      <h2>The big idea</h2>
+      <p><strong>DevOps</strong> is a way of building and shipping software where developers and operations work as one team. The goals are to release features faster, improve reliability, and reduce costs.</p>
+
+      <h2>Key practices</h2>
+      <ul class="steps">
+        <li>Automated builds, tests, and deployments (CI/CD).</li>
+        <li>Version control and code review for everything—app and infra.</li>
+        <li>Infrastructure as Code (IaC) and containers.</li>
+        <li>Monitoring, logging, and feedback loops.</li>
+        <li>Small, frequent changes over rare, risky releases.</li>
+      </ul>
+
+      <h2>Common learning paths</h2>
+      <ul class="steps">
+        <li><strong>AWS DevOps</strong> — largest job market, generous free tier, many labs.</li>
+        <li><strong>Azure DevOps</strong> — fits organizations using Microsoft stack.</li>
+        <li><strong>GCP DevOps</strong> — great for Kubernetes, data, and ML workflows.</li>
+        <li><strong>CloudOps</strong> — SRE mindset, incidents, monitoring, and costs that apply to any cloud.</li>
+      </ul>
+
+      <h2>Where to start</h2>
+      <p>If unsure, start with AWS DevOps. Learn the basics of IAM, CLI, EC2, S3, and build your first CI/CD pipeline. The skills transfer easily to Azure and GCP.</p>
+
+      <div style="margin-top:16px; display:flex; gap:10px; flex-wrap:wrap;">
+        <a class="btn primary" href="../tracks/aws/">Start AWS Day‑1</a>
+        <a class="btn" style="border:1px solid color-mix(in oklab, var(--text) 14%, transparent); background: color-mix(in oklab, var(--text) 6%, transparent); color: var(--text);" href="../">Back to tracks</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>Made with care for students and freshers. © Pepper</p>
+  </footer>
+</body>
+</html>

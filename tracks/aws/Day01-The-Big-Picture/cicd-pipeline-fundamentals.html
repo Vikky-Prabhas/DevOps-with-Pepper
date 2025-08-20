@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CI/CD Pipeline Fundamentals - Complete Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            /* Purple Automation Theme */
+            --bg-primary: #FFFFFF;
+            --bg-secondary: #F8F7FF;
+            --bg-accent: #E6E3FF;
+            --text-primary: #1F2937;
+            --text-secondary: #6B7280;
+            --pipeline-purple: #8B5CF6;
+            --pipeline-dark-purple: #7C3AED;
+            --border-color: #D8B4FE;
+            --card-shadow: rgba(139, 92, 246, 0.1);
+            --card-shadow-hover: rgba(139, 92, 246, 0.2);
+            --success-green: #10B981;
+            --warning-orange: #F59E0B;
+            --error-red: #EF4444;
+        }
+        
+        [data-theme="dark"] {
+            /* Purple Dark Theme */
+            --bg-primary: #1E1B2E;
+            --bg-secondary: #2A2438;
+            --bg-accent: #3A3047;
+            --text-primary: #F9FAFB;
+            --text-secondary: #D1D5DB;
+            --pipeline-purple: #8B5CF6;
+            --pipeline-dark-purple: #7C3AED;
+            --border-color: #6B5B95;
+            --card-shadow: rgba(139, 92, 246, 0.15);
+            --card-shadow-hover: rgba(139, 92, 246, 0.25);
+            --success-green: #34D399;
+            --warning-orange: #FBBF24;
+            --error-red: #F87171;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+            transition: all 0.3s ease;
+        }
+        
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            background: var(--bg-accent);
+            color: var(--pipeline-purple);
+            padding: 12px 20px;
+            border-radius: 12px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            border: 1px solid var(--border-color);
+        }
+        
+        .back-button:hover {
+            background: var(--pipeline-purple);
+            color: white;
+            transform: translateX(-3px);
+        }
+        
+        .theme-toggle {
+            background: var(--bg-accent);
+            border: 1px solid var(--border-color);
+            border-radius: 25px;
+            padding: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .theme-toggle:hover {
+            transform: scale(1.05);
+            background: var(--pipeline-purple);
+        }
+        
+        .theme-toggle:hover .toggle-text {
+            color: white;
+        }
+        
+        .toggle-switch {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+        }
+        
+        .toggle-icon {
+            font-size: 1.2rem;
+        }
+        
+        .toggle-text {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        /* HERO SECTION */
+        .hero-section {
+            text-align: center;
+            margin-bottom: 4rem;
+            padding: 4rem 2rem;
+            background: var(--bg-accent);
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, var(--pipeline-purple), var(--pipeline-dark-purple));
+        }
+        
+        .hero-title {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            color: var(--pipeline-purple);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+        
+        .hero-question {
+            font-size: clamp(1rem, 3vw, 1.3rem);
+            color: var(--text-secondary);
+            font-style: italic;
+            margin-bottom: 3rem;
+        }
+        
+        /* INTERACTIVE CI/CD PIPELINE VISUALIZATION */
+        .pipeline-visual {
+            margin-top: 3rem;
+            padding: 2rem;
+            background: var(--bg-primary);
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 8px 25px var(--card-shadow);
+        }
+        
+        .pipeline-title {
+            text-align: center;
+            color: var(--pipeline-purple);
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+        }
+        
+        .pipeline-flow {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .pipeline-stage {
+            flex: 1;
+            min-width: 140px;
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            border-radius: 15px;
+            text-align: center;
+            border: 2px solid var(--border-color);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .pipeline-stage:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px var(--card-shadow-hover);
+            border-color: var(--pipeline-purple);
+        }
+        
+        .stage-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        
+        .stage-name {
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stage-time {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+        
+        .pipeline-arrow {
+            color: var(--pipeline-purple);
+            font-size: 2rem;
+            animation: flow 2s infinite;
+        }
+        
+        @keyframes flow {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+        
+        /* SECTION TITLES */
+        .section-title {
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            color: var(--pipeline-purple);
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        /* WHAT IS CI/CD SECTION */
+        .cicd-section {
+            margin-bottom: 4rem;
+            background: var(--bg-secondary);
+            padding: 3rem 2rem;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .cicd-intro {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .cicd-title {
+            font-size: 2rem;
+            color: var(--pipeline-purple);
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        
+        .cicd-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            font-style: italic;
+            margin-bottom: 2rem;
+        }
+        
+        .cicd-definition {
+            background: var(--bg-primary);
+            padding: 2rem;
+            border-radius: 15px;
+            border-left: 4px solid var(--pipeline-purple);
+            margin-bottom: 2rem;
+        }
+        
+        .cicd-definition h4 {
+            color: var(--pipeline-purple);
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .cicd-definition p {
+            color: var(--text-primary);
+            font-size: 1.1rem;
+            line-height: 1.7;
+        }
+        
+        .cicd-breakdown {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .breakdown-card {
+            background: var(--bg-primary);
+            padding: 2rem;
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .breakdown-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px var(--card-shadow-hover);
+        }
+        
+        .breakdown-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+        
+        .ci-card .breakdown-icon { color: var(--success-green); }
+        .cd-card .breakdown-icon { color: var(--warning-orange); }
+        .deploy-card .breakdown-icon { color: var(--pipeline-purple); }
+        
+        .breakdown-name {
+            color: var(--text-primary);
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .breakdown-desc {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+        
+        /* BENEFITS SECTION */
+        .benefits-section {
+            background: var(--bg-accent);
+            padding: 3rem 2rem;
+            border-radius: 20px;
+            margin-bottom: 4rem;
+            border: 1px solid var(--border-color);
+        }
+        
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .benefit-card {
+            background: var(--bg-primary);
+            padding: 2rem;
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px var(--card-shadow);
+        }
+        
+        .benefit-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 15px 35px var(--card-shadow-hover);
+        }
+        
+        .benefit-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--pipeline-purple);
+            display: block;
+            text-align: center;
+        }
+        
+        .benefit-title {
+            color: var(--pipeline-purple);
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        .benefit-description {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        
+        .benefit-metric {
+            background: var(--bg-accent);
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 3px solid var(--pipeline-purple);
+            font-weight: 700;
+            color: var(--pipeline-purple);
+            font-size: 1rem;
+            text-align: center;
+        }
+        
+        /* COMPANY EXAMPLES */
+        .company-examples {
+            margin-bottom: 4rem;
+            background: var(--bg-primary);
+            padding: 3rem 2rem;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .company-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .company-card {
+            background: var(--bg-secondary);
+            border-radius: 15px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 15px var(--card-shadow);
+            transition: all 0.3s ease;
+        }
+        
+        .company-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px var(--card-shadow-hover);
+        }
+        
+        .company-header {
+            background: linear-gradient(135deg, var(--pipeline-purple), var(--pipeline-dark-purple));
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+        }
+        
+        .company-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+        }
+        
+        .company-industry {
+            opacity: 0.9;
+            font-size: 0.85rem;
+        }
+        
+        .company-content {
+            padding: 1.5rem;
+        }
+        
+        .cicd-stat {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem;
+            background: var(--bg-accent);
+            border-radius: 8px;
+            margin-bottom: 0.8rem;
+            border-left: 3px solid var(--pipeline-purple);
+            transition: all 0.3s ease;
+        }
+        
+        .cicd-stat:hover {
+            transform: translateX(3px);
+        }
+        
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .stat-value {
+            color: var(--pipeline-purple);
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        
+        /* IMPLEMENTATION GUIDE */
+        .implementation-section {
+            background: var(--bg-secondary);
+            border: 2px solid var(--pipeline-purple);
+            border-radius: 20px;
+            padding: 3rem 2rem;
+            margin: 4rem 0;
+        }
+        
+        .implementation-title {
+            color: var(--pipeline-purple);
+            font-size: 2.2rem;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .implementation-subtitle {
+            text-align: center;
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 3rem;
+        }
+        
+        .implementation-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .step-card {
+            background: var(--bg-primary);
+            padding: 2rem;
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+            position: relative;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px var(--card-shadow);
+        }
+        
+        .step-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px var(--card-shadow-hover);
+        }
+        
+        .step-number {
+            position: absolute;
+            top: -15px;
+            left: 2rem;
+            background: var(--pipeline-purple);
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        
+        .step-title {
+            color: var(--text-primary);
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin: 1rem 0;
+        }
+        
+        .step-description {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+        
+        .step-tools {
+            background: var(--bg-accent);
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 3px solid var(--pipeline-purple);
+        }
+        
+        .step-tools strong {
+            color: var(--pipeline-purple);
+        }
+        
+        /* CONCLUSION */
+        .conclusion {
+            text-align: center;
+            background: linear-gradient(135deg, var(--pipeline-purple), var(--pipeline-dark-purple));
+            color: white;
+            padding: 3rem 2rem;
+            border-radius: 20px;
+            margin-top: 4rem;
+        }
+        
+        .conclusion-text {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .conclusion-subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+        }
+        
+        .takeaways {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+            text-align: left;
+        }
+        
+        .takeaway-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1.5rem;
+            border-radius: 10px;
+            border-left: 4px solid white;
+            transition: all 0.3s ease;
+        }
+        
+        .takeaway-item:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-3px);
+        }
+        
+        /* RESPONSIVE DESIGN */
+        @media (max-width: 1024px) {
+            .company-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .benefits-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .top-bar {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 15px;
+            }
+            
+            .pipeline-flow {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .pipeline-arrow {
+                transform: rotate(90deg);
+                margin: 1rem 0;
+            }
+            
+            .cicd-breakdown,
+            .implementation-steps {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: 1.8rem;
+            }
+            
+            .section-title {
+                font-size: 1.6rem;
+            }
+            
+            .pipeline-stage {
+                min-width: 120px;
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <a href="index.html" class="back-button">← Back to Day 1 Topics</a>
+        
+        <div class="theme-toggle" onclick="toggleTheme()">
+            <div class="toggle-switch">
+                <span class="toggle-icon" id="themeIcon">🌙</span>
+                <span class="toggle-text" id="themeText">Dark</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <!-- HERO SECTION -->
+        <div class="hero-section">
+            <h1 class="hero-title">🎯 CI/CD Pipeline Fundamentals 🚀</h1>
+            <p class="hero-question">Why do some companies deploy 1,000+ times per day while others struggle with monthly releases?</p>
+            
+            <!-- INTERACTIVE CI/CD PIPELINE VISUALIZATION -->
+            <div class="pipeline-visual">
+                <h3 class="pipeline-title">🔄 Complete CI/CD Pipeline Flow</h3>
+                <div class="pipeline-flow">
+                    <div class="pipeline-stage">
+                        <span class="stage-icon">💻</span>
+                        <div class="stage-name">Code</div>
+                        <div class="stage-time">Developer commits</div>
+                    </div>
+                    
+                    <div class="pipeline-arrow">→</div>
+                    
+                    <div class="pipeline-stage">
+                        <span class="stage-icon">🔨</span>
+                        <div class="stage-name">Build</div>
+                        <div class="stage-time">2-5 minutes</div>
+                    </div>
+                    
+                    <div class="pipeline-arrow">→</div>
+                    
+                    <div class="pipeline-stage">
+                        <span class="stage-icon">🧪</span>
+                        <div class="stage-name">Test</div>
+                        <div class="stage-time">5-15 minutes</div>
+                    </div>
+                    
+                    <div class="pipeline-arrow">→</div>
+                    
+                    <div class="pipeline-stage">
+                        <span class="stage-icon">🚀</span>
+                        <div class="stage-name">Deploy</div>
+                        <div class="stage-time">1-3 minutes</div>
+                    </div>
+                    
+                    <div class="pipeline-arrow">→</div>
+                    
+                    <div class="pipeline-stage">
+                        <span class="stage-icon">📊</span>
+                        <div class="stage-name">Monitor</div>
+                        <div class="stage-time">Real-time</div>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin-top: 2rem; padding: 1rem; background: var(--bg-accent); border-radius: 10px;">
+                    <strong>Total Time: From Code to Production in 10-25 minutes!</strong>
+                </div>
+            </div>
+        </div>
+        
+        <!-- WHAT IS CI/CD SECTION -->
+        <div class="cicd-section">
+            <div class="cicd-intro">
+                <h2 class="cicd-title">🎯 What is CI/CD?</h2>
+                <p class="cicd-subtitle">"Think of it like a McDonald's kitchen assembly line for software development"</p>
+            </div>
+            
+            <div class="cicd-definition">
+                <h4>🏭 CI/CD Explained with McDonald's Analogy</h4>
+                <p><strong>CI/CD (Continuous Integration/Continuous Deployment)</strong> is like a McDonald's kitchen assembly line for software. Just like McDonald's can serve thousands of customers quickly because they have a standardized, automated process (prep → cook → assemble → serve), CI/CD creates an automated "assembly line" for software that can deploy code changes thousands of times per day safely and reliably.</p>
+            </div>
+            
+            <div class="cicd-definition">
+                <h4>⚡ Why CI/CD Revolutionary</h4>
+                <p>Before CI/CD, software deployment was like cooking a gourmet meal from scratch every time - slow, manual, and error-prone. CI/CD transforms deployment into a fast, automated factory process. When Netflix deploys 4,000+ times per day or Amazon deploys every 11.7 seconds, they're using CI/CD pipelines to make it safe, fast, and reliable.</p>
+            </div>
+            
+            <h3 style="text-align: center; color: var(--pipeline-purple); font-size: 1.8rem; margin: 2rem 0;">🔧 Breaking Down CI vs CD vs CD</h3>
+            <div class="cicd-breakdown">
+                <div class="breakdown-card ci-card">
+                    <span class="breakdown-icon">🔄</span>
+                    <div class="breakdown-name">Continuous Integration (CI)</div>
+                    <div class="breakdown-desc">Multiple developers merge code changes into shared repository frequently (multiple times per day). Automated tests run immediately to catch conflicts and bugs early.</div>
+                </div>
+                <div class="breakdown-card cd-card">
+                    <span class="breakdown-icon">📦</span>
+                    <div class="breakdown-name">Continuous Delivery (CD)</div>
+                    <div class="breakdown-desc">Code changes are automatically prepared for release to production. Human approval still required for final deployment. Release-ready at any time.</div>
+                </div>
+                <div class="breakdown-card deploy-card">
+                    <span class="breakdown-icon">🚀</span>
+                    <div class="breakdown-name">Continuous Deployment (CD)</div>
+                    <div class="breakdown-desc">Code changes automatically deployed to production without human intervention. Every change that passes tests goes live immediately.</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- BENEFITS SECTION -->
+        <div class="benefits-section">
+            <h2 class="section-title">🏆 Why Every Development Team Needs CI/CD</h2>
+            <div class="benefits-grid">
+                <div class="benefit-card">
+                    <span class="benefit-icon">⚡</span>
+                    <div class="benefit-title">Lightning-Fast Deployments</div>
+                    <div class="benefit-description">
+                        Deploy features in minutes instead of weeks. Respond to customer needs instantly. Fix bugs and security issues immediately instead of waiting for release windows.
+                    </div>
+                    <div class="benefit-metric">Deploy 1,000x faster than traditional methods</div>
+                </div>
+                
+                <div class="benefit-card">
+                    <span class="benefit-icon">🛡️</span>
+                    <div class="benefit-title">Superior Code Quality</div>
+                    <div class="benefit-description">
+                        Automated testing catches bugs before they reach users. Code integration happens continuously, preventing large merge conflicts and compatibility issues.
+                    </div>
+                    <div class="benefit-metric">80% reduction in production bugs</div>
+                </div>
+                
+                <div class="benefit-card">
+                    <span class="benefit-icon">👥</span>
+                    <div class="benefit-title">Enhanced Team Collaboration</div>
+                    <div class="benefit-description">
+                        Multiple developers work on same codebase without conflicts. Everyone sees changes immediately. Faster feedback loops improve communication and coordination.
+                    </div>
+                    <div class="benefit-metric">3x improvement in team productivity</div>
+                </div>
+                
+                <div class="benefit-card">
+                    <span class="benefit-icon">💰</span>
+                    <div class="benefit-title">Massive Cost Savings</div>
+                    <div class="benefit-description">
+                        Automation eliminates manual deployment work. Early bug detection saves millions in post-production fixes. Faster time-to-market increases revenue.
+                    </div>
+                    <div class="benefit-metric">60% reduction in deployment costs</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- COMPANY CI/CD EXAMPLES -->
+        <div class="company-examples">
+            <h2 class="section-title">🏢 How Top Companies Use CI/CD</h2>
+            <div class="company-grid">
+                <div class="company-card">
+                    <div class="company-header">
+                        <div class="company-name">Netflix</div>
+                        <div class="company-industry">Streaming Platform</div>
+                    </div>
+                    <div class="company-content">
+                        <div class="cicd-stat">
+                            <span class="stat-label">Daily Deployments</span>
+                            <span class="stat-value">4,000+</span>
+                        </div>
+                        <div class="cicd-stat">
+                            <span class="stat-label">Pipeline Stages</span>
+                            <span class="stat-value">15+ automated</span>
+                        </div>
+                        <div class="cicd-stat">
+                            <span class="stat-label">Test Coverage</span>
+                            <span class="stat-value">95%+</span>
+                        </div>
+                        <div class="cicd-stat">
+                            <span class="stat-label">Deployment Time</span>
+                            <span class="stat-value">8-12 minutes</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="company-card">
+                    <div class="company-header">
+                        <div class="company-name">Amazon</div>
+                        <div class="company-industry">E-commerce & Cloud</div>
+                    </div>
+                    <div class="company-content">
+                        <div class="cicd-stat">
+                            <span class="stat-label">Deployment Frequency</span>
+                            <span class="stat-value">Every 11.7 sec</span>
+                        </div>
+                        <div class="cicd-stat">
+                            <span class="stat-label">Services</span>
+                            <span class="stat-value">1,000+ independent</span>
+                        </div>
+                        <div class="cicd-stat">
+                            <span class="stat-label">Automated Testing</span>
+                            <span class="stat-value">100% coverage</span>
+                        </div>
+                        <div class="cicd-stat">
+                            <span class="stat-label">Rollback Time</span>
+                            <span class="stat-value">30 seconds</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="company-card">
+                    <div class="company-header">
+                        <div class="company-name">Google</div>
+                        <div class="company-industry">Search & Cloud</div>
+                    </div>
+                    <div class="company-content">
+                        <div class="cicd-stat">
+                            <span class="stat-label">Code Commits</span>
+                            <span class="stat-value">25,000+ daily</span>
+                        </div>
+                        <div class="cicd-stat">
+                            <span class="stat-label">Automated Tests</span>
+                            <span class="stat-value">100M+ daily</span>
+                        </div>
+                        <div class="cicd-stat">
+                            <span class="stat-label">Build Success</span>
+                            <span class="stat-value">99.9% rate</span>
+                        </div>
+                        <div class="cicd-stat">
+                            <span class="stat-label">Pipeline Speed</span>
+                            <span class="stat-value">5-10 minutes</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- IMPLEMENTATION GUIDE -->
+        <div class="implementation-section">
+            <h3 class="implementation-title">🚀 How to Implement CI/CD in Your Organization</h3>
+            <p class="implementation-subtitle">Step-by-step guide to build your first CI/CD pipeline</p>
+            
+            <div class="implementation-steps">
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <div class="step-title">🏗️ Set Up Version Control</div>
+                    <div class="step-description">
+                        Establish centralized code repository with branching strategy. All code changes must go through version control before any CI/CD automation can begin.
+                    </div>
+                    <div class="step-tools">
+                        <strong>Essential Tools:</strong> Git, GitHub, GitLab, Bitbucket, branching strategies (GitFlow, GitHub Flow), pull request workflows.
+                    </div>
+                </div>
+                
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <div class="step-title">🤖 Automate Build Process</div>
+                    <div class="step-description">
+                        Create automated build scripts that compile, package, and prepare your application for testing. Every code commit should trigger an automatic build.
+                    </div>
+                    <div class="step-tools">
+                        <strong>Build Tools:</strong> Jenkins, GitHub Actions, GitLab CI, Azure DevOps, Docker, Maven, npm, Gradle, build scripts, dependency management.
+                    </div>
+                </div>
+                
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <div class="step-title">🧪 Implement Automated Testing</div>
+                    <div class="step-description">
+                        Build comprehensive test suite including unit tests, integration tests, and end-to-end tests. Tests must run automatically and provide clear pass/fail feedback.
+                    </div>
+                    <div class="step-tools">
+                        <strong>Testing Stack:</strong> Jest, Selenium, Cypress, JUnit, pytest, test coverage tools, API testing, security scanning, performance testing.
+                    </div>
+                </div>
+                
+                <div class="step-card">
+                    <div class="step-number">4</div>
+                    <div class="step-title">🚀 Configure Deployment Pipeline</div>
+                    <div class="step-description">
+                        Set up automated deployment to staging and production environments. Include rollback mechanisms and deployment approval processes for critical environments.
+                    </div>
+                    <div class="step-tools">
+                        <strong>Deployment Tools:</strong> Kubernetes, Docker, AWS CodeDeploy, Azure DevOps, Terraform, Ansible, blue-green deployments, canary releases.
+                    </div>
+                </div>
+                
+                <div class="step-card">
+                    <div class="step-number">5</div>
+                    <div class="step-title">📊 Add Monitoring & Alerting</div>
+                    <div class="step-description">
+                        Implement comprehensive monitoring for build pipelines, deployments, and application health. Set up alerts for pipeline failures and application issues.
+                    </div>
+                    <div class="step-tools">
+                        <strong>Monitoring Suite:</strong> Prometheus, Grafana, ELK Stack, DataDog, New Relic, PagerDuty, application logs, performance metrics, error tracking.
+                    </div>
+                </div>
+                
+                <div class="step-card">
+                    <div class="step-number">6</div>
+                    <div class="step-title">🔒 Integrate Security</div>
+                    <div class="step-description">
+                        Add security scanning to every stage of the pipeline. Include vulnerability assessment, dependency scanning, and compliance checks before production deployment.
+                    </div>
+                    <div class="step-tools">
+                        <strong>Security Tools:</strong> SonarQube, OWASP dependency check, container scanning, secret management, SAST/DAST tools, compliance automation, penetration testing.
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- CONCLUSION -->
+        <div class="conclusion">
+            <p class="conclusion-text">🌟 CI/CD is the Foundation of Modern Software Development</p>
+            <p class="conclusion-subtitle">Organizations without CI/CD cannot compete in today's fast-paced digital world</p>
+            
+            <div class="takeaways">
+                <div class="takeaway-item">
+                    <strong>✅ Start Simple, Scale Gradually</strong><br>
+                    Begin with basic build automation, then add testing, deployment, and monitoring incrementally. Perfect the process before adding complexity.
+                </div>
+                <div class="takeaway-item">
+                    <strong>✅ Automate Everything Possible</strong><br>
+                    Manual processes are slow, error-prone, and don't scale. Invest in automation for builds, tests, deployments, and monitoring.
+                </div>
+                <div class="takeaway-item">
+                    <strong>✅ Quality Gates are Non-Negotiable</strong><br>
+                    Never sacrifice quality for speed. Comprehensive automated testing ensures high-quality releases at high velocity.
+                </div>
+                <div class="takeaway-item">
+                    <strong>✅ Monitor Everything, Always</strong><br>
+                    Observability into pipelines and applications is crucial. You can't improve what you can't measure and monitor.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Enhanced dark mode functionality
+        function toggleTheme() {
+            const body = document.body;
+            const themeIcon = document.getElementById('themeIcon');
+            const themeText = document.getElementById('themeText');
+            
+            const isDark = body.hasAttribute('data-theme') && body.getAttribute('data-theme') === 'dark';
+            
+            if (isDark) {
+                body.removeAttribute('data-theme');
+                themeIcon.textContent = '🌙';
+                themeText.textContent = 'Dark';
+                localStorage.setItem('cicd-theme', 'light');
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                themeIcon.textContent = '☀️';
+                themeText.textContent = 'Light';
+                localStorage.setItem('cicd-theme', 'dark');
+            }
+        }
+        
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('cicd-theme') || localStorage.getItem('theme') || 'light';
+            const body = document.body;
+            const themeIcon = document.getElementById('themeIcon');
+            const themeText = document.getElementById('themeText');
+            
+            if (savedTheme === 'dark') {
+                body.setAttribute('data-theme', 'dark');
+                if (themeIcon) themeIcon.textContent = '☀️';
+                if (themeText) themeText.textContent = 'Light';
+            } else {
+                body.removeAttribute('data-theme');
+                if (themeIcon) themeIcon.textContent = '🌙';
+                if (themeText) themeText.textContent = 'Dark';
+            }
+        }
+        
+        // Initialize and add interactive effects
+        document.addEventListener('DOMContentLoaded', function() {
+            loadTheme();
+            
+            // Add click effects to pipeline stages
+            document.querySelectorAll('.pipeline-stage').forEach((stage, index) => {
+                stage.addEventListener('click', function() {
+                    const stages = ['Code Commit', 'Automated Build', 'Test Execution', 'Deployment', 'Monitoring'];
+                    const descriptions = [
+                        'Developer commits code changes to version control repository',
+                        'Automated build system compiles and packages the application',
+                        'Comprehensive test suite runs automatically to verify code quality',
+                        'Application is automatically deployed to staging/production environment',
+                        'Real-time monitoring tracks application performance and health'
+                    ];
+                    
+                    alert(`${stages[index]}: ${descriptions[index]}`);
+                });
+            });
+            
+            // Add intersection observer for animations
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, observerOptions);
+            
+            // Observe cards for smooth scroll animations
+            document.querySelectorAll('.benefit-card, .company-card, .step-card, .breakdown-card').forEach(card => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                observer.observe(card);
+            });
+        });
+    </script>
+</body>
+</html>

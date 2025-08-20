@@ -1,0 +1,1594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deployment Strategies Mastery - Complete Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            /* Teal/Cyan Deployment Light Theme */
+            --bg-primary: #FFFFFF;
+            --bg-secondary: #F0FDFA;
+            --bg-accent: #CCFBF1;
+            --text-primary: #1F2937;
+            --text-secondary: #6B7280;
+            --deploy-teal: #14B8A6;
+            --deploy-dark-teal: #0D9488;
+            --deploy-cyan: #06B6D4;
+            --deploy-light-cyan: #67E8F9;
+            --border-color: #A7F3D0;
+            --card-shadow: rgba(20, 184, 166, 0.1);
+            --card-shadow-hover: rgba(20, 184, 166, 0.2);
+            --success-green: #10B981;
+            --warning-orange: #F59E0B;
+            --error-red: #EF4444;
+            
+            /* Strategy-specific colors */
+            --blue-green-blue: #3B82F6;
+            --blue-green-green: #10B981;
+            --canary-yellow: #F59E0B;
+            --rolling-purple: #8B5CF6;
+            --ab-orange: #F97316;
+            --shadow-gray: #6B7280;
+        }
+        
+        [data-theme="dark"] {
+            /* Teal/Cyan Deployment Dark Theme */
+            --bg-primary: #0F1419;
+            --bg-secondary: #1E2A2A;
+            --bg-accent: #2A3A3A;
+            --text-primary: #F8FAFC;
+            --text-secondary: #CBD5E1;
+            --deploy-teal: #5EEAD4;
+            --deploy-dark-teal: #2DD4BF;
+            --deploy-cyan: #67E8F9;
+            --deploy-light-cyan: #A5F3FC;
+            --border-color: #4A5A5A;
+            --card-shadow: rgba(94, 234, 212, 0.2);
+            --card-shadow-hover: rgba(94, 234, 212, 0.3);
+            --success-green: #34D399;
+            --warning-orange: #FBBF24;
+            --error-red: #F87171;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+            transition: all 0.3s ease;
+        }
+        
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            background: var(--bg-accent);
+            color: var(--deploy-teal);
+            padding: 12px 20px;
+            border-radius: 12px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            border: 1px solid var(--border-color);
+        }
+        
+        .back-button:hover {
+            background: var(--deploy-teal);
+            color: white;
+            transform: translateX(-3px);
+        }
+        
+        .theme-toggle {
+            background: var(--bg-accent);
+            border: 1px solid var(--border-color);
+            border-radius: 25px;
+            padding: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            user-select: none;
+        }
+        
+        .theme-toggle:hover {
+            transform: scale(1.05);
+            background: var(--deploy-teal);
+        }
+        
+        .theme-toggle:hover .toggle-text {
+            color: white;
+        }
+        
+        .toggle-switch {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+        }
+        
+        .toggle-icon {
+            font-size: 1.2rem;
+        }
+        
+        .toggle-text {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        /* HERO SECTION */
+        .hero-section {
+            text-align: center;
+            margin-bottom: 4rem;
+            padding: 4rem 2rem;
+            background: var(--bg-accent);
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, var(--deploy-teal), var(--deploy-cyan), var(--deploy-dark-teal));
+        }
+        
+        .hero-title {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            color: var(--deploy-teal);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+            background: linear-gradient(45deg, var(--deploy-teal), var(--deploy-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .hero-question {
+            font-size: clamp(1rem, 3vw, 1.3rem);
+            color: var(--text-secondary);
+            font-style: italic;
+            margin-bottom: 3rem;
+        }
+        
+        /* DISASTER STORY CALLOUT */
+        .disaster-callout {
+            background: linear-gradient(135deg, var(--error-red), #DC2626);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin: 2rem 0;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .disaster-callout::before {
+            content: '⚠️';
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 2rem;
+            opacity: 0.5;
+        }
+        
+        .disaster-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        
+        .disaster-description {
+            line-height: 1.7;
+            opacity: 0.95;
+        }
+        
+        /* SECTION TITLES */
+        .section-title {
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            color: var(--deploy-teal);
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        /* DEPLOYMENT INTRO SECTION */
+        .deployment-intro-section {
+            margin-bottom: 4rem;
+            background: var(--bg-secondary);
+            padding: 3rem 2rem;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .deployment-intro {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .deployment-intro-title {
+            font-size: 2rem;
+            color: var(--deploy-teal);
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        
+        .deployment-intro-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            font-style: italic;
+            margin-bottom: 2rem;
+        }
+        
+        .deployment-definition {
+            background: var(--bg-primary);
+            padding: 2rem;
+            border-radius: 15px;
+            border-left: 4px solid var(--deploy-teal);
+            margin-bottom: 2rem;
+        }
+        
+        .deployment-definition h4 {
+            color: var(--deploy-teal);
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .deployment-definition p {
+            color: var(--text-primary);
+            font-size: 1.1rem;
+            line-height: 1.7;
+        }
+        
+        /* STRATEGY COMPARISON SECTION */
+        .strategy-comparison {
+            margin-bottom: 4rem;
+            background: var(--bg-primary);
+            padding: 3rem 2rem;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .strategies-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .strategy-card {
+            background: var(--bg-secondary);
+            border-radius: 15px;
+            padding: 2rem;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px var(--card-shadow);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .strategy-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+        }
+        
+        .strategy-card.blue-green::before { background: linear-gradient(90deg, var(--blue-green-blue), var(--blue-green-green)); }
+        .strategy-card.canary::before { background: var(--canary-yellow); }
+        .strategy-card.rolling::before { background: var(--rolling-purple); }
+        .strategy-card.ab-testing::before { background: var(--ab-orange); }
+        .strategy-card.shadow::before { background: var(--shadow-gray); }
+        .strategy-card.recreate::before { background: var(--error-red); }
+        
+        .strategy-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px var(--card-shadow-hover);
+        }
+        
+        .strategy-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .strategy-icon {
+            font-size: 2.5rem;
+        }
+        
+        .blue-green .strategy-icon { color: var(--blue-green-blue); }
+        .canary .strategy-icon { color: var(--canary-yellow); }
+        .rolling .strategy-icon { color: var(--rolling-purple); }
+        .ab-testing .strategy-icon { color: var(--ab-orange); }
+        .shadow .strategy-icon { color: var(--shadow-gray); }
+        .recreate .strategy-icon { color: var(--error-red); }
+        
+        .strategy-name {
+            color: var(--text-primary);
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+        
+        .strategy-description {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+        
+        .strategy-metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .metric {
+            text-align: center;
+            padding: 1rem;
+            background: var(--bg-accent);
+            border-radius: 8px;
+            border-left: 3px solid var(--deploy-teal);
+        }
+        
+        .metric-label {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            margin-bottom: 0.3rem;
+        }
+        
+        .metric-value {
+            color: var(--text-primary);
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        
+        .strategy-pros-cons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        .pros, .cons {
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+        
+        .pros {
+            background: rgba(16, 185, 129, 0.1);
+            border-left: 3px solid var(--success-green);
+        }
+        
+        .cons {
+            background: rgba(239, 68, 68, 0.1);
+            border-left: 3px solid var(--error-red);
+        }
+        
+        .pros-title, .cons-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .pros-title { color: var(--success-green); }
+        .cons-title { color: var(--error-red); }
+        
+        /* INTERACTIVE STRATEGY SIMULATOR */
+        .strategy-simulator {
+            margin-bottom: 4rem;
+            background: var(--bg-accent);
+            padding: 3rem 2rem;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .simulator-controls {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .strategy-buttons {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .strategy-btn {
+            background: var(--bg-primary);
+            border: 2px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .strategy-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px var(--card-shadow-hover);
+        }
+        
+        .strategy-btn.active {
+            background: var(--deploy-teal);
+            color: white;
+            border-color: var(--deploy-teal);
+        }
+        
+        .deployment-visualization {
+            background: var(--bg-primary);
+            border-radius: 15px;
+            padding: 2rem;
+            border: 1px solid var(--border-color);
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .visualization-content {
+            text-align: center;
+            max-width: 600px;
+        }
+        
+        .visualization-title {
+            color: var(--deploy-teal);
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .visualization-description {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+        
+        .deployment-diagram {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .environment {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 2px solid var(--border-color);
+            text-align: center;
+            min-width: 120px;
+            transition: all 0.3s ease;
+        }
+        
+        .environment.active {
+            border-color: var(--success-green);
+            background: rgba(16, 185, 129, 0.1);
+        }
+        
+        .environment.inactive {
+            border-color: var(--text-secondary);
+            opacity: 0.6;
+        }
+        
+        .environment.testing {
+            border-color: var(--warning-orange);
+            background: rgba(245, 158, 11, 0.1);
+        }
+        
+        .env-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        
+        .env-name {
+            color: var(--text-primary);
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+        
+        .env-status {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+        
+        .deployment-arrow {
+            color: var(--deploy-teal);
+            font-size: 2rem;
+            animation: flow 2s infinite;
+        }
+        
+        @keyframes flow {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.1); }
+        }
+        
+        /* RISK VS SPEED MATRIX */
+        .risk-speed-matrix {
+            margin-bottom: 4rem;
+            background: var(--bg-secondary);
+            padding: 3rem 2rem;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .matrix-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            height: 500px;
+            margin: 2rem auto;
+            background: var(--bg-primary);
+            border: 2px solid var(--border-color);
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        
+        .matrix-axes {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .x-axis, .y-axis {
+            position: absolute;
+            background: var(--border-color);
+        }
+        
+        .x-axis {
+            bottom: 50px;
+            left: 50px;
+            right: 20px;
+            height: 2px;
+        }
+        
+        .y-axis {
+            left: 50px;
+            top: 20px;
+            bottom: 50px;
+            width: 2px;
+        }
+        
+        .axis-label {
+            position: absolute;
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .x-label {
+            bottom: 10px;
+            right: 20px;
+        }
+        
+        .y-label {
+            top: 20px;
+            left: 10px;
+            transform: rotate(90deg);
+            transform-origin: left bottom;
+        }
+        
+        .strategy-point {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .strategy-point:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Position strategies on the matrix */
+        .point-blue-green { background: var(--blue-green-blue); top: 80px; right: 80px; }
+        .point-canary { background: var(--canary-yellow); top: 120px; right: 200px; }
+        .point-rolling { background: var(--rolling-purple); top: 200px; right: 150px; }
+        .point-ab { background: var(--ab-orange); top: 160px; right: 250px; }
+        .point-shadow { background: var(--shadow-gray); top: 100px; right: 300px; }
+        .point-recreate { background: var(--error-red); top: 350px; right: 100px; }
+        
+        /* COMPANY EXAMPLES */
+        .company-examples {
+            margin-bottom: 4rem;
+            background: var(--bg-primary);
+            padding: 3rem 2rem;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .company-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .company-card {
+            background: var(--bg-secondary);
+            border-radius: 15px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 15px var(--card-shadow);
+            transition: all 0.3s ease;
+        }
+        
+        .company-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px var(--card-shadow-hover);
+        }
+        
+        .company-header {
+            background: linear-gradient(135deg, var(--deploy-teal), var(--deploy-cyan));
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+        }
+        
+        .company-name {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+        }
+        
+        .company-type {
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+        
+        .deployment-details {
+            padding: 1.5rem;
+        }
+        
+        .deployment-stat {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem;
+            background: var(--bg-accent);
+            border-radius: 8px;
+            margin-bottom: 0.8rem;
+            border-left: 3px solid var(--deploy-teal);
+            transition: all 0.3s ease;
+        }
+        
+        .deployment-stat:hover {
+            transform: translateX(3px);
+        }
+        
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .stat-value {
+            color: var(--deploy-teal);
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        
+        /* IMPLEMENTATION GUIDE */
+        .implementation-guide {
+            background: var(--bg-secondary);
+            border: 2px solid var(--deploy-teal);
+            border-radius: 20px;
+            padding: 3rem 2rem;
+            margin: 4rem 0;
+        }
+        
+        .implementation-title {
+            color: var(--deploy-teal);
+            font-size: 2.2rem;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .implementation-subtitle {
+            text-align: center;
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 3rem;
+        }
+        
+        .implementation-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .implementation-step {
+            background: var(--bg-primary);
+            padding: 2rem;
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+            position: relative;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px var(--card-shadow);
+        }
+        
+        .implementation-step:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px var(--card-shadow-hover);
+        }
+        
+        .step-number {
+            position: absolute;
+            top: -15px;
+            left: 2rem;
+            background: var(--deploy-teal);
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        
+        .step-title {
+            color: var(--text-primary);
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin: 1rem 0;
+        }
+        
+        .step-description {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+        
+        .step-tools {
+            background: var(--bg-accent);
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 3px solid var(--deploy-teal);
+        }
+        
+        .step-tools strong {
+            color: var(--deploy-teal);
+        }
+        
+        /* CONCLUSION */
+        .conclusion {
+            text-align: center;
+            background: linear-gradient(135deg, var(--deploy-teal), var(--deploy-cyan));
+            color: white;
+            padding: 3rem 2rem;
+            border-radius: 20px;
+            margin-top: 4rem;
+        }
+        
+        .conclusion-text {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .conclusion-subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+        }
+        
+        .takeaways {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+            text-align: left;
+        }
+        
+        .takeaway-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1.5rem;
+            border-radius: 10px;
+            border-left: 4px solid white;
+            transition: all 0.3s ease;
+        }
+        
+        .takeaway-item:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-3px);
+        }
+        
+        /* RESPONSIVE DESIGN */
+        @media (max-width: 1024px) {
+            .company-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .matrix-container {
+                height: 400px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .top-bar {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 15px;
+            }
+            
+            .strategies-grid,
+            .implementation-steps {
+                grid-template-columns: 1fr;
+            }
+            
+            .strategy-metrics {
+                grid-template-columns: 1fr;
+            }
+            
+            .strategy-pros-cons {
+                grid-template-columns: 1fr;
+            }
+            
+            .deployment-diagram {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .matrix-container {
+                height: 300px;
+            }
+            
+            .strategy-point {
+                width: 60px;
+                height: 60px;
+                font-size: 0.7rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: 1.8rem;
+            }
+            
+            .section-title {
+                font-size: 1.6rem;
+            }
+            
+            .strategy-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <a href="index.html" class="back-button">← Back to Day 1 Topics</a>
+        
+        <div class="theme-toggle" onclick="
+            const body = document.body;
+            const icon = document.getElementById('themeIcon');
+            const text = document.getElementById('themeText');
+            const isDark = body.getAttribute('data-theme') === 'dark';
+            
+            if (isDark) {
+                body.removeAttribute('data-theme');
+                icon.textContent = '🌙';
+                text.textContent = 'Dark';
+                localStorage.setItem('deployment-theme', 'light');
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                icon.textContent = '☀️';
+                text.textContent = 'Light';
+                localStorage.setItem('deployment-theme', 'dark');
+            }
+        " style="cursor: pointer;">
+            <div class="toggle-switch">
+                <span class="toggle-icon" id="themeIcon">🌙</span>
+                <span class="toggle-text" id="themeText">Dark</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <!-- HERO SECTION -->
+        <div class="hero-section">
+            <h1 class="hero-title">🚀 Deployment Strategies Mastery 📊</h1>
+            <p class="hero-question">Why did Amazon lose $25 million in 30 minutes from one bad deployment, and how can you prevent it?</p>
+            
+            <!-- DISASTER STORY CALLOUT -->
+            <div class="disaster-callout">
+                <div class="disaster-title">💥 The $25 Million Deployment Disaster</div>
+                <div class="disaster-description">
+                    In 2013, Amazon's pricing system failed due to a bad deployment, causing products to be sold at $0.01. Within 30 minutes, customers ordered millions of dollars worth of items before the system was fixed[1][3]. Netflix once lost $100 million when a single deployment took down their entire streaming service during peak hours[5]. These disasters highlight why choosing the right deployment strategy isn't just technical preference—it's business survival.
+                </div>
+            </div>
+        </div>
+        
+        <!-- WHAT ARE DEPLOYMENT STRATEGIES SECTION -->
+        <div class="deployment-intro-section">
+            <div class="deployment-intro">
+                <h2 class="deployment-intro-title">🎯 What Are Deployment Strategies?</h2>
+                <p class="deployment-intro-subtitle">"Think of it like switching production lines in a car factory without stopping the assembly line"</p>
+            </div>
+            
+            <div class="deployment-definition">
+                <h4>🏭 Deployment Strategies Explained with Factory Analogy</h4>
+                <p><strong>Deployment strategies</strong> are systematic approaches for releasing new software versions to users, just like how car factories switch from producing Model A to Model B without shutting down the entire assembly line[1][2]. Each strategy balances three critical factors: **speed** (how fast you can deploy), **risk** (what happens if something goes wrong), and **resources** (how much infrastructure you need).</p>
+            </div>
+            
+            <div class="deployment-definition">
+                <h4>⚡ Why Deployment Strategy Choice Matters</h4>
+                <p>Modern companies deploy thousands of times per day—Netflix deploys 4,000+ times daily, Amazon every 11.7 seconds[3][7]. The wrong strategy can cause catastrophic failures like Knight Capital's $440 million loss in 45 minutes[8]. The right strategy enables continuous delivery while protecting revenue, reputation, and user experience. It's the difference between thriving like Netflix or failing like Blockbuster.</p>
+            </div>
+            
+            <div class="deployment-definition">
+                <h4>🎮 The Strategy Selection Challenge</h4>
+                <p>Choosing deployment strategies is like selecting the right gear in a race car—low gear for safe starts (Blue-Green), high gear for maximum speed (Continuous), and everything in between for different race conditions. Each strategy serves specific business needs, risk tolerance, and technical constraints[21][22].</p>
+            </div>
+        </div>
+        
+        <!-- STRATEGY COMPARISON SECTION -->
+        <div class="strategy-comparison">
+            <h2 class="section-title">📊 Complete Deployment Strategies Breakdown</h2>
+            <div class="strategies-grid">
+                <!-- BLUE-GREEN DEPLOYMENT -->
+                <div class="strategy-card blue-green">
+                    <div class="strategy-header">
+                        <div class="strategy-icon">🔄</div>
+                        <div class="strategy-name">Blue-Green Deployment</div>
+                    </div>
+                    <div class="strategy-description">
+                        Two identical production environments (Blue & Green). Deploy to inactive environment, test thoroughly, then instantly switch all traffic[8][13]. Like having two identical factories and switching the entire production instantly.
+                    </div>
+                    <div class="strategy-metrics">
+                        <div class="metric">
+                            <div class="metric-label">Downtime</div>
+                            <div class="metric-value">Near Zero</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Risk Level</div>
+                            <div class="metric-value">Low</div>
+                        </div>
+                    </div>
+                    <div class="strategy-pros-cons">
+                        <div class="pros">
+                            <div class="pros-title">✅ Pros</div>
+                            <div>• Instant rollback capability<br>• Zero downtime deployments<br>• Full environment testing</div>
+                        </div>
+                        <div class="cons">
+                            <div class="cons-title">❌ Cons</div>
+                            <div>• Requires 2x infrastructure<br>• Database sync challenges<br>• Higher resource costs</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- CANARY DEPLOYMENT -->
+                <div class="strategy-card canary">
+                    <div class="strategy-header">
+                        <div class="strategy-icon">🐤</div>
+                        <div class="strategy-name">Canary Deployment</div>
+                    </div>
+                    <div class="strategy-description">
+                        Release new version to small subset of users first, monitor performance, then gradually increase exposure[7][12]. Named after "canary in coal mine"—early warning system for problems.
+                    </div>
+                    <div class="strategy-metrics">
+                        <div class="metric">
+                            <div class="metric-label">Risk Exposure</div>
+                            <div class="metric-value">5-20%</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Rollout Speed</div>
+                            <div class="metric-value">Gradual</div>
+                        </div>
+                    </div>
+                    <div class="strategy-pros-cons">
+                        <div class="pros">
+                            <div class="pros-title">✅ Pros</div>
+                            <div>• Limited blast radius<br>• Real user feedback<br>• Performance validation</div>
+                        </div>
+                        <div class="cons">
+                            <div class="cons-title">❌ Cons</div>
+                            <div>• Complex traffic routing<br>• Slower full deployment<br>• Monitoring overhead</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- ROLLING DEPLOYMENT -->
+                <div class="strategy-card rolling">
+                    <div class="strategy-header">
+                        <div class="strategy-icon">🔄</div>
+                        <div class="strategy-name">Rolling Update</div>
+                    </div>
+                    <div class="strategy-description">
+                        Update instances gradually, one or few at a time, while maintaining service availability[9][14]. Like replacing factory workers during shift change—continuous operation.
+                    </div>
+                    <div class="strategy-metrics">
+                        <div class="metric">
+                            <div class="metric-label">Resource Usage</div>
+                            <div class="metric-value">Minimal</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Complexity</div>
+                            <div class="metric-value">Medium</div>
+                        </div>
+                    </div>
+                    <div class="strategy-pros-cons">
+                        <div class="pros">
+                            <div class="pros-title">✅ Pros</div>
+                            <div>• No extra infrastructure<br>• Continuous availability<br>• Resource efficient</div>
+                        </div>
+                        <div class="cons">
+                            <div class="cons-title">❌ Cons</div>
+                            <div>• Mixed version states<br>• Slower rollbacks<br>• Compatibility issues</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- A/B TESTING -->
+                <div class="strategy-card ab-testing">
+                    <div class="strategy-header">
+                        <div class="strategy-icon">⚖️</div>
+                        <div class="strategy-name">A/B Testing Deployment</div>
+                    </div>
+                    <div class="strategy-description">
+                        Deploy different versions to different user segments simultaneously to compare performance, user experience, and business metrics[5][60]. Data-driven deployment decisions.
+                    </div>
+                    <div class="strategy-metrics">
+                        <div class="metric">
+                            <div class="metric-label">User Split</div>
+                            <div class="metric-value">50/50</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Decision Basis</div>
+                            <div class="metric-value">Metrics</div>
+                        </div>
+                    </div>
+                    <div class="strategy-pros-cons">
+                        <div class="pros">
+                            <div class="pros-title">✅ Pros</div>
+                            <div>• Data-driven decisions<br>• Feature validation<br>• User experience optimization</div>
+                        </div>
+                        <div class="cons">
+                            <div class="cons-title">❌ Cons</div>
+                            <div>• Complex analytics setup<br>• Statistical significance time<br>• User experience inconsistency</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- SHADOW DEPLOYMENT -->
+                <div class="strategy-card shadow">
+                    <div class="strategy-header">
+                        <div class="strategy-icon">👥</div>
+                        <div class="strategy-name">Shadow Deployment</div>
+                    </div>
+                    <div class="strategy-description">
+                        New version runs parallel to production, receives copy of live traffic but doesn't serve responses to users[5][29]. Perfect for testing performance and behavior with real data.
+                    </div>
+                    <div class="strategy-metrics">
+                        <div class="metric">
+                            <div class="metric-label">User Impact</div>
+                            <div class="metric-value">Zero</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Testing Realism</div>
+                            <div class="metric-value">100%</div>
+                        </div>
+                    </div>
+                    <div class="strategy-pros-cons">
+                        <div class="pros">
+                            <div class="pros-title">✅ Pros</div>
+                            <div>• No user impact<br>• Real traffic testing<br>• Performance validation</div>
+                        </div>
+                        <div class="cons">
+                            <div class="cons-title">❌ Cons</div>
+                            <div>• 2x resource consumption<br>• Complex setup<br>• Data consistency challenges</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- RECREATE DEPLOYMENT -->
+                <div class="strategy-card recreate">
+                    <div class="strategy-header">
+                        <div class="strategy-icon">🔄</div>
+                        <div class="strategy-name">Recreate Deployment</div>
+                    </div>
+                    <div class="strategy-description">
+                        Stop old version completely, then start new version. Simple but causes downtime[4][33]. Like closing factory, upgrading equipment, then reopening—effective but disruptive.
+                    </div>
+                    <div class="strategy-metrics">
+                        <div class="metric">
+                            <div class="metric-label">Downtime</div>
+                            <div class="metric-value">Minutes</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Complexity</div>
+                            <div class="metric-value">Minimal</div>
+                        </div>
+                    </div>
+                    <div class="strategy-pros-cons">
+                        <div class="pros">
+                            <div class="pros-title">✅ Pros</div>
+                            <div>• Simple implementation<br>• Resource efficient<br>• Clean state transitions</div>
+                        </div>
+                        <div class="cons">
+                            <div class="cons-title">❌ Cons</div>
+                            <div>• Service downtime<br>• All-or-nothing risk<br>• User disruption</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- INTERACTIVE STRATEGY SIMULATOR -->
+        <div class="strategy-simulator">
+            <h2 class="section-title">🎮 Interactive Deployment Strategy Simulator</h2>
+            <div class="simulator-controls">
+                <p>Click a deployment strategy to see how it works in action:</p>
+                <div class="strategy-buttons">
+                    <button class="strategy-btn active" onclick="showStrategy('blue-green')">🔄 Blue-Green</button>
+                    <button class="strategy-btn" onclick="showStrategy('canary')">🐤 Canary</button>
+                    <button class="strategy-btn" onclick="showStrategy('rolling')">⚡ Rolling</button>
+                    <button class="strategy-btn" onclick="showStrategy('ab-testing')">⚖️ A/B Testing</button>
+                </div>
+            </div>
+            <div class="deployment-visualization">
+                <div class="visualization-content" id="strategy-demo">
+                    <div class="visualization-title">🔄 Blue-Green Deployment</div>
+                    <div class="visualization-description">
+                        Deploy to Green environment, test thoroughly, then switch all traffic instantly from Blue to Green. Immediate rollback possible by switching back to Blue.
+                    </div>
+                    <div class="deployment-diagram">
+                        <div class="environment active">
+                            <div class="env-icon">🔵</div>
+                            <div class="env-name">Blue</div>
+                            <div class="env-status">Production (v1.0)</div>
+                        </div>
+                        <div class="deployment-arrow">→</div>
+                        <div class="environment testing">
+                            <div class="env-icon">🟢</div>
+                            <div class="env-name">Green</div>
+                            <div class="env-status">Testing (v2.0)</div>
+                        </div>
+                        <div class="deployment-arrow">→</div>
+                        <div class="environment active">
+                            <div class="env-icon">🟢</div>
+                            <div class="env-name">Green</div>
+                            <div class="env-status">New Production (v2.0)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- RISK VS SPEED MATRIX -->
+        <div class="risk-speed-matrix">
+            <h2 class="section-title">📊 Risk vs Speed Decision Matrix</h2>
+            <p style="text-align: center; margin-bottom: 2rem; color: var(--text-secondary);">
+                Choose your deployment strategy based on your risk tolerance and speed requirements:
+            </p>
+            <div class="matrix-container">
+                <div class="matrix-axes">
+                    <div class="x-axis"></div>
+                    <div class="y-axis"></div>
+                    <div class="axis-label x-label">Deployment Speed →</div>
+                    <div class="axis-label y-label">Risk Tolerance ↑</div>
+                </div>
+                
+                <div class="strategy-point point-blue-green" onclick="alert('Blue-Green: High safety, moderate speed. Perfect for mission-critical applications where downtime is unacceptable.')">
+                    Blue-Green
+                </div>
+                
+                <div class="strategy-point point-canary" onclick="alert('Canary: Balanced risk and speed. Ideal for gradual rollouts with real user feedback.')">
+                    Canary
+                </div>
+                
+                <div class="strategy-point point-rolling" onclick="alert('Rolling: Medium risk, good speed. Best for applications that can handle mixed version states.')">
+                    Rolling
+                </div>
+                
+                <div class="strategy-point point-ab" onclick="alert('A/B Testing: Data-driven decisions with controlled risk. Perfect for feature validation.')">
+                    A/B Test
+                </div>
+                
+                <div class="strategy-point point-shadow" onclick="alert('Shadow: Lowest risk, slower feedback. Excellent for testing with production traffic.')">
+                    Shadow
+                </div>
+                
+                <div class="strategy-point point-recreate" onclick="alert('Recreate: High risk but fastest setup. Only for applications that can tolerate downtime.')">
+                    Recreate
+                </div>
+            </div>
+        </div>
+        
+        <!-- COMPANY EXAMPLES -->
+        <div class="company-examples">
+            <h2 class="section-title">🏢 How Top Companies Deploy at Scale</h2>
+            <div class="company-grid">
+                <div class="company-card">
+                    <div class="company-header">
+                        <div class="company-name">Netflix</div>
+                        <div class="company-type">Streaming Platform</div>
+                    </div>
+                    <div class="deployment-details">
+                        <div class="deployment-stat">
+                            <span class="stat-label">Primary Strategy</span>
+                            <span class="stat-value">Canary + Blue-Green</span>
+                        </div>
+                        <div class="deployment-stat">
+                            <span class="stat-label">Daily Deployments</span>
+                            <span class="stat-value">4,000+</span>
+                        </div>
+                        <div class="deployment-stat">
+                            <span class="stat-label">Canary Duration</span>
+                            <span class="stat-value">1-24 hours</span>
+                        </div>
+                        <div class="deployment-stat">
+                            <span class="stat-label">Rollback Time</span>
+                            <span class="stat-value">< 2 minutes</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="company-card">
+                    <div class="company-header">
+                        <div class="company-name">Amazon</div>
+                        <div class="company-type">E-commerce & Cloud</div>
+                    </div>
+                    <div class="deployment-details">
+                        <div class="deployment-stat">
+                            <span class="stat-label">Primary Strategy</span>
+                            <span class="stat-value">Rolling + Canary</span>
+                        </div>
+                        <div class="deployment-stat">
+                            <span class="stat-label">Deployment Frequency</span>
+                            <span class="stat-value">Every 11.7 sec</span>
+                        </div>
+                        <div class="deployment-stat">
+                            <span class="stat-label">Services</span>
+                            <span class="stat-value">1,000+ microservices</span>
+                        </div>
+                        <div class="deployment-stat">
+                            <span class="stat-label">Success Rate</span>
+                            <span class="stat-value">99.99%</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="company-card">
+                    <div class="company-header">
+                        <div class="company-name">Google</div>
+                        <div class="company-type">Search & Cloud</div>
+                    </div>
+                    <div class="deployment-details">
+                        <div class="deployment-stat">
+                            <span class="stat-label">Primary Strategy</span>
+                            <span class="stat-value">Canary + A/B</span>
+                        </div>
+                        <div class="deployment-stat">
+                            <span class="stat-label">Code Changes</span>
+                            <span class="stat-value">25,000+ daily</span>
+                        </div>
+                        <div class="deployment-stat">
+                            <span class="stat-label">Canary Percentage</span>
+                            <span class="stat-value">1-5% initially</span>
+                        </div>
+                        <div class="deployment-stat">
+                            <span class="stat-label">A/B Tests</span>
+                            <span class="stat-value">10,000+ running</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- IMPLEMENTATION GUIDE -->
+        <div class="implementation-guide">
+            <h3 class="implementation-title">🛠️ How to Implement Deployment Strategies</h3>
+            <p class="implementation-subtitle">Step-by-step guide to choosing and implementing the right deployment strategy for your organization</p>
+            
+            <div class="implementation-steps">
+                <div class="implementation-step">
+                    <div class="step-number">1</div>
+                    <div class="step-title">🎯 Assess Your Requirements</div>
+                    <div class="step-description">
+                        Evaluate your application's downtime tolerance, risk appetite, resource constraints, and user base size. Mission-critical applications need different strategies than internal tools.
+                    </div>
+                    <div class="step-tools">
+                        <strong>Key Questions:</strong> Can you afford any downtime? How quickly do you need to rollback? What's your infrastructure budget? How many users will be impacted by failures?
+                    </div>
+                </div>
+                
+                <div class="implementation-step">
+                    <div class="step-number">2</div>
+                    <div class="step-title">🏗️ Set Up Infrastructure</div>
+                    <div class="step-description">
+                        Implement load balancers, container orchestration, and monitoring systems required for your chosen strategy. Blue-Green needs duplicate environments, Canary needs traffic routing.
+                    </div>
+                    <div class="step-tools">
+                        <strong>Essential Tools:</strong> Kubernetes, Docker, AWS ALB/ELB, nginx, Istio, Consul, Terraform for infrastructure as code, Helm for deployment management.
+                    </div>
+                </div>
+                
+                <div class="implementation-step">
+                    <div class="step-number">3</div>
+                    <div class="step-title">🔧 Implement Automation</div>
+                    <div class="step-description">
+                        Create CI/CD pipelines that automatically execute your chosen deployment strategy. Include automated testing, health checks, and deployment verification at each stage.
+                    </div>
+                    <div class="step-tools">
+                        <strong>Automation Stack:</strong> Jenkins, GitHub Actions, GitLab CI, Azure DevOps, AWS CodePipeline, automated testing suites, health check endpoints.
+                    </div>
+                </div>
+                
+                <div class="implementation-step">
+                    <div class="step-number">4</div>
+                    <div class="step-title">📊 Configure Monitoring</div>
+                    <div class="step-description">
+                        Set up comprehensive monitoring for application performance, user experience, and business metrics. Real-time alerting enables quick decision-making during deployments.
+                    </div>
+                    <div class="step-tools">
+                        <strong>Monitoring Tools:</strong> Prometheus, Grafana, DataDog, New Relic, ELK Stack, custom metrics dashboards, PagerDuty for alerting, business KPI tracking.
+                    </div>
+                </div>
+                
+                <div class="implementation-step">
+                    <div class="step-number">5</div>
+                    <div class="step-title">🧪 Test Your Strategy</div>
+                    <div class="step-description">
+                        Practice deployments and rollbacks in staging environments. Simulate failure scenarios and measure recovery times. Build team confidence through repetition and refinement.
+                    </div>
+                    <div class="step-tools">
+                        <strong>Testing Approach:</strong> Chaos engineering tools, disaster recovery drills, staging environment parity, performance testing, rollback simulations, team training.
+                    </div>
+                </div>
+                
+                <div class="implementation-step">
+                    <div class="step-number">6</div>
+                    <div class="step-title">🚀 Execute & Iterate</div>
+                    <div class="step-description">
+                        Start with low-risk deployments, gather metrics, and continuously improve your process. Track deployment frequency, success rate, and time-to-recovery metrics.
+                    </div>
+                    <div class="step-tools">
+                        <strong>Success Metrics:</strong> Deployment frequency, lead time, mean time to recovery (MTTR), change failure rate, customer satisfaction, business impact analysis.
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- CONCLUSION -->
+        <div class="conclusion">
+            <p class="conclusion-text">🌟 Master Deployment Strategies, Master Modern Software Delivery</p>
+            <p class="conclusion-subtitle">The right deployment strategy can be the difference between thriving like Netflix or failing like traditional companies</p>
+            
+            <div class="takeaways">
+                <div class="takeaway-item">
+                    <strong>✅ Match Strategy to Risk</strong><br>
+                    Use Blue-Green for mission-critical apps, Canary for gradual rollouts, Rolling for resource efficiency. Never use one-size-fits-all approaches.
+                </div>
+                <div class="takeaway-item">
+                    <strong>✅ Automate Everything</strong><br>
+                    Manual deployments are slow and error-prone. Invest in automation, monitoring, and observability to make deployments boring and reliable.
+                </div>
+                <div class="takeaway-item">
+                    <strong>✅ Practice Makes Perfect</strong><br>
+                    Regularly practice deployments and rollbacks. Run disaster recovery drills. Build muscle memory for when things go wrong.
+                </div>
+                <div class="takeaway-item">
+                    <strong>✅ Measure and Improve</strong><br>
+                    Track deployment metrics: frequency, success rate, recovery time. Use data to continuously optimize your deployment process and strategy.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Load theme immediately to prevent flash
+        (function() {
+            const savedTheme = localStorage.getItem('deployment-theme') || 'light';
+            if (savedTheme === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+            }
+        })();
+        
+        // Strategy simulator functionality
+        function showStrategy(strategy) {
+            // Remove active class from all buttons
+            document.querySelectorAll('.strategy-btn').forEach(btn => btn.classList.remove('active'));
+            // Add active class to clicked button
+            event.target.classList.add('active');
+            
+            const demoContent = document.getElementById('strategy-demo');
+            
+            const strategies = {
+                'blue-green': {
+                    title: '🔄 Blue-Green Deployment',
+                    description: 'Deploy to Green environment, test thoroughly, then switch all traffic instantly from Blue to Green. Immediate rollback possible by switching back to Blue.',
+                    diagram: `
+                        <div class="environment active">
+                            <div class="env-icon">🔵</div>
+                            <div class="env-name">Blue</div>
+                            <div class="env-status">Current Production (v1.0)</div>
+                        </div>
+                        <div class="deployment-arrow">→</div>
+                        <div class="environment testing">
+                            <div class="env-icon">🟢</div>
+                            <div class="env-name">Green</div>
+                            <div class="env-status">New Version (v2.0)</div>
+                        </div>
+                        <div class="deployment-arrow">→</div>
+                        <div class="environment active">
+                            <div class="env-icon">🟢</div>
+                            <div class="env-name">Green</div>
+                            <div class="env-status">New Production (v2.0)</div>
+                        </div>
+                    `
+                },
+                'canary': {
+                    title: '🐤 Canary Deployment',
+                    description: 'Deploy new version to 5% of users first, monitor metrics and feedback, then gradually increase to 25%, 50%, 75%, and finally 100% of users.',
+                    diagram: `
+                        <div class="environment active">
+                            <div class="env-icon">👥</div>
+                            <div class="env-name">95% Users</div>
+                            <div class="env-status">Old Version (v1.0)</div>
+                        </div>
+                        <div class="deployment-arrow">+</div>
+                        <div class="environment testing">
+                            <div class="env-icon">🐤</div>
+                            <div class="env-name">5% Users</div>
+                            <div class="env-status">Canary (v2.0)</div>
+                        </div>
+                        <div class="deployment-arrow">→</div>
+                        <div class="environment active">
+                            <div class="env-icon">👥</div>
+                            <div class="env-name">100% Users</div>
+                            <div class="env-status">New Version (v2.0)</div>
+                        </div>
+                    `
+                },
+                'rolling': {
+                    title: '⚡ Rolling Update',
+                    description: 'Update instances one by one or in small batches. Replace old pods with new ones gradually while maintaining service availability throughout the process.',
+                    diagram: `
+                        <div class="environment active">
+                            <div class="env-icon">🟦</div>
+                            <div class="env-name">Instance 1</div>
+                            <div class="env-status">Updated (v2.0)</div>
+                        </div>
+                        <div class="environment inactive">
+                            <div class="env-icon">🟩</div>
+                            <div class="env-name">Instance 2</div>
+                            <div class="env-status">Old (v1.0)</div>
+                        </div>
+                        <div class="environment inactive">
+                            <div class="env-icon">🟩</div>
+                            <div class="env-name">Instance 3</div>
+                            <div class="env-status">Old (v1.0)</div>
+                        </div>
+                    `
+                },
+                'ab-testing': {
+                    title: '⚖️ A/B Testing Deployment',
+                    description: 'Split users 50/50 between Version A and Version B. Compare user behavior, performance metrics, and business KPIs to determine which version performs better.',
+                    diagram: `
+                        <div class="environment active">
+                            <div class="env-icon">🅰️</div>
+                            <div class="env-name">Version A</div>
+                            <div class="env-status">50% Users</div>
+                        </div>
+                        <div class="deployment-arrow">⚖️</div>
+                        <div class="environment active">
+                            <div class="env-icon">🅱️</div>
+                            <div class="env-name">Version B</div>
+                            <div class="env-status">50% Users</div>
+                        </div>
+                        <div class="deployment-arrow">→</div>
+                        <div class="environment active">
+                            <div class="env-icon">🏆</div>
+                            <div class="env-name">Winner</div>
+                            <div class="env-status">Best Performing</div>
+                        </div>
+                    `
+                }
+            };
+            
+            const selectedStrategy = strategies[strategy];
+            if (selectedStrategy) {
+                demoContent.innerHTML = `
+                    <div class="visualization-title">${selectedStrategy.title}</div>
+                    <div class="visualization-description">${selectedStrategy.description}</div>
+                    <div class="deployment-diagram">${selectedStrategy.diagram}</div>
+                `;
+            }
+        }
+        
+        // Set theme toggle state when DOM loads
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('deployment-theme') || 'light';
+            const themeIcon = document.getElementById('themeIcon');
+            const themeText = document.getElementById('themeText');
+            
+            if (savedTheme === 'dark') {
+                if (themeIcon) themeIcon.textContent = '☀️';
+                if (themeText) themeText.textContent = 'Light';
+            } else {
+                if (themeIcon) themeIcon.textContent = '🌙';
+                if (themeText) themeText.textContent = 'Dark';
+            }
+            
+            // Add scroll animations
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, observerOptions);
+            
+            // Observe cards for smooth animations
+            document.querySelectorAll('.strategy-card, .company-card, .implementation-step').forEach(card => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                observer.observe(card);
+            });
+        });
+    </script>
+</body>
+</html>

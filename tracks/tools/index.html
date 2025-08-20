@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>DevOps Tools — The Ultimate Catalog</title>
+  <meta name="description" content="The ultimate, filterable DevOps tools catalog for beginners and pros. Covers the entire lifecycle from planning to monitoring." />
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header" role="banner">
+    <div class="header-inner">
+      <div class="brand">
+        <span class="dot" aria-hidden="true"></span>
+        <span class="title">DevOps Tools Catalog</span>
+      </div>
+      <div class="header-actions">
+        <label class="search" aria-label="Search tools">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M21 21l-4.3-4.3M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          <input id="searchInput" type="search" placeholder="Search tools…" autocomplete="off" />
+        </label>
+        <button id="themeBtn" class="theme-toggle" aria-label="Toggle theme">🌙 Dark</button>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <h1>Explore the Universe of DevOps Tools</h1>
+    <p>A comprehensive catalog of essential tools, from code to cloud. Use the search or filters below to build your ideal stack.</p>
+  </section>
+  
+  <div class="filter-controls-wrapper">
+    <div id="stackFilters" class="filter-group">
+      <span class="filter-group-label">Stack:</span>
+    </div>
+    <div id="tagFilters" class="filter-group">
+      <span class="filter-group-label">Type:</span>
+    </div>
+    <div class="filter-group sort-group">
+      <span class="filter-group-label">Sort:</span>
+      <select id="sortControl" class="sort-select" aria-label="Sort tools">
+        <option value="default">Default</option>
+        <option value="az">A-Z</option>
+        <option value="za">Z-A</option>
+      </select>
+    </div>
+  </div>
+
+  <main id="content" role="main" aria-live="polite">
+    </main>
+  
+  <div id="noResults" class="no-results">
+    <h3>No Tools Found</h3>
+    <p>Try adjusting your search or filter combination.</p>
+  </div>
+
+  <footer class="site-footer">
+    <p>© 2025 DevOps Playground · Educational listing. Logos belong to their respective owners.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

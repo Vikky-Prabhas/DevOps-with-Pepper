@@ -1,0 +1,233 @@
+/* DevOps Playground — Stable 3x3 grid with animations (Most popular removed) */
+
+/* Theme tokens with explicit data-theme control */
+:root{
+  --bg:#0b0c0f; --bg-grad-1:#1b2030; --bg-grad-2:#090a0e;
+  --card:rgba(255,255,255,0.08); --card-border:rgba(255,255,255,0.22);
+  --text:#e9eef5; --muted:#b6c0cf; --accent:#8ab4ff;
+  --radius:18px; --shadow:0 10px 30px rgba(0,0,0,0.35);
+}
+:root[data-theme="light"]{
+  --bg:#f6f8fc; --bg-grad-1:#eef1f6; --bg-grad-2:#e9edf5;
+  --card:rgba(255,255,255,0.92);
+  --card-border:rgba(15,18,32,0.10);
+  --text:#0d1020; --muted:#495266; --accent:#3b82f6;
+  --shadow:0 12px 28px rgba(22,25,40,0.10);
+}
+html, body, .card, .site-header, .info-card, .theme-toggle{
+  transition: background-color .25s, color .25s, border-color .25s, background .25s, box-shadow .25s, transform .25s;
+}
+
+/* Base */
+*{ box-sizing:border-box }
+html,body{ height:100% }
+body{
+  margin:0;
+  background: radial-gradient(1000px 520px at 50% -8%, var(--bg-grad-1) 0%, var(--bg) 55%, var(--bg-grad-2) 100%);
+  color: var(--text);
+  font: 16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, system-ui, "Apple Color Emoji","Segoe UI Emoji";
+  letter-spacing: .2px;
+}
+h1,h2,h3,p{ margin-block-start:0 }
+
+/* Header */
+.site-header{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px 20px; position:sticky; top:0; z-index:10;
+  backdrop-filter: blur(10px);
+  background: linear-gradient(to bottom, color-mix(in oklab, var(--bg) 65%, transparent), transparent);
+  border-bottom: 1px solid color-mix(in oklab, var(--text) 8%, transparent);
+}
+.brand{ display:flex; align-items:center; gap:10px; font-weight:600 }
+.brand .dot{
+  width:10px; height:10px; border-radius:50%;
+  background: linear-gradient(135deg, var(--accent), color-mix(in oklab, var(--accent) 40%, white));
+  box-shadow: 0 0 18px color-mix(in oklab, var(--accent) 60%, transparent);
+}
+.brand .title{ color: color-mix(in oklab, var(--text) 92%, transparent) }
+.site-nav{ display:flex; align-items:center; gap:12px }
+
+/* Theme toggle cycles Auto→Light→Dark */
+.theme-toggle{
+  position:relative;
+  display:inline-flex; align-items:center; justify-content:center;
+  min-width:80px; height:36px; padding:0 10px;
+  border-radius:999px; border:1px solid var(--card-border);
+  background: color-mix(in oklab, var(--text) 6%, transparent);
+  color: var(--text); cursor:pointer; font-weight:600;
+}
+.theme-toggle .mode{ display:none }
+.theme-toggle[data-mode="auto"] .auto{ display:inline }
+.theme-toggle[data-mode="light"] .light{ display:inline }
+.theme-toggle[data-mode="dark"] .dark{ display:inline }
+.theme-toggle:hover{ box-shadow:0 8px 20px rgba(0,0,0,.15) }
+
+/* Hero */
+.hero{ padding:40px 20px 0; text-align:center }
+.hero h1{ font-size: clamp(28px, 3.4vw, 48px); letter-spacing:-0.4px; margin:0 0 6px }
+.subtitle{ margin:0 auto 10px; max-width:680px; color:var(--muted) }
+.hero-clouds{
+  height:80px; filter:blur(16px); opacity:.6;
+  background:
+    radial-gradient(140px 60px at 30% 40%, color-mix(in oklab, var(--accent) 35%, transparent), transparent 60%),
+    radial-gradient(160px 70px at 70% 60%, color-mix(in oklab, #a7f0ba 30%, transparent), transparent 60%);
+}
+
+/* Section title */
+.section-title{ padding:0 20px; margin:0 auto 10px; max-width:1200px }
+
+/* Deck: fixed 3 columns on desktop, equal-height rows */
+.deck{
+  position:relative;
+  display:grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-auto-rows: 1fr;
+  align-items: stretch;
+  gap: 20px;
+  padding: 12px 20px 10px;
+  max-width: 1200px; margin: 0 auto 14px;
+}
+.deck::after{ content:""; display:block; height:8px }
+
+@media (max-width: 1024px){
+  .deck{ grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 600px){
+  .deck{ grid-template-columns: 1fr; }
+}
+
+/* Card: single face, grid inside, with animations */
+@keyframes cardFadeIn {
+  from { opacity:0; transform: translateY(6px); }
+  to   { opacity:1; transform: translateY(0); }
+}
+
+.card{
+  position:relative; z-index:0; overflow:hidden;
+  height:100%;
+  display:grid; grid-template-rows: auto auto 1fr auto; /* icon | head | desc | meta */
+  gap: 12px;
+  padding: 26px 24px; border-radius: var(--radius);
+  background:
+    radial-gradient(140% 90% at 50% 0%, rgba(0,0,0,0.04), rgba(0,0,0,0) 50%),
+    linear-gradient(180deg, var(--card), rgba(255,255,255,0.02));
+  border:1px solid var(--card-border); box-shadow: var(--shadow);
+  color:var(--text); text-decoration:none;
+  transform: translateZ(0);
+  animation: cardFadeIn .4s ease both;
+}
+.card:hover{
+  transform: translateY(-4px);
+  box-shadow: 0 18px 44px rgba(22,25,40,0.14);
+  border-color: color-mix(in oklab, var(--text) 22%, transparent);
+}
+.card:focus-visible{ outline:2px solid var(--accent); outline-offset:3px }
+
+/* Icon + head */
+.card-icon{
+  width:68px; height:68px;
+  filter: drop-shadow(0 6px 12px rgba(0,0,0,0.25));
+  transition: transform .25s;
+}
+.card:hover .card-icon{ transform: scale(1.03) }
+.card-head{ display:grid; grid-template-columns: 1fr auto; align-items:center; gap:10px; min-height:28px }
+.card-title{
+  font-size: clamp(19px, 2.4vw, 24px);
+  font-weight:700; margin:0; color:var(--text);
+  white-space: normal; word-break: keep-all; line-height:1.2;
+  max-height: calc(1.2em * 2); overflow:hidden; text-overflow:clip;
+}
+.level{
+  font-size:12px; color: color-mix(in oklab, var(--text) 80%, transparent);
+  background: color-mix(in oklab, var(--text) 8%, transparent);
+  padding:4px 10px; border-radius:999px;
+  border:1px solid color-mix(in oklab, var(--text) 16%, transparent);
+  white-space:nowrap;
+}
+
+/* Description and meta */
+.card-desc{
+  margin:0; color:var(--muted);
+  line-height:1.45; min-height: calc(1.45em * 2);
+  font-size:1.02rem;
+}
+.card-meta{ display:flex; gap:10px; flex-wrap:wrap; row-gap:10px; align-self:end }
+
+/* Chips — stable and crisp (no “Most popular”) */
+:root{
+  --chip-h: 32px; --chip-r: 16px;
+  --chip-h-sm: 28px; --chip-r-sm: 14px;
+  --chip-pad-x: 12px; --chip-pad-x-sm: 10px;
+}
+.chip{
+  display:inline-flex; align-items:center; justify-content:center; gap:6px;
+  height:var(--chip-h); padding:0 var(--chip-pad-x); border-radius:var(--chip-r);
+  flex:0 0 auto; font-size:13px; font-weight:600; line-height:1; letter-spacing:.2px; white-space:nowrap;
+  color: color-mix(in oklab, var(--text) 94%, transparent);
+  background: color-mix(in oklab, var(--text) 8%, transparent);
+  border:1px solid color-mix(in oklab, var(--text) 18%, transparent);
+  box-shadow:none; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+  transition: transform .15s ease, background-color .2s ease, border-color .2s ease, color .2s ease;
+}
+.chip:hover{ transform: translateY(-1px); }
+.chip.tiny{
+  height:var(--chip-h-sm); padding:0 var(--chip-pad-x-sm); border-radius:var(--chip-r-sm);
+  font-size:12px; font-weight:600;
+}
+:root[data-theme="light"] .chip{
+  color:#0f1220; background:rgba(15,18,32,0.045); border-color:rgba(15,18,32,0.16);
+  box-shadow:0 1px 0 rgba(255,255,255,0.65) inset;
+}
+
+/* Below deck: helper + teaser */
+.below-deck{
+  position:relative; z-index:0;
+  max-width:1200px; margin:10px auto 40px; padding:0 20px;
+  display:grid; grid-template-columns:1fr; gap:10px;
+}
+.helper{ margin:0 auto 8px; text-align:center; color:var(--muted) }
+
+.info-card.info-link{
+  display:block; text-decoration:none; color:var(--text);
+  border:1px solid var(--card-border); border-radius:16px;
+  background: linear-gradient(180deg, var(--card), rgba(255,255,255,0.02));
+  padding:14px 16px; margin:0;
+  transition: transform .18s, border-color .2s, box-shadow .2s;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.18);
+}
+.info-card.info-link:hover{
+  transform: translateY(-2px);
+  border-color: color-mix(in oklab, var(--text) 18%, transparent);
+  box-shadow: 0 12px 28px rgba(0,0,0,0.22);
+}
+.info-card .info-head{ display:flex; align-items:center; gap:10px; justify-content:space-between }
+.info-title{ font-size:18px; margin:0 }
+.pill{
+  font-size:12px; color: color-mix(in oklab, var(--text) 90%, transparent);
+  background: color-mix(in oklab, var(--accent) 18%, transparent);
+  padding:4px 8px; border-radius:999px;
+  border:1px solid color-mix(in oklab, var(--accent) 40%, transparent);
+}
+.info-teaser{ color:var(--muted); margin:6px 0 10px }
+.btn{ border-radius:10px; padding:8px 12px; font-weight:600; cursor:pointer; text-decoration:none; color:var(--text) }
+.btn.primary{
+  background: color-mix(in oklab, var(--accent) 30%, transparent);
+  border:1px solid color-mix(in oklab, var(--accent) 45%, transparent);
+}
+
+/* Footer */
+.site-footer{
+  border-top:1px solid color-mix(in oklab, var(--text) 8%, transparent);
+  color:var(--muted); text-align:center; padding:24px;
+}
+
+/* Small devices: permit 3 lines for title/description */
+@media (max-width: 600px){
+  .card-title{ max-height: calc(1.2em * 3) }
+  .card-desc{ min-height: calc(1.45em * 3) }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce){
+  *{ transition:none !important; animation:none !important }
+}

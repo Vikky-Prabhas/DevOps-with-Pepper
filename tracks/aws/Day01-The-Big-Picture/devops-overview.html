@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Servers vs Application Servers - Complete Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            /* Green Theme for DevOps */
+            --bg-primary: #1A1A1A;
+            --bg-secondary: #2A2A2A;
+            --bg-accent: #E8F5E8;
+            --text-primary: #000000;
+            --text-secondary: #8E8E93;
+            --devops-green: #22C55E;
+            --devops-dark-green: #16A34A;
+            --border-color: #BBF7D0;
+            --card-shadow: rgba(34, 197, 94, 0.08);
+            --card-shadow-hover: rgba(34, 197, 94, 0.15);
+        }
+        
+        [data-theme="dark"] {
+            /* Green Dark Theme */
+            --bg-primary: #1A1A1A;
+            --bg-secondary: #2A2A2A;
+            --bg-accent: #1E3A1E;
+            --text-primary: #FFFFFF;
+            --text-secondary: #B3B3B3;
+            --devops-green: #22C55E;
+            --devops-dark-green: #16A34A;
+            --border-color: #2A4A2A;
+            --card-shadow: rgba(34, 197, 94, 0.1);
+            --card-shadow-hover: rgba(34, 197, 94, 0.2);
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+            transition: all 0.3s ease;
+        }
+        
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            background: var(--bg-accent);
+            color: var(--devops-green);
+            padding: 12px 20px;
+            border-radius: 12px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            border: 1px solid var(--border-color);
+        }
+        
+        .back-button:hover {
+            background: var(--devops-green);
+            color: white;
+            transform: translateX(-3px);
+        }
+        
+        .theme-toggle {
+            background: var(--bg-accent);
+            border: 1px solid var(--border-color);
+            border-radius: 25px;
+            padding: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .theme-toggle:hover {
+            transform: scale(1.05);
+            background: var(--devops-green);
+        }
+        
+        .theme-toggle:hover .toggle-text {
+            color: white;
+        }
+        
+        .toggle-switch {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+        }
+        
+        .toggle-icon {
+            font-size: 1.2rem;
+        }
+        
+        .toggle-text {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        /* EDUCATIONAL INTRODUCTION SECTION */
+        .hero-section {
+            text-align: center;
+            margin-bottom: 4rem;
+            padding: 4rem 2rem;
+            background: var(--bg-accent);
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, var(--devops-green), var(--devops-dark-green));
+        }
+        
+        .hero-title {
+            font-size: 3rem;
+            color: var(--devops-green);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+        
+        .hero-question {
+            font-size: 1.3rem;
+            color: var(--text-secondary);
+            font-style: italic;
+            margin-bottom: 1rem;
+        }
+        
+        .hero-emoji {
+            font-size: 2rem;
+            margin: 0 0.5rem;
+        }
+        
+        /* SECTION TITLE */
+        .section-title {
+            font-size: 2.2rem;
+            color: var(--devops-green);
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* CONCEPT EDUCATION SECTION */
+        .concept-section {
+            margin-bottom: 4rem;
+            background: var(--bg-primary);
+            padding: 3rem 2rem;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .concept-intro {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .concept-title {
+            font-size: 2rem;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+        
+        .concept-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+        
+        .concept-explanation {
+            background: var(--bg-accent);
+            padding: 2rem;
+            border-radius: 15px;
+            margin: 2rem 0;
+            border-left: 4px solid var(--devops-green);
+        }
+        
+        .concept-explanation h4 {
+            color: var(--devops-green);
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .concept-explanation p {
+            color: var(--text-primary);
+            font-size: 1.1rem;
+            line-height: 1.7;
+        }
+        
+        /* COMPARISON SECTION */
+        .comparison-section {
+            margin-bottom: 4rem;
+        }
+        
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            margin-top: 2rem;
+        }
+        
+        .server-card {
+            background: var(--bg-primary);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px var(--card-shadow);
+        }
+        
+        .server-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px var(--card-shadow-hover);
+        }
+        
+        .server-header {
+            padding: 2rem;
+            font-size: 1.8rem;
+            font-weight: 600;
+            text-align: center;
+            color: white;
+        }
+        
+        .web-server .server-header {
+            background: linear-gradient(135deg, #3B82F6, #1D4ED8);
+        }
+        
+        .app-server .server-header {
+            background: linear-gradient(135deg, var(--devops-green), var(--devops-dark-green));
+        }
+        
+        .server-content {
+            padding: 2.5rem;
+        }
+        
+        .server-definition {
+            background: var(--bg-accent);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            border-left: 4px solid var(--devops-green);
+        }
+        
+        .server-definition h4 {
+            color: var(--devops-green);
+            font-size: 1.2rem;
+            margin-bottom: 0.8rem;
+        }
+        
+        .server-definition p {
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+        
+        .server-features {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+        
+        .server-features li {
+            padding: 0.8rem 0;
+            color: var(--text-primary);
+            position: relative;
+            padding-left: 2rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .server-features li:last-child {
+            border-bottom: none;
+        }
+        
+        .server-features li:before {
+            content: "→";
+            color: var(--devops-green);
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+            font-size: 1.2rem;
+        }
+        
+        .examples-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .example-item {
+            background: var(--bg-accent);
+            padding: 0.8rem;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 500;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+        
+        .example-item:hover {
+            background: var(--devops-green);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        /* WORKFLOW SECTION */
+        .workflow-section {
+            background: var(--bg-accent);
+            padding: 3rem 2rem;
+            border-radius: 20px;
+            margin-bottom: 4rem;
+            border: 1px solid var(--border-color);
+        }
+        
+        .workflow-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .workflow-card {
+            background: var(--bg-primary);
+            padding: 2rem;
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+        
+        .workflow-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px var(--card-shadow-hover);
+        }
+        
+        .workflow-title {
+            color: var(--devops-green);
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        .workflow-steps {
+            list-style: none;
+            counter-reset: step-counter;
+        }
+        
+        .workflow-steps li {
+            counter-increment: step-counter;
+            padding: 0.8rem 0;
+            position: relative;
+            padding-left: 3rem;
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .workflow-steps li:last-child {
+            border-bottom: none;
+        }
+        
+        .workflow-steps li:before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            top: 0.8rem;
+            background: var(--devops-green);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        /* COLLABORATION SECTION */
+        .collaboration-section {
+            background: var(--bg-primary);
+            border: 2px solid var(--devops-green);
+            border-radius: 20px;
+            padding: 3rem 2rem;
+            margin: 4rem 0;
+        }
+        
+        .collaboration-title {
+            color: var(--devops-green);
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        
+        .collaboration-subtitle {
+            text-align: center;
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+        
+        .collaboration-flow {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .flow-step {
+            background: var(--bg-accent);
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+        
+        .flow-step:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px var(--card-shadow-hover);
+        }
+        
+        .flow-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+        
+        .flow-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .flow-description {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        /* KEY DIFFERENCES TABLE */
+        .differences-section {
+            margin-bottom: 4rem;
+        }
+        
+        .differences-table {
+            background: var(--bg-primary);
+            border-radius: 15px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 20px var(--card-shadow);
+        }
+        
+        .table-header {
+            background: linear-gradient(135deg, var(--devops-green), var(--devops-dark-green));
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+        
+        .table-content {
+            padding: 2rem;
+        }
+        
+        .comparison-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: var(--bg-accent);
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .comparison-aspect {
+            font-weight: 600;
+            color: var(--devops-green);
+            text-align: center;
+        }
+        
+        .comparison-web,
+        .comparison-app {
+            text-align: center;
+            color: var(--text-primary);
+        }
+        
+        /* CONCLUSION SECTION */
+        .conclusion {
+            text-align: center;
+            background: linear-gradient(135deg, var(--devops-green), var(--devops-dark-green));
+            color: white;
+            padding: 3rem 2rem;
+            border-radius: 20px;
+            margin-top: 4rem;
+        }
+        
+        .conclusion-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .conclusion-subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+        }
+        
+        .takeaways {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+            text-align: left;
+        }
+        
+        .takeaway-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            border-radius: 10px;
+            border-left: 3px solid white;
+        }
+        
+        /* SERVER MOCKUPS */
+.server-mockups {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-top: 3rem;
+    flex-wrap: wrap;
+}
+
+.server-mockup {
+    width: 280px;
+    background: linear-gradient(145deg, #2c2c2c, #1a1a1a);
+    border-radius: 20px;
+    padding: 1rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    transition: all 0.3s ease;
+}
+
+.server-mockup:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7);
+}
+
+.mockup-header {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.mockup-title {
+    color: white;
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin-bottom: 0.3rem;
+}
+
+.web-server-mockup .mockup-title {
+    color: #3B82F6;
+}
+
+.app-server-mockup .mockup-title {
+    color: var(--devops-green);
+}
+
+.mockup-subtitle {
+    color: #888;
+    font-size: 0.8rem;
+}
+
+.mockup-screen {
+    background: #000;
+    border-radius: 12px;
+    padding: 1rem;
+    height: 180px;
+    display: flex;
+    flex-direction: column;
+}
+
+.mockup-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.file-item,
+.process-item {
+    background: rgba(59, 130, 246, 0.1);
+    padding: 0.5rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    color: white;
+    border-left: 3px solid #3B82F6;
+}
+
+.app-server-mockup .process-item {
+    background: rgba(34, 197, 94, 0.1);
+    border-left-color: var(--devops-green);
+}
+
+.status-bar {
+    display: flex;
+    justify-content: space-between;
+    margin-top: auto;
+    padding-top: 0.5rem;
+    border-top: 1px solid #333;
+}
+
+.status-item {
+    font-size: 0.7rem;
+    color: #888;
+}
+
+.web-server-mockup .status-item {
+    color: #3B82F6;
+}
+
+.app-server-mockup .status-item {
+    color: var(--devops-green);
+}
+
+@media (max-width: 768px) {
+    .server-mockups {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .server-mockup {
+        width: 100%;
+        max-width: 300px;
+    }
+}
+
+        
+        /* RESPONSIVE DESIGN */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+            
+            .comparison-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .workflow-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .collaboration-flow {
+                grid-template-columns: 1fr;
+            }
+            
+            .comparison-row {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .container {
+                padding: 1rem;
+            }
+            
+            .top-bar {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .takeaways {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <a href="index.html" class="back-button">← Back to Day 1 Topics</a>
+        
+        <div class="theme-toggle" onclick="toggleTheme()">
+            <div class="toggle-switch">
+                <span class="toggle-icon" id="themeIcon">🌙</span>
+                <span class="toggle-text" id="themeText">Dark</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <!-- EDUCATIONAL INTRODUCTION SECTION -->
+        <div class="hero-section">
+            <h1 class="hero-title">🌐 Web Servers vs Application Servers <span class="hero-emoji">⚙️</span></h1>
+            <p class="hero-question">The Foundation of Every Web Application: Understanding the Critical Difference</p>
+            <div class="server-mockups">
+    <!-- Web Server Mockup -->
+    <div class="server-mockup web-server-mockup">
+        <div class="mockup-header">
+            <div class="mockup-title">🌐 Web Server</div>
+            <div class="mockup-subtitle">Nginx/Apache</div>
+        </div>
+        <div class="mockup-screen">
+            <div class="mockup-content">
+                <div class="file-item">📄 index.html</div>
+                <div class="file-item">🎨 style.css</div>
+                <div class="file-item">📷 images/</div>
+                <div class="file-item">📜 script.js</div>
+                <div class="status-bar">
+                    <span class="status-item">✅ Static Files</span>
+                    <span class="status-item">⚡ Fast Delivery</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Application Server Mockup -->
+    <div class="server-mockup app-server-mockup">
+        <div class="mockup-header">
+            <div class="mockup-title">⚙️ App Server</div>
+            <div class="mockup-subtitle">Tomcat/Node.js</div>
+        </div>
+        <div class="mockup-screen">
+            <div class="mockup-content">
+                <div class="process-item">🔐 User Auth</div>
+                <div class="process-item">🗄️ Database Query</div>
+                <div class="process-item">⚙️ Business Logic</div>
+                <div class="process-item">📊 Generate Response</div>
+                <div class="status-bar">
+                    <span class="status-item">🧠 Dynamic Processing</span>
+                    <span class="status-item">🔄 Real-time Data</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+        </div>
+        
+        <!-- CONCEPT EDUCATION SECTION -->
+        <div class="concept-section">
+            <div class="concept-intro">
+                <h2 class="concept-title">What's the Difference?</h2>
+                <p class="concept-subtitle">"Think of a restaurant: Web Server = Waiter, Application Server = Kitchen"</p>
+            </div>
+            
+            <div class="concept-explanation">
+                <h4>🍽️ Restaurant Analogy Explained</h4>
+                <p>In a restaurant, the <strong>waiter (Web Server)</strong> takes your order and serves pre-made items quickly - like bread, water, or salads. But when you order a custom dish, the waiter sends your request to the <strong>kitchen (Application Server)</strong> where chefs prepare, cook, and customize your meal based on your preferences. The kitchen does all the complex work, then sends the finished dish back through the waiter to you.</p>
+            </div>
+            
+            <div class="concept-explanation">
+                <h4>💻 In Web Development Terms</h4>
+                <p><strong>Web Servers</strong> are like efficient waiters - they quickly serve static content (HTML, images, CSS) that's already prepared. <strong>Application Servers</strong> are like skilled kitchens - they process requests, run business logic, connect to databases, and create dynamic, personalized content for each user.</p>
+            </div>
+        </div>
+        
+        <!-- DETAILED COMPARISON SECTION -->
+        <div class="comparison-section">
+            <h2 class="section-title">🔍 Detailed Comparison</h2>
+            <div class="comparison-grid">
+                <!-- Web Server Card -->
+                <div class="server-card web-server">
+                    <div class="server-header">
+                        🌐 Web Server
+                    </div>
+                    <div class="server-content">
+                        <div class="server-definition">
+                            <h4>Primary Function:</h4>
+                            <p>Serves static content and handles HTTP requests efficiently. Acts as the front door to your website, delivering pre-built files quickly to users.</p>
+                        </div>
+                        
+                        <h4 style="color: var(--devops-green); margin-bottom: 1rem;">Key Responsibilities:</h4>
+                        <ul class="server-features">
+                            <li>📁 Serve static content (HTML, CSS, images, videos)</li>
+                            <li>🔄 Act as reverse proxy to application servers</li>
+                            <li>⚡ Handle high-volume HTTP/HTTPS requests</li>
+                            <li>🗜️ Compress and cache content for speed</li>
+                            <li>🔒 SSL termination and security headers</li>
+                            <li>⚖️ Load balancing across multiple servers</li>
+                        </ul>
+                        
+                        <h4 style="color: var(--devops-green); margin-bottom: 1rem;">Popular Examples:</h4>
+                        <div class="examples-grid">
+                            <div class="example-item">Apache</div>
+                            <div class="example-item">Nginx</div>
+                            <div class="example-item">IIS</div>
+                            <div class="example-item">Lighttpd</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Application Server Card -->
+                <div class="server-card app-server">
+                    <div class="server-header">
+                        ⚙️ Application Server
+                    </div>
+                    <div class="server-content">
+                        <div class="server-definition">
+                            <h4>Primary Function:</h4>
+                            <p>Runs business logic and generates dynamic content. Processes user requests that require database interactions, calculations, and personalized responses.</p>
+                        </div>
+                        
+                        <h4 style="color: var(--devops-green); margin-bottom: 1rem;">Key Responsibilities:</h4>
+                        <ul class="server-features">
+                            <li>⚙️ Run business logic and application code</li>
+                            <li>🔗 Connect presentation layer to database</li>
+                            <li>🗄️ Manage database connections and transactions</li>
+                            <li>👤 Handle user sessions and authentication</li>
+                            <li>📊 Process dynamic content generation</li>
+                            <li>🔧 Execute server-side programming languages</li>
+                        </ul>
+                        
+                        <h4 style="color: var(--devops-green); margin-bottom: 1rem;">Popular Examples:</h4>
+                        <div class="examples-grid">
+                            <div class="example-item">Tomcat</div>
+                            <div class="example-item">Node.js</div>
+                            <div class="example-item">JBoss</div>
+                            <div class="example-item">WebLogic</div>
+                            <div class="example-item">WebSphere</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- WORKFLOW SECTION */
+        <div class="workflow-section">
+            <h2 class="section-title">🔄 How They Work</h2>
+            <div class="workflow-grid">
+                <div class="workflow-card">
+                    <div class="workflow-title">🌐 Web Server Workflow</div>
+                    <ol class="workflow-steps">
+                        <li>Browser sends HTTP request to web server</li>
+                        <li>Web server checks if content is static (HTML, CSS, images)</li>
+                        <li>If static, serves content directly from file system</li>
+                        <li>If dynamic, forwards request to application server</li>
+                        <li>Returns response to browser with appropriate headers</li>
+                        <li>Caches frequently requested content for speed</li>
+                    </ol>
+                </div>
+                
+                <div class="workflow-card">
+                    <div class="workflow-title">⚙️ Application Server Workflow</div>
+                    <ol class="workflow-steps">
+                        <li>Receives request from web server</li>
+                        <li>Authenticates user and manages session</li>
+                        <li>Executes business logic and algorithms</li>
+                        <li>Queries database for required data</li>
+                        <li>Processes data and generates dynamic content</li>
+                        <li>Returns processed response to web server</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+        
+        <!-- COLLABORATION SECTION -->
+        <div class="collaboration-section">
+            <h3 class="collaboration-title">🤝 How They Work Together</h3>
+            <p class="collaboration-subtitle">Real-world example: When you shop on Amazon</p>
+            
+            <div class="collaboration-flow">
+                <div class="flow-step">
+                    <span class="flow-icon">🖱️</span>
+                    <div class="flow-title">User Action</div>
+                    <div class="flow-description">You click "Add to Cart" on a product</div>
+                </div>
+                
+                <div class="flow-step">
+                    <span class="flow-icon">🌐</span>
+                    <div class="flow-title">Web Server</div>
+                    <div class="flow-description">Nginx receives your request and forwards to application server</div>
+                </div>
+                
+                <div class="flow-step">
+                    <span class="flow-icon">⚙️</span>
+                    <div class="flow-title">Application Server</div>
+                    <div class="flow-description">Tomcat processes cart logic, updates database, calculates total</div>
+                </div>
+                
+                <div class="flow-step">
+                    <span class="flow-icon">🗄️</span>
+                    <div class="flow-title">Database</div>
+                    <div class="flow-description">Stores cart data, user preferences, inventory updates</div>
+                </div>
+                
+                <div class="flow-step">
+                    <span class="flow-icon">📱</span>
+                    <div class="flow-title">Dynamic Response</div>
+                    <div class="flow-description">Updated cart page with your items and total displayed</div>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 2rem; padding: 1rem; background: var(--bg-accent); border-radius: 10px;">
+                <strong>Key Point:</strong> Web server handles the "delivery" while application server handles the "cooking" - they're a perfect team![3][9]
+            </div>
+        </div>
+        
+        <!-- KEY DIFFERENCES TABLE -->
+        <div class="differences-section">
+            <h2 class="section-title">📊 Key Differences Summary</h2>
+            <div class="differences-table">
+                <div class="table-header">
+                    Web Server vs Application Server Comparison
+                </div>
+                <div class="table-content">
+                    <div class="comparison-row">
+                        <div class="comparison-aspect">Content Type</div>
+                        <div class="comparison-web">Static files (HTML, CSS, images)</div>
+                        <div class="comparison-app">Dynamic content (database-driven)</div>
+                    </div>
+                    
+                    <div class="comparison-row">
+                        <div class="comparison-aspect">Protocols</div>
+                        <div class="comparison-web">HTTP, HTTPS, FTP</div>
+                        <div class="comparison-app">HTTP, RMI, RPC, messaging</div>
+                    </div>
+                    
+                    <div class="comparison-row">
+                        <div class="comparison-aspect">Resource Usage</div>
+                        <div class="comparison-web">Low memory, optimized for speed</div>
+                        <div class="comparison-app">Higher memory, CPU intensive</div>
+                    </div>
+                    
+                    <div class="comparison-row">
+                        <div class="comparison-aspect">Database Access</div>
+                        <div class="comparison-web">No direct database connections</div>
+                        <div class="comparison-app">Direct database interactions</div>
+                    </div>
+                    
+                    <div class="comparison-row">
+                        <div class="comparison-aspect">Multithreading</div>
+                        <div class="comparison-web">Event-driven architecture</div>
+                        <div class="comparison-app">Full multithreading support</div>
+                    </div>
+                    
+                    <div class="comparison-row">
+                        <div class="comparison-aspect">Business Logic</div>
+                        <div class="comparison-web">Minimal processing</div>
+                        <div class="comparison-app">Complex business operations</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- CONCLUSION & TAKEAWAYS SECTION -->
+        <div class="conclusion">
+            <p class="conclusion-text">Understanding the Division of Labor 🎯</p>
+            <p class="conclusion-subtitle">Web servers and application servers work together to create seamless user experiences</p>
+            
+            <div class="takeaways">
+                <div class="takeaway-item">
+                    <strong>✅ Web Server Excellence</strong><br>
+                    Choose Nginx or Apache for serving static content fast and efficiently.
+                </div>
+                <div class="takeaway-item">
+                    <strong>✅ Application Server Power</strong><br>
+                    Use Tomcat, Node.js, or similar for dynamic content and business logic.
+                </div>
+                <div class="takeaway-item">
+                    <strong>✅ Perfect Together</strong><br>
+                    Combine both for optimal performance - web server as front, app server as backend.
+                </div>
+                <div class="takeaway-item">
+                    <strong>✅ Scale Strategically</strong><br>
+                    Scale web servers for traffic, application servers for processing power.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dark mode functionality
+        function toggleTheme() {
+            const body = document.body;
+            const themeIcon = document.getElementById('themeIcon');
+            const themeText = document.getElementById('themeText');
+            
+            if (body.getAttribute('data-theme') === 'dark') {
+                body.removeAttribute('data-theme');
+                themeIcon.textContent = '🌙';
+                themeText.textContent = 'Dark';
+                localStorage.setItem('theme', 'light');
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                themeIcon.textContent = '☀️';
+                themeText.textContent = 'Light';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+        
+        // Load saved theme on page load
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const themeIcon = document.getElementById('themeIcon');
+            const themeText = document.getElementById('themeText');
+            
+            if (savedTheme === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+                themeIcon.textContent = '☀️';
+                themeText.textContent = 'Light';
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', loadTheme);
+    </script>
+</body>
+</html>
